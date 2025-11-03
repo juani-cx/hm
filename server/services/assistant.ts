@@ -28,6 +28,8 @@ class AssistantService {
     await this.loadAgentRegistry();
     await this.loadRoutingConfig();
     await this.loadAllAgentGuidelines();
+    
+    console.log(`✓ Assistant initialized with ${this.agentRegistry.length} agents, ${this.agentGuidelines.size} guidelines loaded`);
   }
 
   private async loadAgentRegistry() {
@@ -35,6 +37,7 @@ class AssistantService {
       const registryPath = path.join(process.cwd(), 'agents', 'registry.json');
       const content = await fs.readFile(registryPath, 'utf-8');
       this.agentRegistry = JSON.parse(content);
+      console.log(`Loaded ${this.agentRegistry.length} agents from registry`);
     } catch (error) {
       console.error('Failed to load agent registry:', error);
       this.agentRegistry = [];
@@ -85,8 +88,10 @@ class AssistantService {
         objectives: content,
         examples: content
       });
+      
+      console.log(`✓ Loaded guideline for ${agent.id}@${agent.version}`);
     } catch (error) {
-      console.error(`Failed to load guidelines for agent ${agent.id}:`, error);
+      console.error(`✗ Failed to load guidelines for agent ${agent.id}:`, error);
     }
   }
 
@@ -144,17 +149,24 @@ IMPORTANT:
 - Reference specific items or looks when relevant`;
 
     try {
+      console.log(`Calling OpenAI for ${agentId} with message: "${userMessage.substring(0, 50)}..."`);
+      
       const response = await openai.chat.completions.create({
-        model: "gpt-5", // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+        model: "gpt-4o",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage }
         ],
-        max_completion_tokens: 512,
+        max_tokens: 512,
       });
 
+      console.log(`OpenAI response received. Choices:`, response.choices?.length || 0);
+      console.log(`First choice content:`, response.choices?.[0]?.message?.content?.substring(0, 200) || 'NULL/EMPTY');
+      
+      const aiMessage = response.choices[0]?.message?.content || "I'm here to help! What would you like to know?";
+
       return {
-        message: response.choices[0]?.message?.content || "I'm here to help! What would you like to know?",
+        message: aiMessage,
         agentId,
         agentVersion: version
       };
@@ -181,12 +193,12 @@ Return only a JSON array of 3 suggestion strings, nothing else.`;
 
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-5",
+        model: "gpt-4o",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: "Generate suggestions" }
         ],
-        max_completion_tokens: 256,
+        max_tokens: 256,
       });
 
       const content = response.choices[0]?.message?.content || '[]';
