@@ -166,6 +166,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/assistant/suggestions", async (req, res) => {
+    try {
+      const context = req.query.context as string || '';
+      const suggestions = await assistantService.generateSuggestions(context);
+      res.json({ suggestions });
+    } catch (error) {
+      console.error('Suggestions error:', error);
+      res.status(500).json({ error: "Failed to generate suggestions" });
+    }
+  });
+
   app.post("/api/assistant/suggestions", async (req, res) => {
     try {
       const { context } = req.body;

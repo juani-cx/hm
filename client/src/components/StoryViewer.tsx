@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SuggestionToast } from "./SuggestionToast";
+import { AIStyleTip } from "./AIStyleTip";
 
 interface Look {
   id: string;
@@ -23,6 +24,7 @@ interface StoryViewerProps {
 export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook, onAskAssistant }: StoryViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showSuggestion, setShowSuggestion] = useState(false);
+  const [showAITip, setShowAITip] = useState(false);
 
   const goNext = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -35,10 +37,19 @@ export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook, on
   const currentLook = looks[currentIndex] || looks[0];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const suggestionTimer = setTimeout(() => {
       setShowSuggestion(true);
     }, 3000);
-    return () => clearTimeout(timer);
+    
+    const tipTimer = setTimeout(() => {
+      setShowSuggestion(false); // Hide suggestion toast when AI tip appears
+      setShowAITip(true);
+    }, 5000);
+    
+    return () => {
+      clearTimeout(suggestionTimer);
+      clearTimeout(tipTimer);
+    };
   }, [currentIndex]);
 
   const contextualSuggestions = [
@@ -135,6 +146,16 @@ export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook, on
           onAskAssistant(suggestion);
         }}
         onDismiss={() => setShowSuggestion(false)}
+      />
+
+      <AIStyleTip
+        show={showAITip}
+        tip={`This ${currentLook?.items[0]?.name || 'piece'} pairs beautifully with neutral tones. Try layering with a light jacket for a versatile look that transitions from day to night.`}
+        onClose={() => setShowAITip(false)}
+        onLearnMore={() => {
+          onAskAssistant(`Tell me more about styling ${currentLook?.items[0]?.name || 'this look'}`);
+          setShowAITip(false);
+        }}
       />
     </div>
   );

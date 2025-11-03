@@ -71,6 +71,10 @@ export default function Home() {
     console.log('Ask assistant:', question);
   };
 
+  const handleAISuggestionClick = (suggestion: string) => {
+    console.log('AI Suggestion clicked:', suggestion);
+  };
+
   const handleSavePreferences = async (prefs: string[]) => {
     try {
       await updateProfile({
@@ -116,7 +120,11 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <StoryFeed stories={stories || []} onStoryClick={handleStoryClick} />
+            <StoryFeed 
+              stories={stories || []} 
+              onStoryClick={handleStoryClick}
+              onAISuggestionClick={handleAISuggestionClick}
+            />
           )}
           
           {showPreferences && (

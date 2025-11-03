@@ -188,20 +188,35 @@ export function AssistantOverlay({ suggestions = [] }: AssistantOverlayProps) {
       </AnimatePresence>
 
       {!isOpen && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="fixed bottom-4 right-4 z-40"
-        >
-          <Button
-            size="icon"
-            onClick={() => setIsOpen(true)}
-            className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg"
-            data-testid="button-open-assistant"
+        <div className="fixed bottom-4 right-4 z-40">
+          <motion.div
+            className="absolute inset-0 bg-primary rounded-full"
+            animate={{
+              scale: [1, 1.4, 1],
+              opacity: [0.5, 0, 0.5],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="relative"
           >
-            <MessageCircle className="w-6 h-6" />
-          </Button>
-        </motion.div>
+            <Button
+              size="icon"
+              onClick={() => setIsOpen(true)}
+              className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg relative"
+              data-testid="button-open-assistant"
+            >
+              <MessageCircle className="w-6 h-6" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse" />
+            </Button>
+          </motion.div>
+        </div>
       )}
     </>
   );

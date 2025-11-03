@@ -1,4 +1,5 @@
 import { StoryCard } from "./StoryCard";
+import { AISuggestionsCard } from "./AISuggestionsCard";
 import { motion } from "framer-motion";
 
 interface Story {
@@ -12,9 +13,10 @@ interface Story {
 interface StoryFeedProps {
   stories: Story[];
   onStoryClick: (storyId: string) => void;
+  onAISuggestionClick?: (suggestion: string) => void;
 }
 
-export function StoryFeed({ stories, onStoryClick }: StoryFeedProps) {
+export function StoryFeed({ stories, onStoryClick, onAISuggestionClick }: StoryFeedProps) {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-md mx-auto px-4 py-6">
@@ -29,12 +31,14 @@ export function StoryFeed({ stories, onStoryClick }: StoryFeedProps) {
         </motion.div>
         
         <div className="grid grid-cols-2 gap-4">
+          <AISuggestionsCard onSuggestionClick={onAISuggestionClick} />
+          
           {stories.map((story, index) => (
             <motion.div
               key={story.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: (index + 1) * 0.1 }}
             >
               <StoryCard
                 {...story}
