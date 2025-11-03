@@ -28,6 +28,7 @@ export default function StoryViewerExample() {
       images={[autumn, summer]}
       onClose={() => console.log('Close clicked')}
       onShopLook={(id) => console.log('Shop look:', id)}
+      onAskAssistant={(question) => console.log('Ask assistant:', question)}
     />
   );
 }

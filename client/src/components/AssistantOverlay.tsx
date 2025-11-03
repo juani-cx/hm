@@ -29,7 +29,7 @@ export function AssistantOverlay({ suggestions = [] }: AssistantOverlayProps) {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
@@ -39,19 +39,39 @@ export function AssistantOverlay({ suggestions = [] }: AssistantOverlayProps) {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageText = input;
     setInput('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/assistant/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: messageText }),
+      });
+
+      const data = await response.json();
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: "That's a great choice! For a winter party, try pairing it with a soft knit turtleneck and sheer tights. Add metallic pumps for a touch of shine. Want to see similar looks?",
-        agent: 'fashion@v1'
+        content: data.message,
+        agent: `${data.agentId}@${data.agentVersion}`
       };
+      
       setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: "I'm having trouble responding right now. Please try again!",
+        agent: 'system'
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleSuggestion = (suggestion: string) => {
@@ -149,7 +169,7 @@ export function AssistantOverlay({ suggestions = [] }: AssistantOverlayProps) {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
                 placeholder="Ask me anything..."
                 className="flex-1"
                 data-testid="input-assistant-message"

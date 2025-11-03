@@ -27,7 +27,7 @@ export function QuickPreferences({ onComplete, onSkip }: QuickPreferencesProps) 
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 max-w-sm w-full mx-4 backdrop-blur-md bg-white/90 shadow-lg rounded-3xl p-6 z-30"
+      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-sm w-[calc(100%-2rem)] backdrop-blur-md bg-background/95 border shadow-lg rounded-3xl p-6 z-30"
     >
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-5 h-5 text-primary" />

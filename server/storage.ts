@@ -1,37 +1,136 @@
-import { type User, type InsertUser } from "@shared/schema";
+import {
+  type Item,
+  type InsertItem,
+  type Look,
+  type InsertLook,
+  type Story,
+  type InsertStory,
+  type UserProfile,
+  type InsertUserProfile,
+  type AssistantEvent,
+  type InsertAssistantEvent,
+} from "@shared/schema";
 import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
-
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Items
+  getItem(sku: string): Promise<Item | undefined>;
+  getAllItems(): Promise<Item[]>;
+  createItem(item: InsertItem): Promise<Item>;
+  updateItemStock(sku: string, stock: number): Promise<Item | undefined>;
+  
+  // Looks
+  getLook(id: string): Promise<Look | undefined>;
+  getAllLooks(): Promise<Look[]>;
+  createLook(look: InsertLook): Promise<Look>;
+  
+  // Stories
+  getStory(id: string): Promise<Story | undefined>;
+  getAllStories(): Promise<Story[]>;
+  createStory(story: InsertStory): Promise<Story>;
+  
+  // UserProfile
+  getUserProfile(userId: string): Promise<UserProfile | undefined>;
+  createOrUpdateUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  
+  // AssistantEvents (logging)
+  logAssistantEvent(event: InsertAssistantEvent): Promise<AssistantEvent>;
+  getAssistantEvents(limit?: number): Promise<AssistantEvent[]>;
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private items: Map<string, Item>;
+  private looks: Map<string, Look>;
+  private stories: Map<string, Story>;
+  private userProfiles: Map<string, UserProfile>;
+  private assistantEvents: AssistantEvent[];
 
   constructor() {
-    this.users = new Map();
+    this.items = new Map();
+    this.looks = new Map();
+    this.stories = new Map();
+    this.userProfiles = new Map();
+    this.assistantEvents = [];
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  // Items
+  async getItem(sku: string): Promise<Item | undefined> {
+    return this.items.get(sku);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getAllItems(): Promise<Item[]> {
+    return Array.from(this.items.values());
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
+  async createItem(item: InsertItem): Promise<Item> {
+    this.items.set(item.sku, item);
+    return item;
+  }
+
+  async updateItemStock(sku: string, stock: number): Promise<Item | undefined> {
+    const item = this.items.get(sku);
+    if (item) {
+      item.stock = stock;
+      this.items.set(sku, item);
+    }
+    return item;
+  }
+
+  // Looks
+  async getLook(id: string): Promise<Look | undefined> {
+    return this.looks.get(id);
+  }
+
+  async getAllLooks(): Promise<Look[]> {
+    return Array.from(this.looks.values());
+  }
+
+  async createLook(insertLook: InsertLook): Promise<Look> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const look: Look = { ...insertLook, id };
+    this.looks.set(id, look);
+    return look;
+  }
+
+  // Stories
+  async getStory(id: string): Promise<Story | undefined> {
+    return this.stories.get(id);
+  }
+
+  async getAllStories(): Promise<Story[]> {
+    return Array.from(this.stories.values());
+  }
+
+  async createStory(insertStory: InsertStory): Promise<Story> {
+    const id = randomUUID();
+    const story: Story = { ...insertStory, id };
+    this.stories.set(id, story);
+    return story;
+  }
+
+  // UserProfile
+  async getUserProfile(userId: string): Promise<UserProfile | undefined> {
+    return this.userProfiles.get(userId);
+  }
+
+  async createOrUpdateUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    this.userProfiles.set(profile.userId, profile);
+    return profile;
+  }
+
+  // AssistantEvents
+  async logAssistantEvent(insertEvent: InsertAssistantEvent): Promise<AssistantEvent> {
+    const event: AssistantEvent = {
+      id: randomUUID(),
+      timestamp: Date.now(),
+      ...insertEvent,
+    };
+    this.assistantEvents.push(event);
+    return event;
+  }
+
+  async getAssistantEvents(limit: number = 100): Promise<AssistantEvent[]> {
+    return this.assistantEvents.slice(-limit);
   }
 }
 

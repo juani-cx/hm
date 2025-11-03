@@ -1,0 +1,23 @@
+[
+  {
+    "intents": ["style", "match", "what goes with", "outfit", "wear", "color", "look", "occasion"],
+    "agentId": "fashion",
+    "regions": ["global"],
+    "languages": ["en"],
+    "fallback": "fashion"
+  },
+  {
+    "intents": ["price", "cost", "sale", "discount", "promotion", "membership", "cheaper", "budget", "expensive"],
+    "agentId": "business",
+    "regions": ["global"],
+    "languages": ["en"],
+    "fallback": "fashion"
+  },
+  {
+    "intents": ["shipping", "delivery", "return", "exchange", "refund", "order", "tracking", "size", "fit", "problem", "help", "issue"],
+    "agentId": "support",
+    "regions": ["global"],
+    "languages": ["en"],
+    "fallback": "fashion"
+  }
+]

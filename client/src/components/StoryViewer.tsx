@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SuggestionToast } from "./SuggestionToast";
 
 interface Look {
   id: string;
@@ -16,10 +17,12 @@ interface StoryViewerProps {
   images: string[];
   onClose: () => void;
   onShopLook: (lookId: string) => void;
+  onAskAssistant: (question: string) => void;
 }
 
-export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook }: StoryViewerProps) {
+export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook, onAskAssistant }: StoryViewerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showSuggestion, setShowSuggestion] = useState(false);
 
   const goNext = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
@@ -30,6 +33,19 @@ export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook }: 
   };
 
   const currentLook = looks[currentIndex] || looks[0];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSuggestion(true);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [currentIndex]);
+
+  const contextualSuggestions = [
+    `What goes with ${currentLook?.items[0]?.name || 'this item'}?`,
+    'Show me similar looks',
+    'More sustainable options'
+  ];
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
@@ -110,6 +126,16 @@ export function StoryViewer({ storyTitle, looks, images, onClose, onShopLook }: 
           Shop the Look
         </Button>
       </div>
+
+      <SuggestionToast
+        show={showSuggestion}
+        message="Need styling help with this look?"
+        suggestions={contextualSuggestions}
+        onSuggestionClick={(suggestion) => {
+          onAskAssistant(suggestion);
+        }}
+        onDismiss={() => setShowSuggestion(false)}
+      />
     </div>
   );
 }

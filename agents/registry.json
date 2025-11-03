@@ -1,0 +1,29 @@
+[
+  {
+    "id": "fashion",
+    "name": "Fashion Stylist",
+    "role": "fashion",
+    "mdPath": "agents/fashion/fashion.v1.md",
+    "version": "v1",
+    "lastUpdated": 1730678400000,
+    "enabled": true
+  },
+  {
+    "id": "business",
+    "name": "Business Assistant",
+    "role": "business",
+    "mdPath": "agents/business/business.v1.md",
+    "version": "v1",
+    "lastUpdated": 1730678400000,
+    "enabled": true
+  },
+  {
+    "id": "support",
+    "name": "Customer Support",
+    "role": "support",
+    "mdPath": "agents/support/support.v1.md",
+    "version": "v1",
+    "lastUpdated": 1730678400000,
+    "enabled": true
+  }
+]
