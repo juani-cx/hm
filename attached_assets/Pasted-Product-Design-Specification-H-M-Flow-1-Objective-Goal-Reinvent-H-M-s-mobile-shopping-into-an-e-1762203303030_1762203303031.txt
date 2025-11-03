@@ -1,0 +1,290 @@
+Product Design Specification — H&M Flow
+1. Objective
+
+Goal: Reinvent H&M’s mobile shopping into an editorial, AI-guided experience—“like a glossy magazine”—that curates stories and shoppable looks from live inventory, supported by a contextual assistant.
+
+Type: Feature (POC) / Experiment
+
+Source: New app from scratch → track in docs/prd-hm-flow-poc.md
+
+2. User & Context
+
+Persona(s):
+
+Fashion Explorer (primary): inspiration-seeking, enjoys editorial content and styling guidance.
+
+Key Jobs To Be Done:
+
+JTBD 1: Check what’s new in my favorite store.
+
+JTBD 2: Find inspiration / just read & see content.
+
+Primary Environment: Mobile-responsive web (POC), English UX (global EN). Native app (iOS/Android) later.
+
+3. Functional Scope
+Area	Description
+Entry Point	Start from a copy of H&M’s current mobile landing. User can: (a) scroll hero → enter Flow Stories (editorial feed); (b) Search; or (c) accept contextual prompts from the assistant.
+Core Actions	Browse Flow Stories; open interactive looks (live inventory); see AI stylist tips + sustainability callouts; Search or follow guided suggestions; open PDP; Add to cart / size select; Save/Like items/looks; Share; engage a conversational companion; Create profile / update preferences by talking to the agent; watch AI-generated campaign/video pages.
+Outcomes	Added to cart, Saved to Favorites, profile/preferences stored for future sessions, personalized next-story queue adapts, deep-link to PDP from looks, assistant memory improves suggestions, optional handoff to traditional e-commerce flow.
+4. UI/UX Expectations
+
+PROVIDE A FUNCTIONAL PROTOTYPE (Optional):
+
+[TBD – link to prototype once available]
+
+Screens/Components Affected:
+
+Mobile Landing (clone + entry tiles to Flow / Search)
+
+Flow Story Feed (editorial cards)
+
+Story Viewer (full-bleed, swipeable; shoppable look chips; CTAs)
+
+Look Card / Outfit Composer (swap items, sizes, sustainability)
+
+PDP (gallery, details, fit/size selector, add-to-cart)
+
+Assistant Overlay (chat bubble + inline prompts, context-aware)
+
+Profile & Preferences (Conversational) (style, size, color, price)
+
+AI Campaign/Video page (watch + shop the scene)
+
+Search (POC scope: lightweight; optional)
+
+State Transitions (idle → loading → success/error):
+
+Story cards lazy-load with shimmer placeholders.
+
+Assistant shows typing indicator; suggestions appear as chips/toasts.
+
+PDP size validation: inline error + subtle haptic (device-capable).
+
+Outfit swaps: optimistic update; fallback to “similar” if OOS.
+
+Video page: buffering badge; auto-miniplayer on navigate away.
+
+Edge Cases (POC):
+
+OOS or missing size → Notify me + Swap similar (same silhouette/colorway).
+
+Look item unavailable → nearest match by price band, material, color.
+
+Cold start (no profile) → 3-chip quick prefs in first story.
+
+Low connectivity → cached hero, skeleton feed, retry.
+
+Privacy: explicit consent for behavioral signals; “Why am I seeing this?” explainer.
+
+Brand safety: AI tips avoid sensitive inferences; tone = editorial, non-pushy.
+
+4b Branding and UI Foundations
+
+Design System or Framework: Tailwind + ShadCN; motion via Framer Motion.
+
+Brand Assets: Use photography and styling sourced from H&M’s public Image Gallery (Fashion/Move/Beauty/Events categories).
+
+Logo: H&M wordmark (existing).
+
+Typography (POC substitutes aligned to editorial feel):
+
+Editorial serif: Bodoni Moda or Playfair Display (for story headlines).
+
+UI sans: Inter (for navigation, body, controls).
+
+Colors:
+
+Primary: H&M Red #CC071E (POC standardization).
+
+Secondary: Black #000000, White #FFFFFF.
+
+Accent/Background: Cool Gray #F6F6F6.
+
+Icon Set: Lucide (linear/outline, “linear-style similar”).
+
+Figma Source of Truth: Create new (none yet).
+
+5. Data & Business Rules
+
+Key Fields / Objects:
+
+UserProfile { user_id, sizes[], colors[], price_band, style_tags[], consents{behavioral, personalization} }
+
+Look { id, title, items[sku], hero_image, tags[], sustain_badges[], substitutes[sku], availability_state }
+
+Item { sku, name, images[], price, sizes[], color, material, sustainTags[], stock }
+
+AssistantEvent { timestamp, agent_id, context, suggestion, user_action(view|click|dismiss), content_source(md_path@version) }
+
+Story { id, narrative_md, look_ids[], video_ref?, campaign_ref? }
+
+Agent Guidelines System (file-based, human-controllable)
+
+Registry: AgentRegistry { id, name, role(business|fashion|support|rules|regions|languages), md_path, version, last_updated, enabled }
+
+Guideline Files (.md with frontmatter) — one per agent (business, fashion, support, rules, regions, languages).
+
+Frontmatter: agent_id, scope(answers|guardrails|routing), regions[], languages[], tone, priority, effective_from, expires_on?
+
+Sections: Objectives, AnswerStyle, Do/Don’t, RoutingHints, Escalation, Examples (Q→A)
+
+RoutingConfig: intents[] → agent_id with region/language overrides & fallbacks.
+
+Dev Folder Structure:
+
+/agents/
+  /business/  business.v1.md
+  /fashion/   fashion.v1.md
+  /support/   support.v1.md
+  /rules/     rules.v1.md
+  /regions/   eu.v1.md  us.v1.md
+  /languages/ en.v1.md  sv.v1.md
+/agents/registry.json
+/agents/routing.json
+
+
+Demo Flow (human control):
+
+Edit fashion.v1.md → save fashion.v2.md.
+
+Update registry.json version.
+
+Preview Q&A: before/after diff.
+
+Publish toggle enabled=true for v2; rollbackable.
+
+All answers log agent_id@version.
+
+Validations:
+
+Consent required for behavioral signals.
+
+Tone enforcement via linter/cues from tone in guideline.
+
+Safety: no sensitive inferences; sustainability claims from allowlisted tags.
+
+Inventory binding: only in-stock SKUs; auto-fallback to similar when needed.
+
+Single size required on add-to-cart.
+
+Version pinning on all assistant outputs.
+
+Dependencies:
+
+Live Catalog/Inventory API; PDP deep links.
+
+Auth/Profile service for preferences & saved looks.
+
+Video CDN for campaign pages.
+
+Content loader (hot-reload /agents/**/*.md in dev).
+
+Event pipeline (AssistantEvent + analytics).
+
+6. Constraints & Considerations
+
+Performance budget: first contentful interaction < 2.0s on mid-range mobile; story card < 150ms per swap.
+
+Follow Tailwind + ShadCN components; minimal custom primitives.
+
+Accessibility: WCAG AA (color contrast; focus states; captions on video).
+
+Privacy: explicit consent UI; transparent “Why this suggestion?” panel.
+
+Offline/resilience: skeletons, retries, optimistic UI for swaps/saves.
+
+Observability: logs include agent_id@version, routing path, and inventory resolution.
+
+POC routing via keywords; ML intent later (non-blocking for POC).
+
+Legal/brand: avoid medical/body-related claims; respect regional messaging rules.
+
+7. Acceptance criteria
+
+Landing → Flow Stories
+
+Given a first-time user with no profile, when landing loads, then they see hero + Flow entry tile and a 3-chip quick-pref prompt.
+
+When they tap Flow Stories, then the feed renders editorial cards with shimmer placeholders within 2s.
+
+Story → Shoppable Look → PDP
+
+Given a story card with a look, when tapped, then the Story Viewer opens full-bleed with look chips and Shop the look CTA.
+
+When Shop the look is tapped, then the PDP opens with the selected SKU, size chooser, sustain badges, and Add to cart.
+
+If selected size is OOS, then user sees an inline error + Notify me + Swap similar.
+
+Assistant (contextual prompts)
+
+Given the user scrolls 50% of a story, the assistant shows one non-intrusive suggestion chip relevant to the current look.
+
+When the user opens the assistant, it answers using fashion guidelines and logs fashion@<version>.
+
+If the user asks about delivery/promo, routing switches to business agent with visible handoff tag.
+
+Profile & Preferences (conversational)
+
+Given a signed-in user, when they say “prefer earth tones and under $60,” then preferences update in UserProfile and future suggestions reflect the change.
+
+Campaign/Video page
+
+Given an AI campaign page, when the video plays, then items shown are tappable and link to PDP; on navigate away, a mini-player persists.
+
+Agent update demo (human control)
+
+Given fashion.v2.md is uploaded and enabled, when the same test question is asked, then the new answer matches v2 tone/content and the audit log records fashion@v2.
+
+9. References
+
+Brand imagery source: H&M Image Gallery (Fashion/Move/Beauty/Events).
+
+Tracking doc: docs/prd-hm-flow-poc.md (to be created).
+
+API schema: docs/api/catalog-inventory.md (TBD).
+
+10. Metadata
+
+Author: (your name)
+
+Date: 2025-11-03
+
+Stakeholders: Product, Design, Engineering, Brand, Legal
+
+Appendix — Agent .md Template (copy/paste)
+---
+agent_id: fashion
+scope: answers
+regions: [global]
+languages: [en]
+tone: "editorial, warm, non-pushy, concise"
+priority: 80
+effective_from: 2025-11-01
+expires_on:
+---
+
+# Objectives
+Inspire looks using live inventory; emphasize creativity and confidence.
+
+# AnswerStyle
+- 1–2 sentence tips; avoid hard sells.
+- Offer 2 alternatives: budget-friendly & premium.
+
+# Do
+- Use color theory; mention fabric feel.
+# Don’t
+- Infer sensitive attributes; avoid prescriptive body talk.
+
+# RoutingHints
+intents:
+- "style", "match", "what goes with", "outfit for"
+
+# Escalation
+If price sensitivity detected → handoff to **business** for promo info.
+
+# Examples
+Q: “What goes with this satin skirt for a winter party?”
+A: “Try a soft knit turtleneck and sheer tights; add metallic pumps for shine. Want a warmer option?”
+
+
+I
