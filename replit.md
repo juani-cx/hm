@@ -12,6 +12,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**November 3, 2025 - Session 3: Critical Bug Fixes & UX Polish**
+- Fixed critical image loading bug by adding express.static middleware for `/generated_images` path
+- Transformed API responses to normalize `images[0]` → `imageUrl` for StoryCard compatibility
+- Improved QuickPreferences modal with mobile-first bottom sheet, desktop centering, and proper backdrop
+- Added "Don't show me this again" button with localStorage persistence (`hm-preferences-dismissed`)
+- Fixed modal positioning on mobile (no longer off-screen, slides up from bottom)
+- All E2E tests passed: images load correctly, modal works across all viewports, dismiss persists
+- Architect approved all changes with no security concerns
+
 **November 3, 2025 - Session 2: Navigation & AI Enhancement**
 - Added hamburger menu with H&M logo integration in TopBar
 - Created slide-out navigation drawer with menu items (Flow Stories, AI Stylist, Favorites, Settings, Help & Support)
