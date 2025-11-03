@@ -20,6 +20,9 @@ export default function Home() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [userId] = useState('demo-user');
+  const [preferencesDismissed, setPreferencesDismissed] = useState(() => {
+    return localStorage.getItem('hm-preferences-dismissed') === 'true';
+  });
 
   // Fetch stories from API
   const { data: stories, isLoading: storiesLoading } = useQuery({
@@ -44,7 +47,9 @@ export default function Home() {
 
   const handleEnterFlow = () => {
     setCurrentView('feed');
-    setShowPreferences(true);
+    if (!preferencesDismissed) {
+      setShowPreferences(true);
+    }
   };
 
   const handleStoryClick = (storyId: string) => {
@@ -73,6 +78,12 @@ export default function Home() {
 
   const handleAISuggestionClick = (suggestion: string) => {
     console.log('AI Suggestion clicked:', suggestion);
+  };
+
+  const handleDismissPreferences = () => {
+    localStorage.setItem('hm-preferences-dismissed', 'true');
+    setPreferencesDismissed(true);
+    setShowPreferences(false);
   };
 
   const handleSavePreferences = async (prefs: string[]) => {
@@ -127,10 +138,11 @@ export default function Home() {
             />
           )}
           
-          {showPreferences && (
+          {showPreferences && !preferencesDismissed && (
             <QuickPreferences
               onComplete={handleSavePreferences}
               onSkip={() => setShowPreferences(false)}
+              onDismiss={handleDismissPreferences}
             />
           )}
         </>

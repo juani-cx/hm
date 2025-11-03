@@ -19,7 +19,14 @@ export const apiRequest = async <T = any>(
 };
 
 // Stories API
-export const fetchStories = () => apiRequest('/api/stories');
+export const fetchStories = async () => {
+  const stories = await apiRequest<any[]>('/api/stories');
+  // Transform API response to add imageUrl field from images array
+  return stories.map(story => ({
+    ...story,
+    imageUrl: story.images?.[0] || ''
+  }));
+};
 export const fetchStory = (id: string) => apiRequest(`/api/stories/${id}`);
 
 // Items API
