@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
+import hmLogo from "@assets/H&M-Logo_1762206118498.png";
 
 interface HeroSectionProps {
   onEnterFlow: () => void;
@@ -17,6 +18,20 @@ export function HeroSection({ onEnterFlow }: HeroSectionProps) {
       >
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
       </div>
+      
+      <motion.header
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="absolute top-0 left-0 right-0 z-10 flex items-center justify-center py-4 px-6"
+      >
+        <img 
+          src={hmLogo} 
+          alt="H&M" 
+          className="h-8 w-auto brightness-0 invert"
+          data-testid="img-hero-logo"
+        />
+      </motion.header>
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

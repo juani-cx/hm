@@ -18,7 +18,8 @@ Preferred communication style: Simple, everyday language.
 - Improved QuickPreferences modal with mobile-first bottom sheet, desktop centering, and proper backdrop
 - Added "Don't show me this again" button with localStorage persistence (`hm-preferences-dismissed`)
 - Fixed modal positioning on mobile (no longer off-screen, slides up from bottom)
-- All E2E tests passed: images load correctly, modal works across all viewports, dismiss persists
+- Added minimal header with H&M logo to landing page with smooth fade-in animation
+- All E2E tests passed: images load correctly, modal works across all viewports, dismiss persists, logo displays properly
 - Architect approved all changes with no security concerns
 
 **November 3, 2025 - Session 2: Navigation & AI Enhancement**
