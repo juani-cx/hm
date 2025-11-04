@@ -12,6 +12,22 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**November 4, 2025 - Session 7: Virtual Try-On Feature**
+- Implemented complete virtual try-on system with AI-generated outfit previews
+- Added 5 model avatar types: Athletic Build, Petite, Curvy, Tall & Slim, Plus Size
+- Created preview panel showing AI-generated images of outfits on selected model types
+- Built backend endpoint `/api/assistant/generate-outfit-preview` using OpenAI gpt-image-1 model
+- Fixed image generation to properly handle base64 format (gpt-image-1 returns b64_json, not URLs)
+- Converts base64 images to data URLs for browser display
+- Implemented proper error handling with toast notifications (no redundant alerts)
+- Added loading states during 10-30 second image generation process
+- Fixed Item type shadowing issue by importing shared schema type
+- Ensured accurate prompts with color and material metadata from items
+- Preview clears on generation start and on error to prevent stale data
+- Generate button properly disabled during generation to prevent double-clicks
+- E2E test passed: model selection, item addition, image generation all verified
+- Architect approved final implementation with proper typing and state management
+
 **November 4, 2025 - Session 6: AI Stylist Page Implementation**
 - Created complete AI Stylist page at /ai-stylist for outfit building
 - Implemented item selection drawer with "From Store" and "My Collection" tabs
@@ -83,13 +99,16 @@ Preferred communication style: Simple, everyday language.
 - Successfully tested end-to-end flow from hero → stories → products → AI chat
 
 **Technical Decisions**
-- Using GPT-4o model (not GPT-5) for compatibility with Replit AI Integrations
+- Using GPT-4o model for chat (not GPT-5) for compatibility with Replit AI Integrations
+- Using gpt-image-1 model for virtual try-on image generation via OpenAI API
+- Image generation returns base64 format (b64_json), converted to data URLs for display
 - In-memory storage (MemStorage) for POC - can migrate to PostgreSQL for production
 - Agent guidelines stored as editable markdown files in `agents/` directory for flexibility
 - H&M logo integrated from attached assets (`attached_assets/H&M-Logo_1762206118498.png`)
 - AI features designed to be prominent but non-intrusive with staggered timing (3s/5s delays)
 - Cart items uniquely identified by composite `${sku}-${size}` key for proper variant management
 - User behavior tracking sends add_to_cart, save_for_later, save_to_collection events to /api/profile for agent learning
+- Virtual try-on generates photorealistic previews with 1024x1024 resolution taking 10-30 seconds
 
 ## System Architecture
 
