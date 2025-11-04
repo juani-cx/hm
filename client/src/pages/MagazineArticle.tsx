@@ -110,7 +110,7 @@ export default function MagazineArticle() {
     <div className="min-h-screen bg-background">
       {/* Top Bar */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
           <Button
             variant="ghost"
             size="icon"
@@ -119,7 +119,7 @@ export default function MagazineArticle() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="font-serif text-lg" data-testid="text-article-title">
+          <h1 className="font-serif text-base sm:text-lg truncate max-w-[180px] sm:max-w-none" data-testid="text-article-title">
             {collection.title}
           </h1>
           <Button
@@ -151,19 +151,19 @@ export default function MagazineArticle() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         
         {/* Hero Actions */}
-        <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
-          <div>
-            <h2 className="font-serif text-3xl md:text-4xl text-white mb-2" data-testid="text-hero-title">
+        <div className="absolute bottom-4 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 flex items-end justify-between">
+          <div className="flex-1 pr-3">
+            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-white mb-1 sm:mb-2" data-testid="text-hero-title">
               {collection.title}
             </h2>
             {currentImage.caption && (
-              <p className="text-white/90 text-sm md:text-base" data-testid="text-hero-caption">
+              <p className="text-white/90 text-xs sm:text-sm md:text-base" data-testid="text-hero-caption">
                 {currentImage.caption}
               </p>
             )}
           </div>
           
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             <Button
               size="icon"
               variant="ghost"
@@ -220,11 +220,11 @@ export default function MagazineArticle() {
       </div>
 
       {/* Article Content */}
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-6 sm:py-12">
         {/* Image Gallery Preview */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-serif text-2xl" data-testid="text-gallery-title">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h3 className="font-serif text-xl sm:text-2xl" data-testid="text-gallery-title">
               Explore this Collection
             </h3>
             <Button
@@ -239,7 +239,7 @@ export default function MagazineArticle() {
 
           {/* Image Grid based on user preference */}
           {viewStyle === "magazine" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               {collection.editorialImages.slice(0, 4).map((img, idx) => (
                 <div
                   key={idx}
@@ -256,8 +256,8 @@ export default function MagazineArticle() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   {img.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-                      <p className="text-white text-sm">{img.caption}</p>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 bg-gradient-to-t from-black/60 to-transparent">
+                      <p className="text-white text-xs sm:text-sm">{img.caption}</p>
                     </div>
                   )}
                 </div>
@@ -311,23 +311,23 @@ export default function MagazineArticle() {
         </div>
 
         {/* Article Text */}
-        <div className="prose prose-lg max-w-none mb-12">
-          <h2 className="font-serif text-3xl mb-4">Build Your Look</h2>
-          <p className="text-muted-foreground leading-relaxed mb-4">
+        <div className="prose prose-sm sm:prose-lg max-w-none mb-8 sm:mb-12">
+          <h2 className="font-serif text-2xl sm:text-3xl mb-3 sm:mb-4">Build Your Look</h2>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-3 sm:mb-4">
             {collection.description}
           </p>
-          <p className="text-muted-foreground leading-relaxed">
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
             Mix and match pieces to create your perfect outfit. Our AI stylist can help you pair these items for maximum impact.
           </p>
         </div>
 
         {/* Product Recommendations */}
         {collection.items && collection.items.length > 0 && (
-          <div className="mb-12">
-            <h3 className="font-serif text-2xl mb-6" data-testid="text-products-title">
+          <div className="mb-8 sm:mb-12">
+            <h3 className="font-serif text-xl sm:text-2xl mb-4 sm:mb-6" data-testid="text-products-title">
               Your Outfit
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {collection.items.slice(0, 4).map((item) => (
                 <Card
                   key={item.sku}
@@ -341,20 +341,20 @@ export default function MagazineArticle() {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
-                  <div className="p-4">
-                    <h4 className="font-medium mb-1 text-sm line-clamp-2" data-testid={`product-name-${item.sku}`}>
+                  <div className="p-3 sm:p-4">
+                    <h4 className="font-medium mb-1 text-xs sm:text-sm line-clamp-2" data-testid={`product-name-${item.sku}`}>
                       {item.name}
                     </h4>
-                    <p className="text-lg font-bold mb-3" data-testid={`product-price-${item.sku}`}>
+                    <p className="text-base sm:text-lg font-bold mb-2 sm:mb-3" data-testid={`product-price-${item.sku}`}>
                       ${item.price.toFixed(2)}
                     </p>
                     <Button
                       size="sm"
-                      className="w-full"
+                      className="w-full text-xs sm:text-sm"
                       onClick={() => handleAddToCart(item)}
                       data-testid={`button-add-to-cart-${item.sku}`}
                     >
-                      <Plus className="w-4 h-4 mr-1" />
+                      <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                       Add to Cart
                     </Button>
                   </div>
@@ -365,22 +365,24 @@ export default function MagazineArticle() {
         )}
 
         {/* Save Actions */}
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <Button
             onClick={handleSaveToCollection}
             variant="outline"
-            className="flex-1"
+            className="flex-1 text-xs sm:text-sm"
             data-testid="button-save-collection"
           >
-            <Bookmark className="w-4 h-4 mr-2" />
-            Save to My Collections
+            <Bookmark className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Save to My Collections</span>
+            <span className="sm:hidden">Save</span>
           </Button>
           <Button
             onClick={handleShare}
             variant="outline"
+            className="text-xs sm:text-sm"
             data-testid="button-share-bottom"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
         </div>
       </div>

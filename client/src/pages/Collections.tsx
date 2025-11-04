@@ -65,15 +65,15 @@ export default function CollectionsPage() {
     <div className="min-h-screen bg-background">
       <TopBar />
       
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl md:text-5xl mb-4">Collections</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-12">
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4">Collections</h1>
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
             Explore our curated fashion collections, each telling its own story through editorial photography and timeless style.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {collections.map((collection) => (
             <Card
               key={collection.id}
@@ -93,18 +93,18 @@ export default function CollectionsPage() {
               </div>
 
               {/* Collection Info */}
-              <div className="p-6">
-                <h3 className="font-serif text-2xl mb-2 group-hover:text-primary transition-colors" data-testid={`collection-title-${collection.id}`}>
+              <div className="p-4 sm:p-6">
+                <h3 className="font-serif text-xl sm:text-2xl mb-1 sm:mb-2 group-hover:text-primary transition-colors" data-testid={`collection-title-${collection.id}`}>
                   {collection.title}
                 </h3>
                 
                 {collection.season && (
-                  <p className="text-sm text-muted-foreground mb-3" data-testid={`collection-season-${collection.id}`}>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3" data-testid={`collection-season-${collection.id}`}>
                     {collection.season}
                   </p>
                 )}
                 
-                <p className="text-muted-foreground mb-4 line-clamp-2" data-testid={`collection-description-${collection.id}`}>
+                <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 line-clamp-2" data-testid={`collection-description-${collection.id}`}>
                   {collection.description}
                 </p>
 

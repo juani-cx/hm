@@ -19,18 +19,18 @@ interface StoryFeedProps {
 export function StoryFeed({ stories, onStoryClick, onAISuggestionClick }: StoryFeedProps) {
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-md mx-auto px-4 py-6">
+      <div className="max-w-md mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="font-serif font-bold text-4xl mb-6 tracking-tight">
+          <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-4 sm:mb-6 tracking-tight">
             Flow Stories
           </h2>
         </motion.div>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           <AISuggestionsCard onSuggestionClick={onAISuggestionClick} />
           
           {stories.map((story, index) => (

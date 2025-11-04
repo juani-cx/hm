@@ -71,7 +71,7 @@ export default function Home() {
 
   const handleShopLook = (lookId: string) => {
     // Find the selected look and use its first item
-    const selectedLook = storyData?.looks?.find(look => look.id === lookId);
+    const selectedLook = storyData?.looks?.find((look: any) => look.id === lookId);
     if (selectedLook?.items?.[0]?.sku) {
       setSelectedSku(selectedLook.items[0].sku);
       setCurrentView('product');
@@ -200,9 +200,7 @@ export default function Home() {
       {currentView === 'feed' && (
         <>
           <TopBar
-            cartCount={cartItems.length}
             onSearchClick={() => console.log('Search')}
-            onCartClick={() => setIsCartOpen(true)}
             onProfileClick={() => console.log('Profile')}
           />
           

@@ -43,7 +43,7 @@ export function HeroSection({ onEnterFlow }: HeroSectionProps) {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between py-4 px-6"
+        className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between py-3 sm:py-4 px-4 sm:px-6"
       >
         <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <SheetTrigger asChild>
@@ -87,7 +87,7 @@ export function HeroSection({ onEnterFlow }: HeroSectionProps) {
         <img 
           src={hmLogo} 
           alt="H&M" 
-          className="h-8 w-auto absolute left-1/2 -translate-x-1/2"
+          className="h-6 sm:h-8 w-auto absolute left-1/2 -translate-x-1/2"
           data-testid="img-hero-logo"
         />
         
@@ -98,19 +98,19 @@ export function HeroSection({ onEnterFlow }: HeroSectionProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="relative h-full flex flex-col items-center justify-end pb-12 px-6"
+        className="relative h-full flex flex-col items-center justify-end pb-8 sm:pb-12 px-4 sm:px-6"
       >
-        <h1 className="font-serif font-bold text-5xl md:text-6xl text-white text-center tracking-tight leading-tight mb-4">
+        <h1 className="font-serif font-bold text-4xl sm:text-5xl md:text-6xl text-white text-center tracking-tight leading-tight mb-3 sm:mb-4">
           Style Your Story
         </h1>
-        <p className="text-white/90 text-base md:text-lg text-center mb-8 max-w-md">
+        <p className="text-white/90 text-sm sm:text-base md:text-lg text-center mb-6 sm:mb-8 max-w-md px-2">
           Discover curated looks, get AI-powered style tips, and shop the latest trends
         </p>
         
         <Button
           size="lg"
           onClick={onEnterFlow}
-          className="backdrop-blur-md bg-white/20 hover:bg-white/30 text-white border border-white/30 px-8 h-12 rounded-full font-medium text-base"
+          className="backdrop-blur-md bg-white/20 hover:bg-white/30 text-white border border-white/30 px-6 sm:px-8 h-11 sm:h-12 rounded-full font-medium text-sm sm:text-base"
           data-testid="button-enter-flow"
         >
           Explore Flow Stories
@@ -119,9 +119,9 @@ export function HeroSection({ onEnterFlow }: HeroSectionProps) {
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="mt-12"
+          className="mt-8 sm:mt-12"
         >
-          <ChevronDown className="text-white/60 w-6 h-6" />
+          <ChevronDown className="text-white/60 w-5 h-5 sm:w-6 sm:h-6" />
         </motion.div>
       </motion.div>
     </div>
