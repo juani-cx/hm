@@ -6,6 +6,8 @@ import { StoryViewer } from "@/components/StoryViewer";
 import { ProductDetailPage } from "@/components/ProductDetailPage";
 import { AssistantOverlay } from "@/components/AssistantOverlay";
 import { QuickPreferences } from "@/components/QuickPreferences";
+import { EditorialContent } from "@/components/EditorialContent";
+import { ShoppingCart } from "@/components/ShoppingCart";
 import { TopBar } from "@/components/TopBar";
 import { LoadingCard } from "@/components/LoadingCard";
 import { fetchStories, fetchStory, updateProfile, fetchItem } from "@/lib/api";
@@ -13,12 +15,22 @@ import heroImg from '@assets/generated_images/Hero_fashion_editorial_image_aaf76
 
 type View = 'hero' | 'feed' | 'story' | 'product';
 
+interface CartItem {
+  sku: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  size?: string;
+}
+
 export default function Home() {
   const [currentView, setCurrentView] = useState<View>('hero');
   const [selectedStory, setSelectedStory] = useState<string | null>(null);
   const [selectedSku, setSelectedSku] = useState<string | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [userId] = useState('demo-user');
   const [preferencesDismissed, setPreferencesDismissed] = useState(() => {
     return localStorage.getItem('hm-preferences-dismissed') === 'true';
@@ -66,10 +78,74 @@ export default function Home() {
     }
   };
 
-  const handleAddToCart = (sku: string, size: string) => {
+  const handleAddToCart = async (sku: string, size: string) => {
     console.log('Added to cart:', sku, size);
-    setCartCount(prev => prev + 1);
-    setCurrentView('feed');
+    
+    // Fetch product data to add to cart
+    if (productData) {
+      const existingItem = cartItems.find(item => item.sku === sku && item.size === size);
+      
+      if (existingItem) {
+        setCartItems(prev => prev.map(item =>
+          item.sku === sku && item.size === size
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        ));
+      } else {
+        const newItem: CartItem = {
+          sku,
+          name: productData.name,
+          price: productData.price,
+          quantity: 1,
+          image: productData.images[0],
+          size
+        };
+        setCartItems(prev => [...prev, newItem]);
+      }
+      
+      // Track user behavior for agent learning
+      await trackUserBehavior('add_to_cart', { sku, size });
+      
+      setIsCartOpen(true);
+      setTimeout(() => setCurrentView('feed'), 500);
+    }
+  };
+
+  const handleUpdateQuantity = (sku: string, size: string | undefined, quantity: number) => {
+    if (quantity === 0) {
+      setCartItems(prev => prev.filter(item => !(item.sku === sku && item.size === size)));
+    } else {
+      setCartItems(prev => prev.map(item =>
+        item.sku === sku && item.size === size ? { ...item, quantity } : item
+      ));
+    }
+  };
+
+  const handleRemoveItem = (sku: string, size: string | undefined) => {
+    setCartItems(prev => prev.filter(item => !(item.sku === sku && item.size === size)));
+  };
+
+  const handleSaveForLater = async (sku: string, size: string | undefined) => {
+    console.log('Save for later:', sku, size);
+    await trackUserBehavior('save_for_later', { sku, size });
+  };
+
+  const handleSaveToCollection = async (sku: string, size: string | undefined) => {
+    console.log('Save to collection:', sku, size);
+    await trackUserBehavior('save_to_collection', { sku, size });
+  };
+
+  const trackUserBehavior = async (action: string, data: any) => {
+    try {
+      await updateProfile({
+        userId,
+        lastAction: action,
+        actionData: data,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      console.error('Failed to track behavior:', error);
+    }
   };
 
   const handleAskAssistant = (question: string) => {
@@ -78,6 +154,16 @@ export default function Home() {
 
   const handleAISuggestionClick = (suggestion: string) => {
     console.log('AI Suggestion clicked:', suggestion);
+  };
+
+  const handleTryAIStylist = () => {
+    console.log('Try AI Stylist');
+    // Open assistant overlay with stylist context
+  };
+
+  const handleCreateCollection = () => {
+    console.log('Create Collection');
+    // Navigate to collection builder
   };
 
   const handleDismissPreferences = () => {
@@ -114,9 +200,9 @@ export default function Home() {
       {currentView === 'feed' && (
         <>
           <TopBar
-            cartCount={cartCount}
+            cartCount={cartItems.length}
             onSearchClick={() => console.log('Search')}
-            onCartClick={() => console.log('Cart')}
+            onCartClick={() => setIsCartOpen(true)}
             onProfileClick={() => console.log('Profile')}
           />
           
@@ -131,11 +217,18 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <StoryFeed 
-              stories={stories || []} 
-              onStoryClick={handleStoryClick}
-              onAISuggestionClick={handleAISuggestionClick}
-            />
+            <>
+              <StoryFeed 
+                stories={stories || []} 
+                onStoryClick={handleStoryClick}
+                onAISuggestionClick={handleAISuggestionClick}
+              />
+              
+              <EditorialContent
+                onTryAIStylist={handleTryAIStylist}
+                onCreateCollection={handleCreateCollection}
+              />
+            </>
           )}
           
           {showPreferences && !preferencesDismissed && (
@@ -145,6 +238,16 @@ export default function Home() {
               onDismiss={handleDismissPreferences}
             />
           )}
+          
+          <ShoppingCart
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            items={cartItems}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveItem}
+            onSaveForLater={handleSaveForLater}
+            onSaveToCollection={handleSaveToCollection}
+          />
         </>
       )}
 

@@ -64,6 +64,54 @@ export async function seedData() {
       stock: 50,
       description: "Classic blue denim with modern fit."
     },
+    {
+      sku: "SKU006",
+      name: "Floral Midi Dress",
+      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      price: 79,
+      sizes: ["XS", "S", "M", "L", "XL"],
+      color: "Multicolor",
+      material: "Recycled Polyester",
+      sustainTags: ["Made from recycled materials"],
+      stock: 22,
+      description: "Elegant floral dress perfect for any occasion."
+    },
+    {
+      sku: "SKU007",
+      name: "Tailored Blazer",
+      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      price: 129,
+      sizes: ["XS", "S", "M", "L", "XL"],
+      color: "Navy",
+      material: "Wool Blend",
+      sustainTags: ["Responsible Wool"],
+      stock: 18,
+      description: "Professional blazer with modern fit."
+    },
+    {
+      sku: "SKU008",
+      name: "Silk Blouse",
+      images: ["/generated_images/Product_basic_tee_7cb6d64a.png"],
+      price: 69,
+      sizes: ["XS", "S", "M", "L", "XL"],
+      color: "Cream",
+      material: "Silk",
+      sustainTags: [],
+      stock: 25,
+      description: "Luxurious silk blouse for elegant looks."
+    },
+    {
+      sku: "SKU009",
+      name: "Wide-Leg Trousers",
+      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      price: 69,
+      sizes: ["XS", "S", "M", "L", "XL"],
+      color: "Black",
+      material: "Cotton Blend",
+      sustainTags: ["Water-saving production"],
+      stock: 30,
+      description: "Sophisticated wide-leg trousers."
+    },
   ];
 
   for (const item of items) {
@@ -97,6 +145,30 @@ export async function seedData() {
       substitutes: [],
       availabilityState: "available"
     },
+    {
+      title: "Spring Garden",
+      items: [
+        { sku: "SKU006", name: "Floral Midi Dress", price: 79 },
+      ],
+      heroImage: "/generated_images/Story_card_summer_look_b5f6c911.png",
+      tags: ["Floral", "Spring"],
+      sustainBadges: ["Made from recycled materials"],
+      substitutes: [],
+      availabilityState: "available"
+    },
+    {
+      title: "Office Chic",
+      items: [
+        { sku: "SKU007", name: "Tailored Blazer", price: 129 },
+        { sku: "SKU008", name: "Silk Blouse", price: 69 },
+        { sku: "SKU009", name: "Wide-Leg Trousers", price: 69 },
+      ],
+      heroImage: "/generated_images/Story_card_workwear_look_a3ea8ce1.png",
+      tags: ["Professional", "Elegant"],
+      sustainBadges: ["Responsible Wool"],
+      substitutes: [],
+      availabilityState: "available"
+    },
   ];
 
   const lookIds: string[] = [];
@@ -121,6 +193,22 @@ export async function seedData() {
       lookIds: [lookIds[1]],
       images: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
       tags: ["Fresh", "Summer"],
+      lookCount: 1
+    },
+    {
+      title: "Spring Garden",
+      narrativeMd: "Embrace florals and sustainable style",
+      lookIds: [lookIds[2]],
+      images: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
+      tags: ["Floral", "Sustainable"],
+      lookCount: 1
+    },
+    {
+      title: "Workwear Edit",
+      narrativeMd: "Professional pieces that command attention",
+      lookIds: [lookIds[3]],
+      images: ["/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
+      tags: ["Professional", "Tailored"],
       lookCount: 1
     },
   ];
