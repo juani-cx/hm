@@ -105,14 +105,14 @@ export default function AIStylist() {
       
       {/* Page Header */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-serif font-bold flex items-center gap-2">
-                <Wand2 className="w-6 h-6 text-primary" />
+              <h1 className="text-xl sm:text-2xl font-serif font-bold flex items-center gap-2">
+                <Wand2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 AI Stylist
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                 Build your perfect outfit with AI-powered suggestions
               </p>
             </div>
@@ -120,21 +120,22 @@ export default function AIStylist() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <div className="grid lg:grid-cols-3 gap-6">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Outfit Builder - Main Area */}
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Your Outfit</h2>
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+            <Card className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 className="text-lg sm:text-xl font-semibold">Your Outfit</h2>
                 <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                   <SheetTrigger asChild>
                     <Button 
                       variant="default" 
-                      className="gap-2"
+                      className="gap-1 sm:gap-2 text-xs sm:text-sm"
+                      size="sm"
                       data-testid="button-add-item"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                       Add Item
                     </Button>
                   </SheetTrigger>
@@ -211,7 +212,7 @@ export default function AIStylist() {
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                   {selectedItems.map((item) => (
                     <Card 
                       key={item.sku}
@@ -221,11 +222,11 @@ export default function AIStylist() {
                       <Button
                         size="icon"
                         variant="destructive"
-                        className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7"
+                        className="absolute top-1 right-1 sm:top-2 sm:right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 sm:h-7 sm:w-7"
                         onClick={() => handleRemoveItem(item.sku)}
                         data-testid={`button-remove-${item.sku}`}
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3 h-3 sm:w-4 sm:h-4" />
                       </Button>
                       <div className="aspect-[3/4] relative bg-muted">
                         {getItemImage(item) && (
@@ -236,9 +237,9 @@ export default function AIStylist() {
                           />
                         )}
                       </div>
-                      <div className="p-3">
-                        <p className="font-medium text-sm line-clamp-2">{item.name}</p>
-                        <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+                      <div className="p-2 sm:p-3">
+                        <p className="font-medium text-xs sm:text-sm line-clamp-2">{item.name}</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">${item.price}</p>
                       </div>
                     </Card>
                   ))}
@@ -246,22 +247,24 @@ export default function AIStylist() {
               )}
 
               {selectedItems.length > 0 && (
-                <div className="mt-6 pt-6 border-t">
-                  <div className="flex items-center justify-between">
+                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                     <div>
-                      <p className="text-sm text-muted-foreground">Total Outfit Value</p>
-                      <p className="text-2xl font-bold">
+                      <p className="text-xs sm:text-sm text-muted-foreground">Total Outfit Value</p>
+                      <p className="text-xl sm:text-2xl font-bold">
                         ${selectedItems.reduce((sum, item) => sum + item.price, 0).toFixed(2)}
                       </p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" data-testid="button-save-outfit">
-                        <Heart className="w-4 h-4 mr-2" />
-                        Save Outfit
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-initial text-xs sm:text-sm" data-testid="button-save-outfit">
+                        <Heart className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">Save Outfit</span>
+                        <span className="sm:hidden">Save</span>
                       </Button>
-                      <Button data-testid="button-add-to-cart">
-                        <ShoppingBag className="w-4 h-4 mr-2" />
-                        Add to Cart
+                      <Button size="sm" className="flex-1 sm:flex-initial text-xs sm:text-sm" data-testid="button-add-to-cart">
+                        <ShoppingBag className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">Add to Cart</span>
+                        <span className="sm:hidden">Add</span>
                       </Button>
                     </div>
                   </div>
@@ -271,30 +274,30 @@ export default function AIStylist() {
           </div>
 
           {/* AI Suggestions Panel */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Virtual Try-On Preview */}
-            <Card className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Virtual Try-On</h3>
+            <Card className="p-4 sm:p-6">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <h3 className="text-base sm:text-lg font-semibold">Virtual Try-On</h3>
               </div>
 
               {/* Model Selection */}
-              <div className="mb-4">
-                <p className="text-sm font-medium mb-3">Select Model</p>
+              <div className="mb-3 sm:mb-4">
+                <p className="text-xs sm:text-sm font-medium mb-2 sm:mb-3">Select Model</p>
                 <div className="space-y-2">
                   {MODEL_AVATARS.map((model) => (
                     <button
                       key={model.id}
                       onClick={() => setSelectedModel(model.id)}
-                      className={`w-full text-left p-3 rounded-lg border-2 transition-colors ${
+                      className={`w-full text-left p-2 sm:p-3 rounded-lg border-2 transition-colors ${
                         selectedModel === model.id
                           ? 'border-primary bg-primary/5'
                           : 'border-border hover-elevate'
                       }`}
                       data-testid={`model-${model.id}`}
                     >
-                      <p className="font-medium text-sm">{model.name}</p>
+                      <p className="font-medium text-xs sm:text-sm">{model.name}</p>
                       <p className="text-xs text-muted-foreground">{model.description}</p>
                     </button>
                   ))}
@@ -302,7 +305,7 @@ export default function AIStylist() {
               </div>
 
               {/* Preview Area */}
-              <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-4" data-testid="preview-area">
+              <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-3 sm:mb-4" data-testid="preview-area">
                 {previewImage ? (
                   <img
                     src={previewImage}
@@ -312,8 +315,8 @@ export default function AIStylist() {
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
-                    <Wand2 className="w-12 h-12 mb-3 opacity-50" />
-                    <p className="text-sm">Select items and generate preview</p>
+                    <Wand2 className="w-8 h-8 sm:w-12 sm:h-12 mb-2 sm:mb-3 opacity-50" />
+                    <p className="text-xs sm:text-sm px-2 text-center">Select items and generate preview</p>
                   </div>
                 )}
               </div>
@@ -322,17 +325,18 @@ export default function AIStylist() {
               <Button
                 onClick={handleGeneratePreview}
                 disabled={selectedItems.length === 0 || isGenerating}
-                className="w-full gap-2"
+                className="w-full gap-1 sm:gap-2 text-xs sm:text-sm"
+                size="sm"
                 data-testid="button-generate-preview"
               >
                 {isGenerating ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
                     Generating Preview...
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
+                    <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
                     Generate Preview
                   </>
                 )}
@@ -345,10 +349,10 @@ export default function AIStylist() {
               )}
             </Card>
 
-            <Card className="p-6 bg-gradient-to-br from-primary/5 via-background to-accent/5">
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">AI Style Tips</h3>
+            <Card className="p-4 sm:p-6 bg-gradient-to-br from-primary/5 via-background to-accent/5">
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                <h3 className="text-base sm:text-lg font-semibold">AI Style Tips</h3>
               </div>
 
               {selectedItems.length === 0 ? (
@@ -372,9 +376,9 @@ export default function AIStylist() {
             </Card>
 
             {/* Quick Style Guide */}
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Style Guide</h3>
-              <div className="space-y-3 text-sm">
+            <Card className="p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Style Guide</h3>
+              <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <div>
                   <p className="font-medium mb-1">Build Your Look</p>
                   <p className="text-muted-foreground text-xs">
