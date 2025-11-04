@@ -1,5 +1,12 @@
 [
   {
+    "intents": ["my profile", "my preferences", "my style", "my size", "remember", "save preference", "personalize", "what did I like", "my favorites"],
+    "agentId": "user-profile",
+    "regions": ["global"],
+    "languages": ["en"],
+    "fallback": "fashion"
+  },
+  {
     "intents": ["style", "match", "what goes with", "outfit", "wear", "color", "look", "occasion"],
     "agentId": "fashion",
     "regions": ["global"],

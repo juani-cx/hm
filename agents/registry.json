@@ -1,5 +1,14 @@
 [
   {
+    "id": "user-profile",
+    "name": "User Profile & Preferences",
+    "role": "personalization",
+    "mdPath": "agents/user-profile/user-profile.v1.md",
+    "version": "v1",
+    "lastUpdated": 1730764800000,
+    "enabled": true
+  },
+  {
     "id": "fashion",
     "name": "Fashion Stylist",
     "role": "fashion",
