@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers } from "lucide-react";
 import hmLogo from '@assets/H&M-Logo_1762206118498.png';
 
 interface TopBarProps {
@@ -18,6 +18,7 @@ export function TopBar({ onSearchClick, onCartClick, onProfileClick, cartCount =
 
   const menuItems = [
     { label: 'Flow Stories', icon: Home, onClick: () => setLocation('/') },
+    { label: 'Collections', icon: Layers, onClick: () => console.log('Collections - Coming Soon') },
     { label: 'AI Stylist', icon: Sparkles, onClick: () => setLocation('/ai-stylist') },
     { label: 'Favorites', icon: Heart, onClick: () => console.log('Favorites') },
     { label: 'Settings', icon: Settings, onClick: () => console.log('Settings') },
