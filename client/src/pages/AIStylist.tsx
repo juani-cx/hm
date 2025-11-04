@@ -31,8 +31,16 @@ export default function AIStylist() {
     queryKey: ['/api/items'],
   });
 
+  const skuList = selectedItems.map(i => i.sku).join(',');
+  
   const { data: aiSuggestions, refetch: refetchSuggestions } = useQuery<{ suggestions: AISuggestion[] }>({
-    queryKey: ['/api/assistant/stylist-suggestions', { skus: selectedItems.map(i => i.sku).join(',') }],
+    queryKey: ['/api/assistant/stylist-suggestions', skuList],
+    queryFn: async () => {
+      if (!skuList) return { suggestions: [] };
+      const res = await fetch(`/api/assistant/stylist-suggestions?skus=${skuList}`);
+      if (!res.ok) throw new Error('Failed to fetch suggestions');
+      return res.json();
+    },
     enabled: selectedItems.length > 0,
   });
 
