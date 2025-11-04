@@ -9,7 +9,7 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-The frontend is built with React 18 and TypeScript, using Vite for building and Wouter for routing. TanStack Query manages server state, data fetching, and caching. The UI relies on Radix UI for accessible component foundations, shadcn/ui for design, and Tailwind CSS for styling. Design principles emphasize editorial typography (Playfair Display, Inter), magazine-quality layouts, mobile-first responsiveness, and accessibility. State management primarily uses TanStack Query for server state and React hooks for local UI state.
+The frontend is built with React 18 and TypeScript, using Vite for building and Wouter for routing. TanStack Query manages server state, data fetching, and caching. The UI relies on Radix UI for accessible component foundations, shadcn/ui for design, and Tailwind CSS for styling. Design principles emphasize editorial typography (Playfair Display, Inter), magazine-quality layouts, mobile-first responsiveness, and accessibility. State management primarily uses TanStack Query for server state, React Context (CartContext) for global shopping cart state, and React hooks for local UI state. The shopping cart uses functional state updates to ensure atomic operations and prevent race conditions during rapid add-to-cart interactions.
 
 ### Backend Architecture
 The backend uses Express.js with TypeScript. It features RESTful APIs for stories, items, inventory, AI assistant interactions, and user profiles. Data is currently stored in-memory using `MemStorage` (with an interface for future PostgreSQL migration via Drizzle ORM). The AI Assistant System is a multi-agent architecture (Fashion, Business, Support) using OpenAI (GPT-4o via Replit AI Integrations) for intent-based routing and context-aware responses, with guidelines stored in Markdown files. An Inventory Service handles stock availability and similar product recommendations.
@@ -36,6 +36,19 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
 - **Flow Stories:** Curated editorial content featuring shoppable looks.
 - **AI-Powered Assistant:** Styling guidance, product recommendations, customer support.
 - **Collections:** Editorial model photography, interactive modules, and viewer with actions (Add to My Collection, Save for Later, Add to Cart, Virtual AI Assist).
+- **Magazine Article Viewer:** Immersive full-screen content experience with:
+  - Hero image with share, save, and favorite actions
+  - Interactive image gallery with multiple viewing modes (magazine, board, virtual gallery) based on user preferences
+  - AI image editing capabilities with custom prompt input
+  - Video player support for editorial content
+  - Shoppable product cards with one-click add-to-cart
+  - Smooth animations and transitions using Framer Motion
+- **Global Shopping Cart:** React Context-based cart system with:
+  - Atomic state updates using functional setState to prevent race conditions
+  - Persistent cart across all pages
+  - Real-time cart count badge in navigation
+  - Quick add-to-cart with automatic cart drawer opening
+  - Cart accessible from all pages via TopBar
 - **Virtual Try-On:** AI-generated outfit previews on various model avatars (Athletic, Petite, Curvy, Tall & Slim, Plus Size).
 - **AI Stylist Page:** Outfit builder with item selection, real-time outfit calculation, AI suggestions, and save/add-to-cart options.
 - **Shopping Cart:** Drawer overlay, quantity controls, remove items, subtotal/shipping/total, AI styling tips, and "Complete the Look" suggestions.
