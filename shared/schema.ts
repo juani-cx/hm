@@ -69,6 +69,12 @@ export const userProfileSchema = z.object({
     behavioral: z.boolean().default(false),
     personalization: z.boolean().default(false),
   }).default({ behavioral: false, personalization: false }),
+  onboardingCompleted: z.boolean().default(false),
+  desiredExperience: z.enum(['ultra_personalized', 'non_intrusive', 'traditional']).optional(),
+  shoppingMood: z.enum(['magazine', 'funny_interactive', 'fashionist']).optional(),
+  bodyType: z.enum(['athletic', 'petite', 'curvy', 'tall_slim', 'plus_size']).optional(),
+  productPagesStyle: z.enum(['magazine', 'board', 'virtual_gallery']).optional(),
+  insightsPreference: z.enum(['fashion_recommendations', 'pricing_first', 'try_on']).optional(),
 });
 
 export const insertUserProfileSchema = userProfileSchema;
