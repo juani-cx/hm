@@ -5,6 +5,8 @@ import {
   type InsertLook,
   type Story,
   type InsertStory,
+  type Collection,
+  type InsertCollection,
   type UserProfile,
   type InsertUserProfile,
   type AssistantEvent,
@@ -29,6 +31,11 @@ export interface IStorage {
   getAllStories(): Promise<Story[]>;
   createStory(story: InsertStory): Promise<Story>;
   
+  // Collections
+  getCollection(id: string): Promise<Collection | undefined>;
+  getAllCollections(): Promise<Collection[]>;
+  createCollection(collection: InsertCollection): Promise<Collection>;
+  
   // UserProfile
   getUserProfile(userId: string): Promise<UserProfile | undefined>;
   createOrUpdateUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
@@ -42,6 +49,7 @@ export class MemStorage implements IStorage {
   private items: Map<string, Item>;
   private looks: Map<string, Look>;
   private stories: Map<string, Story>;
+  private collections: Map<string, Collection>;
   private userProfiles: Map<string, UserProfile>;
   private assistantEvents: AssistantEvent[];
 
@@ -49,6 +57,7 @@ export class MemStorage implements IStorage {
     this.items = new Map();
     this.looks = new Map();
     this.stories = new Map();
+    this.collections = new Map();
     this.userProfiles = new Map();
     this.assistantEvents = [];
   }
@@ -106,6 +115,22 @@ export class MemStorage implements IStorage {
     const story: Story = { ...insertStory, id };
     this.stories.set(id, story);
     return story;
+  }
+
+  // Collections
+  async getCollection(id: string): Promise<Collection | undefined> {
+    return this.collections.get(id);
+  }
+
+  async getAllCollections(): Promise<Collection[]> {
+    return Array.from(this.collections.values());
+  }
+
+  async createCollection(insertCollection: InsertCollection): Promise<Collection> {
+    const id = randomUUID();
+    const collection: Collection = { ...insertCollection, id };
+    this.collections.set(id, collection);
+    return collection;
   }
 
   // UserProfile

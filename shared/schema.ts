@@ -105,6 +105,25 @@ export const agentRegistrySchema = z.object({
 
 export type AgentRegistry = z.infer<typeof agentRegistrySchema>;
 
+// Collection schema
+export const collectionSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  editorialImages: z.array(z.object({
+    url: z.string(),
+    caption: z.string().optional(),
+    itemSkus: z.array(z.string()),
+  })),
+  itemSkus: z.array(z.string()),
+  tags: z.array(z.string()).optional(),
+  season: z.string().optional(),
+});
+
+export const insertCollectionSchema = collectionSchema.omit({ id: true });
+export type Collection = z.infer<typeof collectionSchema>;
+export type InsertCollection = z.infer<typeof insertCollectionSchema>;
+
 // Routing Config schema
 export const routingConfigSchema = z.object({
   intents: z.array(z.string()),

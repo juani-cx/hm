@@ -1,5 +1,5 @@
 import { storage } from "./storage";
-import { type InsertItem, type InsertLook, type InsertStory } from "@shared/schema";
+import { type InsertItem, type InsertLook, type InsertStory, type InsertCollection } from "@shared/schema";
 
 export async function seedData() {
   // Seed Items
@@ -215,6 +215,61 @@ export async function seedData() {
 
   for (const story of stories) {
     await storage.createStory(story);
+  }
+
+  // Seed Collections
+  const collections: InsertCollection[] = [
+    {
+      title: "Autumn Essentials",
+      description: "Discover the perfect pieces for fall layering. From premium leather to cozy knits, this collection brings together timeless staples that transition seamlessly from crisp morning walks to evening gatherings.",
+      editorialImages: [
+        {
+          url: "/generated_images/Story_card_autumn_look_7a4bbbf6.png",
+          caption: "Autumn Layers",
+          itemSkus: ["SKU001", "SKU002", "SKU003"],
+        },
+        {
+          url: "/generated_images/Story_card_workwear_look_a3ea8ce1.png",
+          caption: "Cozy Weekend",
+          itemSkus: ["SKU004", "SKU005"],
+        },
+      ],
+      itemSkus: ["SKU001", "SKU002", "SKU003", "SKU004", "SKU005"],
+      tags: ["Sustainability", "Layering", "Fall"],
+      season: "Fall/Winter 2025",
+    },
+    {
+      title: "Spring Awakening",
+      description: "Embrace the season of renewal with flowing silhouettes and vibrant florals. Each piece in this collection celebrates sustainable craftsmanship and effortless elegance.",
+      editorialImages: [
+        {
+          url: "/generated_images/Story_card_summer_look_b5f6c911.png",
+          caption: "Garden Party",
+          itemSkus: ["SKU006"],
+        },
+      ],
+      itemSkus: ["SKU006"],
+      tags: ["Floral", "Sustainable", "Spring"],
+      season: "Spring/Summer 2025",
+    },
+    {
+      title: "Workwear Edit",
+      description: "Professional pieces that command attention. This curated selection brings together tailored excellence and timeless sophistication for the modern professional.",
+      editorialImages: [
+        {
+          url: "/generated_images/Story_card_workwear_look_a3ea8ce1.png",
+          caption: "Office Chic",
+          itemSkus: ["SKU007", "SKU008", "SKU009"],
+        },
+      ],
+      itemSkus: ["SKU007", "SKU008", "SKU009"],
+      tags: ["Professional", "Tailored", "Elegant"],
+      season: "Year-Round",
+    },
+  ];
+
+  for (const collection of collections) {
+    await storage.createCollection(collection);
   }
 
   console.log('✅ Seed data loaded successfully');
