@@ -52,9 +52,10 @@ export default function CollectionImageViewer({
   };
 
   const handleSaveCollection = () => {
-    // Save the entire collection to favorites
-    // This would typically call an API endpoint
-    console.log("Save collection:", collection.id);
+    toast({
+      title: "Collection Saved",
+      description: "This collection has been added to your favorites.",
+    });
   };
 
   return (

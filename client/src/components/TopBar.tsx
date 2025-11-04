@@ -18,7 +18,7 @@ export function TopBar({ onSearchClick, onCartClick, onProfileClick, cartCount =
 
   const menuItems = [
     { label: 'Flow Stories', icon: Home, onClick: () => setLocation('/') },
-    { label: 'Collections', icon: Layers, onClick: () => console.log('Collections - Coming Soon') },
+    { label: 'Collections', icon: Layers, onClick: () => setLocation('/collections') },
     { label: 'AI Stylist', icon: Sparkles, onClick: () => setLocation('/ai-stylist') },
     { label: 'Favorites', icon: Heart, onClick: () => console.log('Favorites') },
     { label: 'Settings', icon: Settings, onClick: () => console.log('Settings') },

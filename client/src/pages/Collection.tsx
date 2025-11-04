@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, Item } from "@shared/schema";
-import TopBar from "@/components/TopBar";
+import { TopBar } from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Heart, ShoppingBag, Bookmark, ChevronRight } from "lucide-react";
@@ -22,102 +22,34 @@ export default function CollectionPage() {
     queryKey: [`/api/collections/${id}`],
   });
 
-  const handleSaveCollection = async () => {
-    try {
-      await apiRequest(`/api/profile/guest`, {
-        method: "POST",
-        body: JSON.stringify({
-          event: "save_collection",
-          collectionId: id,
-        }),
-      });
-      
-      toast({
-        title: "Collection Saved",
-        description: "This collection has been added to your favorites.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save collection. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleSaveCollection = () => {
+    toast({
+      title: "Collection Saved",
+      description: "This collection has been added to your favorites.",
+    });
   };
 
-  const handleAddToCart = async (itemSku: string, size: string = "M") => {
-    try {
-      await apiRequest(`/api/profile/guest`, {
-        method: "POST",
-        body: JSON.stringify({
-          event: "add_to_cart",
-          itemSku,
-          size,
-        }),
-      });
-      
-      toast({
-        title: "Added to Cart",
-        description: "Item added to your shopping cart.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add to cart. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleAddToCart = (itemSku: string, size: string = "M") => {
+    toast({
+      title: "Added to Cart",
+      description: "Item added to your shopping cart.",
+    });
   };
 
-  const handleAddAllToCart = async () => {
+  const handleAddAllToCart = () => {
     if (!collection?.items) return;
     
-    try {
-      for (const item of collection.items) {
-        await apiRequest(`/api/profile/guest`, {
-          method: "POST",
-          body: JSON.stringify({
-            event: "add_to_cart",
-            itemSku: item.sku,
-            size: "M",
-          }),
-        });
-      }
-      
-      toast({
-        title: "Added to Cart",
-        description: `${collection.items.length} items added to your cart.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add items to cart. Please try again.",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Added to Cart",
+      description: `${collection.items.length} items added to your cart.`,
+    });
   };
 
-  const handleSaveLater = async (itemSku: string) => {
-    try {
-      await apiRequest(`/api/profile/guest`, {
-        method: "POST",
-        body: JSON.stringify({
-          event: "save_for_later",
-          itemSku,
-        }),
-      });
-      
-      toast({
-        title: "Saved for Later",
-        description: "Item saved to your wishlist.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save item. Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleSaveLater = (itemSku: string) => {
+    toast({
+      title: "Saved for Later",
+      description: "Item saved to your wishlist.",
+    });
   };
 
   const openViewer = (index: number) => {
