@@ -3,16 +3,16 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import hmLogo from '@assets/H&M-Logo_1762206118498.png';
 
 interface TopBarProps {
   onSearchClick?: () => void;
-  onCartClick?: () => void;
   onProfileClick?: () => void;
-  cartCount?: number;
 }
 
-export function TopBar({ onSearchClick, onCartClick, onProfileClick, cartCount = 0 }: TopBarProps) {
+export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
+  const { items, setIsOpen: setCartOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
 
@@ -84,14 +84,14 @@ export function TopBar({ onSearchClick, onCartClick, onProfileClick, cartCount =
         <Button
           size="icon"
           variant="ghost"
-          onClick={onCartClick}
+          onClick={() => setCartOpen(true)}
           className="relative"
           data-testid="button-cart"
         >
           <ShoppingBag className="w-5 h-5" />
-          {cartCount > 0 && (
+          {items.length > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
-              {cartCount}
+              {items.length}
             </span>
           )}
         </Button>

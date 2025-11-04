@@ -78,7 +78,7 @@ export default function CollectionsPage() {
             <Card
               key={collection.id}
               className="group cursor-pointer overflow-hidden transition-all hover-elevate active-elevate-2"
-              onClick={() => setLocation(`/collections/${collection.id}`)}
+              onClick={() => setLocation(`/magazine/${collection.id}`)}
               data-testid={`collection-card-${collection.id}`}
             >
               {/* Collection Image */}
