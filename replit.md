@@ -1,209 +1,61 @@
 # H&M Flow - Editorial Shopping Experience
 
 ## Overview
-
-H&M Flow is a mobile-responsive web application that reimagines fashion e-commerce as an editorial, magazine-quality experience. The application combines curated "Flow Stories" (editorial content featuring shoppable looks) with an AI-powered contextual assistant that provides styling guidance, product recommendations, and customer support. Built as a proof-of-concept, the app transforms traditional product browsing into an engaging, Instagram-meets-Vogue-style experience where users discover fashion through visual storytelling backed by live inventory.
-
-The application features a full-screen hero landing, a card-based story feed, immersive story viewers with swipeable looks, detailed product pages, and an intelligent assistant overlay that adapts to user context and preferences.
+H&M Flow is a mobile-responsive web application that redefines fashion e-commerce as an editorial, magazine-quality experience. It merges curated "Flow Stories" with an AI-powered contextual assistant for styling guidance and product recommendations. Designed as a proof-of-concept, the app aims to transform traditional product browsing into an engaging, visual storytelling experience, akin to "Instagram meets Vogue," with real-time inventory. Key features include a full-screen hero landing, a card-based story feed, immersive story viewers, detailed product pages, and an intelligent assistant overlay. The project's ambition is to create an immersive shopping experience that leverages AI for personalized fashion discovery and customer support.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
-
-## Recent Changes
-
-**November 4, 2025 - Session 7: Virtual Try-On Feature**
-- Implemented complete virtual try-on system with AI-generated outfit previews
-- Added 5 model avatar types: Athletic Build, Petite, Curvy, Tall & Slim, Plus Size
-- Created preview panel showing AI-generated images of outfits on selected model types
-- Built backend endpoint `/api/assistant/generate-outfit-preview` using OpenAI gpt-image-1 model
-- Fixed image generation to properly handle base64 format (gpt-image-1 returns b64_json, not URLs)
-- Converts base64 images to data URLs for browser display
-- Implemented proper error handling with toast notifications (no redundant alerts)
-- Added loading states during 10-30 second image generation process
-- Fixed Item type shadowing issue by importing shared schema type
-- Ensured accurate prompts with color and material metadata from items
-- Preview clears on generation start and on error to prevent stale data
-- Generate button properly disabled during generation to prevent double-clicks
-- E2E test passed: model selection, item addition, image generation all verified
-- Architect approved final implementation with proper typing and state management
-
-**November 4, 2025 - Session 6: AI Stylist Page Implementation**
-- Created complete AI Stylist page at /ai-stylist for outfit building
-- Implemented item selection drawer with "From Store" and "My Collection" tabs
-- Added real-time outfit builder with hover-to-remove item functionality
-- Integrated AI-powered styling suggestions that adapt to selected items
-- Built backend endpoint /api/assistant/stylist-suggestions with intelligent parsing
-- Fixed parsing to preserve hyphenated words (e.g., "knee-high") using whitespace-aware regex
-- Corrected item property references (material instead of non-existent category field)
-- Implemented custom queryFn to properly handle URL query parameters
-- Updated navigation menu to include AI Stylist link
-- Added TopBar to AI Stylist page for consistent navigation
-- Features: Total outfit calculation, Save Outfit/Add to Cart buttons, contextual AI recommendations
-- E2E tests verified: navigation works, items add/remove correctly, AI suggestions display with proper content
-- Architect approved all changes after fixing parsing, data validation, and query parameter issues
-
-**November 4, 2025 - Session 5: Story Feed Expansion, Editorial Content & Shopping Cart**
-- Expanded story feed to 4 cards by adding "Spring Garden" and "Workwear Edit" stories
-- Created EditorialContent component with 3 blog-style article cards and 2 interactive CTAs
-- Added "Try AI Stylist" and "Create Your Collection" gradient CTA cards
-- Implemented full-featured ShoppingCart component with drawer overlay design
-- Added AI Styling Tip and "Complete the Look" AI suggestions in cart
-- Implemented quantity controls, remove items, subtotal/shipping/total calculations
-- Added "Save to Collection" and "Save for Later" features with user behavior tracking
-- Fixed critical cart bug: composite SKU+size keys ensure proper variant management
-- Cart handlers now accept (sku, size) to manage variants independently
-- All cart React keys and test IDs use composite identifiers for unique rendering
-- Extended seed data: 4 new items, 2 new looks, 2 new stories
-- E2E tests verified: all 4 stories display, editorial content renders, cart functions correctly
-- Architect approved all changes after critical bug fixes
-
-**November 4, 2025 - Session 4: User Profile Agent & Landing Page Enhancements**
-- Created new user-profile agent for learning and storing user preferences, style choices, and shopping behavior
-- Added comprehensive agent guidelines in `agents/user-profile/user-profile.v1.md` with preference storage schema
-- Updated agent registry and routing to handle profile-related intents ("my preferences", "remember", etc.)
-- Updated landing page to display red H&M logo (removed white filter for brand consistency)
-- Added hamburger menu to landing page header with full navigation drawer
-- Set up favicon using H&M logo for browser tab branding
-- All E2E tests passed: logo displays in red, menu functional, favicon loads, user-profile agent responds correctly
-- Architect approved all changes with no security concerns
-
-**November 3, 2025 - Session 3: Critical Bug Fixes & UX Polish**
-- Fixed critical image loading bug by adding express.static middleware for `/generated_images` path
-- Transformed API responses to normalize `images[0]` → `imageUrl` for StoryCard compatibility
-- Improved QuickPreferences modal with mobile-first bottom sheet, desktop centering, and proper backdrop
-- Added "Don't show me this again" button with localStorage persistence (`hm-preferences-dismissed`)
-- Fixed modal positioning on mobile (no longer off-screen, slides up from bottom)
-- Added minimal header with H&M logo to landing page with smooth fade-in animation
-- All E2E tests passed: images load correctly, modal works across all viewports, dismiss persists, logo displays properly
-- Architect approved all changes with no security concerns
-
-**November 3, 2025 - Session 2: Navigation & AI Enhancement**
-- Added hamburger menu with H&M logo integration in TopBar
-- Created slide-out navigation drawer with menu items (Flow Stories, AI Stylist, Favorites, Settings, Help & Support)
-- Implemented prominent AI Suggestions Card on story feed with live API-generated suggestions
-- Enhanced assistant button with pulsing animation and indicator dot for visibility
-- Added AI Style Tip component that appears contextually in story viewer (5s after viewing)
-- Fixed overlay timing to prevent UI conflicts (suggestion toast hides when AI tip appears)
-- Added GET endpoint for `/api/assistant/suggestions` to support query-based suggestion fetching
-- All interactive elements now include proper data-testid attributes for E2E testing
-- Comprehensive testing completed - all navigation and AI features verified end-to-end
-
-**November 3, 2025 - Session 1: Core Implementation**
-- Implemented full backend API with stories, items, inventory, and assistant endpoints
-- Created multi-agent AI system with GPT-4o integration
-- Added inventory service with stock tracking and similar item suggestions
-- Fixed product selection flow to use correct SKU from selected look
-- Connected frontend to live API data using React Query
-- Added comprehensive error handling and logging throughout the stack
-- Successfully tested end-to-end flow from hero → stories → products → AI chat
-
-**Technical Decisions**
-- Using GPT-4o model for chat (not GPT-5) for compatibility with Replit AI Integrations
-- Using gpt-image-1 model for virtual try-on image generation via OpenAI API
-- Image generation returns base64 format (b64_json), converted to data URLs for display
-- In-memory storage (MemStorage) for POC - can migrate to PostgreSQL for production
-- Agent guidelines stored as editable markdown files in `agents/` directory for flexibility
-- H&M logo integrated from attached assets (`attached_assets/H&M-Logo_1762206118498.png`)
-- AI features designed to be prominent but non-intrusive with staggered timing (3s/5s delays)
-- Cart items uniquely identified by composite `${sku}-${size}` key for proper variant management
-- User behavior tracking sends add_to_cart, save_for_later, save_to_collection events to /api/profile for agent learning
-- Virtual try-on generates photorealistic previews with 1024x1024 resolution taking 10-30 seconds
 
 ## System Architecture
 
 ### Frontend Architecture
-
-**Framework & Build System**
-- React 18 with TypeScript for type-safe component development
-- Vite as the build tool and dev server, configured for HMR and optimized production builds
-- Wouter for lightweight client-side routing
-- TanStack Query (React Query) for server state management, data fetching, and caching
-
-**UI Component System**
-- Radix UI primitives for accessible, unstyled component foundations (dialogs, dropdowns, popovers, etc.)
-- shadcn/ui design system with custom "new-york" style variant
-- Tailwind CSS for utility-first styling with custom design tokens
-- Custom CSS variables for theming (light/dark mode support)
-- Framer Motion for animations and transitions
-
-**Design Principles**
-- Editorial typography: Playfair Display for headlines, Inter for UI text
-- Magazine-quality layouts with full-bleed imagery and editorial spacing
-- Mobile-first responsive design
-- Accessibility-focused component architecture via Radix UI
-
-**State Management Strategy**
-- Server state: TanStack Query with infinite stale time for cached API responses
-- Local UI state: React hooks (useState, useEffect) for component-level state
-- No global state management library needed due to server-centric data model
+The frontend is built with React 18 and TypeScript, using Vite for building and Wouter for routing. TanStack Query manages server state, data fetching, and caching. The UI relies on Radix UI for accessible component foundations, shadcn/ui for design, and Tailwind CSS for styling. Design principles emphasize editorial typography (Playfair Display, Inter), magazine-quality layouts, mobile-first responsiveness, and accessibility. State management primarily uses TanStack Query for server state and React hooks for local UI state.
 
 ### Backend Architecture
+The backend uses Express.js with TypeScript. It features RESTful APIs for stories, items, inventory, AI assistant interactions, and user profiles. Data is currently stored in-memory using `MemStorage` (with an interface for future PostgreSQL migration via Drizzle ORM). The AI Assistant System is a multi-agent architecture (Fashion, Business, Support) using OpenAI (GPT-4o via Replit AI Integrations) for intent-based routing and context-aware responses, with guidelines stored in Markdown files. An Inventory Service handles stock availability and similar product recommendations.
 
-**Server Framework**
-- Express.js as the HTTP server
-- TypeScript for type safety across the stack
-- Custom middleware for request logging and JSON parsing
+### Technical Decisions
+- GPT-4o for AI chat and GPT-image-1 for virtual try-on image generation (handling base64 outputs).
+- In-memory storage for POC, with Drizzle ORM configured for PostgreSQL for production.
+- Agent guidelines are editable markdown files for flexibility.
+- AI features are prominent but non-intrusive, with staggered timings.
+- Cart items are uniquely identified by composite `${sku}-${size}` keys.
+- User behavior (add_to_cart, save_for_later, save_to_collection) is tracked for agent learning.
+- Virtual try-on generates 1024x1024 photorealistic previews.
 
-**API Design**
-- RESTful endpoints organized by resource type:
-  - `/api/stories` - Editorial story collections
-  - `/api/items` - Product inventory
-  - `/api/inventory` - Stock checking and similar item suggestions
-  - `/api/assistant` - AI chat and contextual suggestions
-  - `/api/profile` - User preferences and profiles
+### UI/UX Decisions
+- Editorial typography: Playfair Display for headlines, Inter for UI text.
+- Magazine-quality layouts with full-bleed imagery.
+- Mobile-first responsive design.
+- Accessible component architecture via Radix UI.
+- Custom CSS variables for theming.
+- Framer Motion for animations and transitions.
+- H&M logo and favicon for consistent branding.
 
-**Data Layer**
-- In-memory storage implementation (`MemStorage`) for POC/development
-- Interface-driven design (`IStorage`) allows swapping to persistent database
-- Drizzle ORM configured for PostgreSQL (via Neon serverless) for production migration
-- Schema-first approach with Zod validation on shared types
+### Feature Specifications
+- **Flow Stories:** Curated editorial content featuring shoppable looks.
+- **AI-Powered Assistant:** Styling guidance, product recommendations, customer support.
+- **Collections:** Editorial model photography, interactive modules, and viewer with actions (Add to My Collection, Save for Later, Add to Cart, Virtual AI Assist).
+- **Virtual Try-On:** AI-generated outfit previews on various model avatars (Athletic, Petite, Curvy, Tall & Slim, Plus Size).
+- **AI Stylist Page:** Outfit builder with item selection, real-time outfit calculation, AI suggestions, and save/add-to-cart options.
+- **Shopping Cart:** Drawer overlay, quantity controls, remove items, subtotal/shipping/total, AI styling tips, and "Complete the Look" suggestions.
+- **User Profile Agent:** Learns and stores user preferences, style choices, and shopping behavior.
 
-**AI Assistant System**
-- Multi-agent architecture with specialized roles:
-  - Fashion agent: Styling advice and outfit recommendations
-  - Business agent: Pricing, promotions, and purchasing decisions
-  - Support agent: Customer service, orders, and returns
-- Agent registry and routing system using intent-based classification
-- OpenAI integration via Replit AI Integrations service (GPT-4o model)
-- Context-aware responses based on current user activity (story viewing, product browsing)
-- Markdown-based agent guidelines stored in `agents/` directory with version control
-- Automatic agent guideline loading on server startup
-- Intent-based message routing to appropriate agent
+## External Dependencies
 
-**Inventory Service**
-- Stock availability checking with three states: available, low_stock, out_of_stock
-- Similarity algorithm for finding alternative products based on category, color, material, and price
-- Integration points for real-time inventory updates
+### Third-Party Services
+- **OpenAI (via Replit AI Integrations)**: Powers the contextual assistant (GPT-4o) and image generation (gpt-image-1).
+- **Neon Database**: Serverless PostgreSQL for production data persistence (configured for migration).
 
-### External Dependencies
+### Key Libraries
+- **Drizzle ORM**: Type-safe database queries.
+- **Zod**: Runtime schema validation.
+- **TanStack Query**: Server state management.
+- **Radix UI**: Accessible component primitives.
+- **Framer Motion**: Animation library.
+- **Tailwind CSS**: Utility-first CSS.
+- **Wouter**: Lightweight client-side routing.
 
-**Third-Party Services**
-- **OpenAI (via Replit AI Integrations)**: Powers the contextual assistant with GPT-5 for natural language understanding and generation
-- **Neon Database**: Serverless PostgreSQL for production data persistence (configured but not yet migrated from in-memory storage)
-
-**Key Libraries**
-- **Drizzle ORM**: Type-safe database queries and schema management
-- **Zod**: Runtime schema validation for API payloads and database inserts
-- **TanStack Query**: Server state management and request caching
-- **Radix UI**: Accessible component primitives
-- **Framer Motion**: Animation library for transitions and interactions
-- **Tailwind CSS**: Utility-first CSS framework
-- **date-fns**: Date formatting and manipulation
-
-**Database Design (PostgreSQL via Drizzle)**
-- Items table: Product catalog with SKU, pricing, images, sizes, materials, sustainability tags
-- Looks table: Curated outfit combinations linking multiple items
-- Stories table: Editorial collections containing multiple looks
-- UserProfiles table: User preferences for personalization
-- AssistantEvents table: Interaction logging for analytics and improvement
-
-**Asset Management**
-- Static images stored in `attached_assets/generated_images/`
-- Vite alias configuration for easy asset imports
-- Google Fonts for typography (Playfair Display, Inter)
-
-**Development Tools**
-- Replit-specific plugins for enhanced development experience (cartographer, dev banner, runtime error overlay)
-- ESBuild for production server bundling
-- TypeScript strict mode for maximum type safety
+### Asset Management
+- Static images stored locally.
+- Google Fonts for typography.
