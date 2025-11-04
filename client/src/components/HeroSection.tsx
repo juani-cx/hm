@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, Menu } from "lucide-react";
 import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Home, Sparkles, Heart, Settings, HelpCircle } from "lucide-react";
+import { Home, Sparkles, Heart, Settings, HelpCircle, User } from "lucide-react";
+import { useLocation } from "wouter";
 import hmLogo from "@assets/H&M-Logo_1762206118498.png";
 import bgVideo from "@assets/cover3_1762284331952.mp4";
 
@@ -13,12 +14,13 @@ interface HeroSectionProps {
 
 export function HeroSection({ onEnterFlow }: HeroSectionProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [, setLocation] = useLocation();
 
   const menuItems = [
     { label: 'Flow Stories', icon: Home, onClick: () => onEnterFlow() },
     { label: 'AI Stylist', icon: Sparkles, onClick: () => console.log('AI Stylist') },
-    { label: 'Favorites', icon: Heart, onClick: () => console.log('Favorites') },
-    { label: 'Settings', icon: Settings, onClick: () => console.log('Settings') },
+    { label: 'User Profile', icon: User, onClick: () => setLocation('/profile') },
+    { label: 'Onboarding', icon: Settings, onClick: () => setLocation('/onboarding') },
     { label: 'Help & Support', icon: HelpCircle, onClick: () => console.log('Help') },
   ];
 
