@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle } from "lucide-react";
@@ -13,10 +14,11 @@ interface TopBarProps {
 
 export function TopBar({ onSearchClick, onCartClick, onProfileClick, cartCount = 0 }: TopBarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [, setLocation] = useLocation();
 
   const menuItems = [
-    { label: 'Flow Stories', icon: Home, onClick: () => console.log('Home') },
-    { label: 'AI Stylist', icon: Sparkles, onClick: () => console.log('AI Stylist') },
+    { label: 'Flow Stories', icon: Home, onClick: () => setLocation('/') },
+    { label: 'AI Stylist', icon: Sparkles, onClick: () => setLocation('/ai-stylist') },
     { label: 'Favorites', icon: Heart, onClick: () => console.log('Favorites') },
     { label: 'Settings', icon: Settings, onClick: () => console.log('Settings') },
     { label: 'Help & Support', icon: HelpCircle, onClick: () => console.log('Help') },

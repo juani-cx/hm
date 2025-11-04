@@ -188,6 +188,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/assistant/stylist-suggestions", async (req, res) => {
+    try {
+      const skus = (req.query.skus as string || '').split(',').filter(Boolean);
+      
+      if (skus.length === 0) {
+        return res.json({ suggestions: [] });
+      }
+
+      // Fetch selected items
+      const items = await Promise.all(skus.map(sku => storage.getItem(sku)));
+      const validItems = items.filter(Boolean);
+
+      if (validItems.length === 0) {
+        return res.json({ suggestions: [] });
+      }
+
+      // Build context for AI using available item properties
+      const itemDescriptions = validItems.map(item => 
+        `${item.name} (${item.material}, ${item.color}, $${item.price})`
+      ).join(', ');
+
+      const context = `User is styling an outfit with: ${itemDescriptions}. Provide 2-3 specific styling tips. Format each tip as: "Main recommendation - Brief explanation." Use a dash with spaces to separate the main point from the reasoning.`;
+
+      const response = await assistantService.chat(
+        "Give me styling tips for my outfit selection",
+        context
+      );
+
+      // Parse AI response into structured suggestions
+      const messageLines = response.message
+        .split(/\n+/)
+        .filter(line => line.trim().length > 0)
+        .filter(line => !line.match(/^(Here are|Here's|Based on|I'd suggest)/i));
+
+      const suggestions = [];
+      
+      // Try to parse numbered suggestions (1., 2., etc.)
+      const numberedPattern = /^\d+[\.)]\s*(.+)/;
+      for (const line of messageLines) {
+        const match = line.match(numberedPattern);
+        if (match) {
+          const fullText = match[1].trim();
+          
+          // Split only on dash/colon with surrounding whitespace to avoid breaking hyphenated words
+          const separatorMatch = fullText.match(/^(.+?)\s+[-:–—]\s+(.+)$/);
+          
+          if (separatorMatch) {
+            suggestions.push({
+              text: separatorMatch[1].trim(),
+              reasoning: separatorMatch[2].trim()
+            });
+          } else {
+            // No clear separator, use full text as main suggestion
+            suggestions.push({
+              text: fullText,
+              reasoning: `Pairs well with ${validItems[0]?.material || 'your'} pieces`
+            });
+          }
+        }
+      }
+
+      // If no numbered suggestions found, split the message into sentences
+      if (suggestions.length === 0) {
+        const sentences = response.message
+          .split(/(?<=[.!?])\s+/)
+          .filter(s => s.trim().length > 20)
+          .slice(0, 3);
+
+        for (const sentence of sentences) {
+          const cleanSentence = sentence.trim();
+          suggestions.push({
+            text: cleanSentence,
+            reasoning: `Recommended to complement your ${validItems[0]?.material || 'selected'} items`
+          });
+        }
+      }
+
+      // Limit to 3 suggestions
+      const finalSuggestions = suggestions.slice(0, 3);
+
+      // If we still don't have suggestions, provide generic fallback
+      if (finalSuggestions.length === 0) {
+        finalSuggestions.push({
+          text: "Layer your pieces for depth and versatility",
+          reasoning: "Creates visual interest and adaptable styling options"
+        });
+      }
+
+      res.json({ suggestions: finalSuggestions });
+    } catch (error) {
+      console.error('Stylist suggestions error:', error);
+      res.status(500).json({ error: "Failed to generate stylist suggestions" });
+    }
+  });
+
   // Assistant events
   app.post("/api/assistant/events", async (req, res) => {
     try {
