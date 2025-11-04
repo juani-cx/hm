@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Home, Sparkles, Heart, Settings, HelpCircle } from "lucide-react";
 import hmLogo from "@assets/H&M-Logo_1762206118498.png";
+import bgVideo from "@assets/cover3_1762284331952.mp4";
 
 interface HeroSectionProps {
   onEnterFlow: () => void;
@@ -23,14 +24,18 @@ export function HeroSection({ onEnterFlow }: HeroSectionProps) {
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)',
-        }}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        data-testid="video-hero-background"
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-      </div>
+        <source src={bgVideo} type="video/mp4" />
+      </video>
+      
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
       
       <motion.header
         initial={{ opacity: 0, y: -20 }}
