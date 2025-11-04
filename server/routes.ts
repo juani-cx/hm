@@ -40,6 +40,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Collections
+  app.get("/api/collections", async (_req, res) => {
+    try {
+      const collections = await storage.getAllCollections();
+      res.json(collections);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch collections" });
+    }
+  });
+
+  app.get("/api/collections/:id", async (req, res) => {
+    try {
+      const collection = await storage.getCollection(req.params.id);
+      if (!collection) {
+        return res.status(404).json({ error: "Collection not found" });
+      }
+      
+      // Fetch full item details for all items in the collection
+      const itemsWithDetails = await Promise.all(
+        collection.itemSkus.map(async (sku) => {
+          const item = await storage.getItem(sku);
+          return item;
+        })
+      );
+      
+      res.json({ ...collection, items: itemsWithDetails.filter(Boolean) });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch collection" });
+    }
+  });
+
   // Items
   app.get("/api/items", async (_req, res) => {
     try {
