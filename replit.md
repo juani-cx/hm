@@ -12,6 +12,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**November 4, 2025 - Session 5: Story Feed Expansion, Editorial Content & Shopping Cart**
+- Expanded story feed to 4 cards by adding "Spring Garden" and "Workwear Edit" stories
+- Created EditorialContent component with 3 blog-style article cards and 2 interactive CTAs
+- Added "Try AI Stylist" and "Create Your Collection" gradient CTA cards
+- Implemented full-featured ShoppingCart component with drawer overlay design
+- Added AI Styling Tip and "Complete the Look" AI suggestions in cart
+- Implemented quantity controls, remove items, subtotal/shipping/total calculations
+- Added "Save to Collection" and "Save for Later" features with user behavior tracking
+- Fixed critical cart bug: composite SKU+size keys ensure proper variant management
+- Cart handlers now accept (sku, size) to manage variants independently
+- All cart React keys and test IDs use composite identifiers for unique rendering
+- Extended seed data: 4 new items, 2 new looks, 2 new stories
+- E2E tests verified: all 4 stories display, editorial content renders, cart functions correctly
+- Architect approved all changes after critical bug fixes
+
 **November 4, 2025 - Session 4: User Profile Agent & Landing Page Enhancements**
 - Created new user-profile agent for learning and storing user preferences, style choices, and shopping behavior
 - Added comprehensive agent guidelines in `agents/user-profile/user-profile.v1.md` with preference storage schema
@@ -58,6 +73,8 @@ Preferred communication style: Simple, everyday language.
 - Agent guidelines stored as editable markdown files in `agents/` directory for flexibility
 - H&M logo integrated from attached assets (`attached_assets/H&M-Logo_1762206118498.png`)
 - AI features designed to be prominent but non-intrusive with staggered timing (3s/5s delays)
+- Cart items uniquely identified by composite `${sku}-${size}` key for proper variant management
+- User behavior tracking sends add_to_cart, save_for_later, save_to_collection events to /api/profile for agent learning
 
 ## System Architecture
 
