@@ -188,6 +188,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/assistant/generate-outfit-preview", async (req, res) => {
+    try {
+      const { skus, modelType, items } = req.body;
+      
+      if (!skus || skus.length === 0) {
+        return res.status(400).json({ error: "No items selected" });
+      }
+
+      // Build description of the outfit
+      const outfitDescription = items.map((item: any) => 
+        `${item.name} in ${item.color} (${item.material})`
+      ).join(', ');
+
+      // Map model types to descriptive body types
+      const modelDescriptions: Record<string, string> = {
+        athletic: 'athletic build with broad shoulders and defined muscles',
+        petite: 'petite with shorter stature and slender frame',
+        curvy: 'curvy with hourglass figure',
+        tall: 'tall and slim build',
+        plus: 'plus-size with fuller figure'
+      };
+
+      const modelDescription = modelDescriptions[modelType] || modelDescriptions.athletic;
+
+      // Generate the image using AI
+      const prompt = `High-quality fashion photography of a professional model with ${modelDescription}, wearing: ${outfitDescription}. Full body shot, studio lighting, neutral background, fashion catalog style, realistic, professional.`;
+
+      console.log('Generating outfit preview with prompt:', prompt);
+
+      // Use OpenAI image generation
+      const response = await assistantService.generateImage(prompt);
+      
+      res.json({ imageUrl: response.imageUrl });
+    } catch (error) {
+      console.error('Outfit preview generation error:', error);
+      res.status(500).json({ error: "Failed to generate outfit preview" });
+    }
+  });
+
   app.get("/api/assistant/stylist-suggestions", async (req, res) => {
     try {
       const skus = (req.query.skus as string || '').split(',').filter(Boolean);

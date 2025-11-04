@@ -7,25 +7,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2 } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { TopBar } from '@/components/TopBar';
-
-interface Item {
-  id: string;
-  sku: string;
-  name: string;
-  price: number;
-  category: string;
-  images: string[];
-  imageUrl?: string;
-}
+import { useToast } from '@/hooks/use-toast';
+import type { Item } from '@shared/schema';
 
 interface AISuggestion {
   text: string;
   reasoning: string;
 }
 
+const MODEL_AVATARS = [
+  { id: 'athletic', name: 'Athletic Build', description: 'Broad shoulders, defined muscles' },
+  { id: 'petite', name: 'Petite', description: 'Shorter stature, slender frame' },
+  { id: 'curvy', name: 'Curvy', description: 'Hourglass figure, fuller bust and hips' },
+  { id: 'tall', name: 'Tall & Slim', description: 'Tall stature, lean build' },
+  { id: 'plus', name: 'Plus Size', description: 'Fuller figure, comfortable fit' },
+];
+
 export default function AIStylist() {
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(MODEL_AVATARS[0].id);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const { data: storeItems = [] } = useQuery<Item[]>({
     queryKey: ['/api/items'],
@@ -55,7 +58,46 @@ export default function AIStylist() {
     setSelectedItems(selectedItems.filter(i => i.sku !== sku));
   };
 
-  const getItemImage = (item: Item) => item.imageUrl || item.images?.[0] || '';
+  const generatePreviewMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/assistant/generate-outfit-preview', {
+        skus: selectedItems.map(i => i.sku),
+        modelType: selectedModel,
+        items: selectedItems.map(i => ({
+          name: i.name,
+          color: i.color,
+          material: i.material
+        }))
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log('Preview generated:', data);
+      setPreviewImage(data.imageUrl);
+      setIsGenerating(false);
+    },
+    onError: (error) => {
+      console.error('Preview generation failed:', error);
+      setPreviewImage(null);
+      setIsGenerating(false);
+      toast({
+        title: "Generation Failed",
+        description: "Sorry, image generation is currently unavailable. Please try again later.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleGeneratePreview = () => {
+    if (selectedItems.length === 0) return;
+    setIsGenerating(true);
+    setPreviewImage(null);
+    generatePreviewMutation.mutate();
+  };
+
+  const { toast } = useToast();
+
+  const getItemImage = (item: Item) => item.images?.[0] || '';
 
   return (
     <div className="min-h-screen bg-background">
@@ -134,7 +176,7 @@ export default function AIStylist() {
                               <div className="p-3">
                                 <p className="font-medium text-sm line-clamp-2">{item.name}</p>
                                 <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
-                                <p className="text-xs text-muted-foreground capitalize">{item.category}</p>
+                                <p className="text-xs text-muted-foreground capitalize">{item.material}</p>
                               </div>
                             </Card>
                           ))}
@@ -230,6 +272,79 @@ export default function AIStylist() {
 
           {/* AI Suggestions Panel */}
           <div className="space-y-6">
+            {/* Virtual Try-On Preview */}
+            <Card className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold">Virtual Try-On</h3>
+              </div>
+
+              {/* Model Selection */}
+              <div className="mb-4">
+                <p className="text-sm font-medium mb-3">Select Model</p>
+                <div className="space-y-2">
+                  {MODEL_AVATARS.map((model) => (
+                    <button
+                      key={model.id}
+                      onClick={() => setSelectedModel(model.id)}
+                      className={`w-full text-left p-3 rounded-lg border-2 transition-colors ${
+                        selectedModel === model.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover-elevate'
+                      }`}
+                      data-testid={`model-${model.id}`}
+                    >
+                      <p className="font-medium text-sm">{model.name}</p>
+                      <p className="text-xs text-muted-foreground">{model.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview Area */}
+              <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-4" data-testid="preview-area">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Outfit Preview"
+                    className="w-full h-full object-cover"
+                    data-testid="preview-image"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+                    <Wand2 className="w-12 h-12 mb-3 opacity-50" />
+                    <p className="text-sm">Select items and generate preview</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Generate Button */}
+              <Button
+                onClick={handleGeneratePreview}
+                disabled={selectedItems.length === 0 || isGenerating}
+                className="w-full gap-2"
+                data-testid="button-generate-preview"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+                    Generating Preview...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    Generate Preview
+                  </>
+                )}
+              </Button>
+
+              {selectedItems.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-2 text-center">
+                  Add items to your outfit first
+                </p>
+              )}
+            </Card>
+
             <Card className="p-6 bg-gradient-to-br from-primary/5 via-background to-accent/5">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-5 h-5 text-primary" />

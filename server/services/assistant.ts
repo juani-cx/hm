@@ -213,6 +213,39 @@ Return only a JSON array of 3 suggestion strings, nothing else.`;
       return ['Show me more', 'Similar items', 'Style tips'];
     }
   }
+
+  async generateImage(prompt: string): Promise<{ imageUrl: string }> {
+    try {
+      console.log('Generating image with OpenAI image generation API');
+      console.log('Prompt:', prompt.substring(0, 100) + '...');
+      
+      const response = await openai.images.generate({
+        model: "gpt-image-1",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+      });
+
+      // gpt-image-1 always returns base64 format (b64_json), not URLs
+      const base64Image = response.data[0]?.b64_json;
+      
+      if (!base64Image) {
+        console.error('No base64 image in response. Full response:', JSON.stringify(response));
+        throw new Error('No image data returned from OpenAI');
+      }
+
+      // Convert base64 to data URL format for browser display
+      const imageUrl = `data:image/png;base64,${base64Image}`;
+      
+      console.log('Image generated successfully, base64 length:', base64Image.length);
+      
+      return { imageUrl };
+    } catch (error) {
+      console.error('Image generation error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      throw new Error('Failed to generate image');
+    }
+  }
 }
 
 export const assistantService = new AssistantService();
