@@ -12,6 +12,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**November 4, 2025 - Session 4: User Profile Agent & Landing Page Enhancements**
+- Created new user-profile agent for learning and storing user preferences, style choices, and shopping behavior
+- Added comprehensive agent guidelines in `agents/user-profile/user-profile.v1.md` with preference storage schema
+- Updated agent registry and routing to handle profile-related intents ("my preferences", "remember", etc.)
+- Updated landing page to display red H&M logo (removed white filter for brand consistency)
+- Added hamburger menu to landing page header with full navigation drawer
+- Set up favicon using H&M logo for browser tab branding
+- All E2E tests passed: logo displays in red, menu functional, favicon loads, user-profile agent responds correctly
+- Architect approved all changes with no security concerns
+
 **November 3, 2025 - Session 3: Critical Bug Fixes & UX Polish**
 - Fixed critical image loading bug by adding express.static middleware for `/generated_images` path
 - Transformed API responses to normalize `images[0]` → `imageUrl` for StoryCard compatibility
