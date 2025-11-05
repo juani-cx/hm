@@ -80,6 +80,12 @@ export const userProfileSchema = z.object({
   previewMood: z.string().optional(),
   previewInspiration: z.string().optional(),
   previewCustomPrompt: z.string().optional(),
+  favoriteCollections: z.array(z.string()).default([]),
+  uploadedPhotos: z.array(z.object({
+    url: z.string(),
+    caption: z.string().optional(),
+    timestamp: z.number(),
+  })).default([]),
 });
 
 export const insertUserProfileSchema = userProfileSchema;
