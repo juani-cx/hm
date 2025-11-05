@@ -12,11 +12,14 @@ interface Story {
 
 interface StoryFeedProps {
   stories: Story[];
-  onStoryClick: (storyId: string) => void;
   onAISuggestionClick?: (suggestion: string) => void;
+  showTopCollections?: boolean;
 }
 
-export function StoryFeed({ stories, onStoryClick, onAISuggestionClick }: StoryFeedProps) {
+export function StoryFeed({ stories, onAISuggestionClick, showTopCollections = false }: StoryFeedProps) {
+  const topStories = showTopCollections ? stories.slice(0, 4) : stories;
+  const title = showTopCollections ? "Top Collections" : "Flow Stories";
+  
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-md mx-auto px-3 sm:px-4 py-4 sm:py-6">
@@ -26,24 +29,21 @@ export function StoryFeed({ stories, onStoryClick, onAISuggestionClick }: StoryF
           transition={{ duration: 0.5 }}
         >
           <h2 className="font-serif font-bold text-3xl sm:text-4xl mb-4 sm:mb-6 tracking-tight">
-            Flow Stories
+            {title}
           </h2>
         </motion.div>
         
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <AISuggestionsCard onSuggestionClick={onAISuggestionClick} />
+          {!showTopCollections && <AISuggestionsCard onSuggestionClick={onAISuggestionClick} />}
           
-          {stories.map((story, index) => (
+          {topStories.map((story, index) => (
             <motion.div
               key={story.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: (index + 1) * 0.1 }}
             >
-              <StoryCard
-                {...story}
-                onClick={() => onStoryClick(story.id)}
-              />
+              <StoryCard {...story} />
             </motion.div>
           ))}
         </div>

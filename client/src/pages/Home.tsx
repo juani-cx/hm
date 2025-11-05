@@ -2,18 +2,16 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { HeroSection } from "@/components/HeroSection";
 import { StoryFeed } from "@/components/StoryFeed";
-import { StoryViewer } from "@/components/StoryViewer";
-import { ProductDetailPage } from "@/components/ProductDetailPage";
 import { AssistantOverlay } from "@/components/AssistantOverlay";
 import { QuickPreferences } from "@/components/QuickPreferences";
 import { EditorialContent } from "@/components/EditorialContent";
 import { ShoppingCart } from "@/components/ShoppingCart";
 import { TopBar } from "@/components/TopBar";
 import { LoadingCard } from "@/components/LoadingCard";
-import { fetchStories, fetchStory, updateProfile, fetchItem } from "@/lib/api";
+import { fetchStories, updateProfile } from "@/lib/api";
 import heroImg from '@assets/generated_images/Hero_fashion_editorial_image_aaf760a6.png';
 
-type View = 'hero' | 'feed' | 'story' | 'product';
+type View = 'hero' | 'feed';
 
 interface CartItem {
   sku: string;
@@ -26,8 +24,6 @@ interface CartItem {
 
 export default function Home() {
   const [currentView, setCurrentView] = useState<View>('hero');
-  const [selectedStory, setSelectedStory] = useState<string | null>(null);
-  const [selectedSku, setSelectedSku] = useState<string | null>(null);
   const [showPreferences, setShowPreferences] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -43,19 +39,6 @@ export default function Home() {
     enabled: currentView === 'feed',
   });
 
-  // Fetch selected story details
-  const { data: storyData } = useQuery({
-    queryKey: ['/api/stories', selectedStory],
-    queryFn: () => selectedStory ? fetchStory(selectedStory) : null,
-    enabled: !!selectedStory && currentView === 'story',
-  });
-
-  // Fetch selected product details
-  const { data: productData } = useQuery({
-    queryKey: ['/api/items', selectedSku],
-    queryFn: () => selectedSku ? fetchItem(selectedSku) : null,
-    enabled: !!selectedSku && currentView === 'product',
-  });
 
   const handleEnterFlow = () => {
     setCurrentView('feed');
@@ -64,52 +47,7 @@ export default function Home() {
     }
   };
 
-  const handleStoryClick = (storyId: string) => {
-    setSelectedStory(storyId);
-    setCurrentView('story');
-  };
 
-  const handleShopLook = (lookId: string) => {
-    // Find the selected look and use its first item
-    const selectedLook = storyData?.looks?.find((look: any) => look.id === lookId);
-    if (selectedLook?.items?.[0]?.sku) {
-      setSelectedSku(selectedLook.items[0].sku);
-      setCurrentView('product');
-    }
-  };
-
-  const handleAddToCart = async (sku: string, size: string) => {
-    console.log('Added to cart:', sku, size);
-    
-    // Fetch product data to add to cart
-    if (productData) {
-      const existingItem = cartItems.find(item => item.sku === sku && item.size === size);
-      
-      if (existingItem) {
-        setCartItems(prev => prev.map(item =>
-          item.sku === sku && item.size === size
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        ));
-      } else {
-        const newItem: CartItem = {
-          sku,
-          name: productData.name,
-          price: productData.price,
-          quantity: 1,
-          image: productData.images[0],
-          size
-        };
-        setCartItems(prev => [...prev, newItem]);
-      }
-      
-      // Track user behavior for agent learning
-      await trackUserBehavior('add_to_cart', { sku, size });
-      
-      setIsCartOpen(true);
-      setTimeout(() => setCurrentView('feed'), 500);
-    }
-  };
 
   const handleUpdateQuantity = (sku: string, size: string | undefined, quantity: number) => {
     if (quantity === 0) {
@@ -146,10 +84,6 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to track behavior:', error);
     }
-  };
-
-  const handleAskAssistant = (question: string) => {
-    console.log('Ask assistant:', question);
   };
 
   const handleAISuggestionClick = (suggestion: string) => {
@@ -206,7 +140,7 @@ export default function Home() {
           
           {storiesLoading ? (
             <div className="max-w-md mx-auto px-4 py-6">
-              <h2 className="font-serif font-bold text-4xl mb-6 tracking-tight">Flow Stories</h2>
+              <h2 className="font-serif font-bold text-4xl mb-6 tracking-tight">Top Collections</h2>
               <div className="grid grid-cols-2 gap-4">
                 <LoadingCard />
                 <LoadingCard />
@@ -218,8 +152,8 @@ export default function Home() {
             <>
               <StoryFeed 
                 stories={stories || []} 
-                onStoryClick={handleStoryClick}
                 onAISuggestionClick={handleAISuggestionClick}
+                showTopCollections={true}
               />
               
               <EditorialContent
@@ -249,26 +183,7 @@ export default function Home() {
         </>
       )}
 
-      {currentView === 'story' && storyData && (
-        <StoryViewer
-          storyTitle={storyData.title}
-          looks={storyData.looks || []}
-          images={storyData.images || []}
-          onClose={() => setCurrentView('feed')}
-          onShopLook={handleShopLook}
-          onAskAssistant={handleAskAssistant}
-        />
-      )}
-
-      {currentView === 'product' && productData && (
-        <ProductDetailPage
-          product={productData}
-          onClose={() => setCurrentView('story')}
-          onAddToCart={handleAddToCart}
-        />
-      )}
-
-      {currentView !== 'hero' && currentView !== 'product' && (
+      {currentView !== 'hero' && (
         <AssistantOverlay
           suggestions={['Show me winter looks', 'What goes with jeans?', 'Sustainable options']}
         />
