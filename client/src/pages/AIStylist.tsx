@@ -254,7 +254,7 @@ export default function AIStylist() {
   const getItemImage = (item: Item) => item.images?.[0] || '';
 
   const renderItemGrid = (items: Item[]) => (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pb-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
       {items.map((item) => (
         <Card 
           key={item.sku}
@@ -319,160 +319,174 @@ export default function AIStylist() {
                       Add Item
                     </Button>
                   </SheetTrigger>
-                  <SheetContent side="bottom" className="h-[80vh]">
-                    <SheetHeader>
-                      <SheetTitle>Select Items</SheetTitle>
-                    </SheetHeader>
-                    
-                    <Tabs defaultValue="store" className="mt-4">
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="store" data-testid="tab-store">
-                          <ShoppingBag className="w-4 h-4 mr-2" />
-                          From Store
-                        </TabsTrigger>
-                        <TabsTrigger value="collection" data-testid="tab-collection">
-                          <Heart className="w-4 h-4 mr-2" />
-                          My Collection
-                        </TabsTrigger>
-                      </TabsList>
+                  <SheetContent side="bottom" className="h-screen w-screen p-0 max-w-none">
+                    <div className="flex flex-col h-full">
+                      <div className="flex items-center justify-between px-6 py-4 border-b bg-background sticky top-0 z-10">
+                        <SheetTitle className="text-2xl font-serif">Select Items</SheetTitle>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setIsDrawerOpen(false)}
+                          data-testid="button-close-drawer"
+                        >
+                          <X className="w-5 h-5" />
+                        </Button>
+                      </div>
                       
-                      <TabsContent value="store" className="mt-4 space-y-4">
-                        <div className="relative">
-                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Search by name, color, or material..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9"
-                            data-testid="input-search"
-                          />
-                        </div>
+                      <Tabs defaultValue="store" className="flex-1 flex flex-col overflow-hidden">
+                        <div className="px-6 pt-4 border-b bg-background">
+                          <TabsList className="grid w-full max-w-md grid-cols-2">
+                            <TabsTrigger value="store" data-testid="tab-store">
+                              <ShoppingBag className="w-4 h-4 mr-2" />
+                              From Store
+                            </TabsTrigger>
+                            <TabsTrigger value="collection" data-testid="tab-collection">
+                              <Heart className="w-4 h-4 mr-2" />
+                              My Collection
+                            </TabsTrigger>
+                          </TabsList>
+                          
+                          <div className="mt-4 mb-4 space-y-3">
+                            <div className="relative">
+                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Search by name, color, or material..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-9"
+                                data-testid="input-search"
+                              />
+                            </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          <Select value={selectedOccasion} onValueChange={setSelectedOccasion}>
-                            <SelectTrigger data-testid="select-occasion">
-                              <SelectValue placeholder="Occasion" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">All Occasions</SelectItem>
-                              {OCCASIONS.map(occ => (
-                                <SelectItem key={occ} value={occ} className="capitalize">
-                                  {occ}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            <div className="flex gap-2 flex-wrap">
+                              <Select value={selectedOccasion} onValueChange={setSelectedOccasion}>
+                                <SelectTrigger className="w-auto min-w-[140px]" data-testid="select-occasion">
+                                  <SelectValue placeholder="All Occasions" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="all">All Occasions</SelectItem>
+                                  {OCCASIONS.map(occ => (
+                                    <SelectItem key={occ} value={occ} className="capitalize">
+                                      {occ}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
 
-                          <Select value={selectedColorFamily} onValueChange={setSelectedColorFamily}>
-                            <SelectTrigger data-testid="select-color">
-                              <SelectValue placeholder="Color" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="all">All Colors</SelectItem>
-                              {COLOR_FAMILIES.map(color => (
-                                <SelectItem key={color} value={color} className="capitalize">
-                                  {color}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                              <Select value={selectedColorFamily} onValueChange={setSelectedColorFamily}>
+                                <SelectTrigger className="w-auto min-w-[120px]" data-testid="select-color">
+                                  <SelectValue placeholder="All Colors" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="all">All Colors</SelectItem>
+                                  {COLOR_FAMILIES.map(color => (
+                                    <SelectItem key={color} value={color} className="capitalize">
+                                      {color}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
 
-                          <Select value={selectedPriceRange} onValueChange={setSelectedPriceRange}>
-                            <SelectTrigger data-testid="select-price">
-                              <SelectValue placeholder="Price Range" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {PRICE_RANGES.map(range => (
-                                <SelectItem key={range.id} value={range.id}>
-                                  {range.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <Accordion type="single" collapsible defaultValue="all" className="w-full">
-                          {CATEGORIES.map(category => {
-                            const items = itemsByCategory[category.id] || [];
-                            if (items.length === 0 && category.id !== 'all') return null;
-                            
-                            return (
-                              <AccordionItem 
-                                key={category.id} 
-                                value={category.id}
-                                data-testid={`accordion-category-${category.id}`}
-                              >
-                                <AccordionTrigger className="text-sm font-medium">
-                                  {category.label} ({items.length})
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  {items.length > 0 ? (
-                                    renderItemGrid(items)
-                                  ) : (
-                                    <p className="text-sm text-muted-foreground text-center py-8">
-                                      No items found in this category
-                                    </p>
-                                  )}
-                                </AccordionContent>
-                              </AccordionItem>
-                            );
-                          })}
-                        </Accordion>
-                      </TabsContent>
-                      
-                      <TabsContent value="collection" className="mt-4">
-                        {isLoadingProfile ? (
-                          <div className="text-center py-12">
-                            <p className="text-muted-foreground">Loading your collection...</p>
+                              <Select value={selectedPriceRange} onValueChange={setSelectedPriceRange}>
+                                <SelectTrigger className="w-auto min-w-[130px]" data-testid="select-price">
+                                  <SelectValue placeholder="All Prices" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {PRICE_RANGES.map(range => (
+                                    <SelectItem key={range.id} value={range.id}>
+                                      {range.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
-                        ) : collectionItems.length === 0 ? (
-                          <div className="text-center py-12 text-muted-foreground">
-                            <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                            <p>Your saved collection is empty</p>
-                            <p className="text-sm mt-2">Save items from stories to see them here</p>
-                          </div>
-                        ) : (
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pb-4">
-                            {collectionItems.map((item) => (
-                              <Card 
-                                key={item.sku}
-                                className="overflow-hidden relative group"
-                                data-testid={`collection-item-${item.sku}`}
-                              >
-                                <Button
-                                  size="icon"
-                                  variant="destructive"
-                                  className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7"
-                                  onClick={() => handleRemoveFromCollection(item.sku)}
-                                  data-testid={`button-remove-collection-${item.sku}`}
+                        </div>
+                        
+                        <TabsContent value="store" className="flex-1 overflow-hidden mt-0">
+                          <Accordion type="single" collapsible defaultValue="all" className="h-full overflow-y-auto px-6 py-4">
+                            {CATEGORIES.map(category => {
+                              const items = itemsByCategory[category.id] || [];
+                              if (items.length === 0 && category.id !== 'all') return null;
+                              
+                              return (
+                                <AccordionItem 
+                                  key={category.id} 
+                                  value={category.id}
+                                  data-testid={`accordion-category-${category.id}`}
                                 >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                                <div 
-                                  className="cursor-pointer"
-                                  onClick={() => handleAddItem(item)}
-                                >
-                                  <div className="aspect-[3/4] relative bg-muted">
-                                    {getItemImage(item) && (
-                                      <img
-                                        src={getItemImage(item)}
-                                        alt={item.name}
-                                        className="w-full h-full object-cover"
-                                      />
+                                  <AccordionTrigger className="text-base font-medium py-4">
+                                    {category.label} ({items.length})
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    {items.length > 0 ? (
+                                      renderItemGrid(items)
+                                    ) : (
+                                      <p className="text-sm text-muted-foreground text-center py-8">
+                                        No items found in this category
+                                      </p>
                                     )}
+                                  </AccordionContent>
+                                </AccordionItem>
+                              );
+                            })}
+                          </Accordion>
+                        </TabsContent>
+                      
+                        <TabsContent value="collection" className="flex-1 overflow-y-auto px-6 py-4 mt-0">
+                          {isLoadingProfile ? (
+                            <div className="text-center py-12">
+                              <p className="text-muted-foreground">Loading your collection...</p>
+                            </div>
+                          ) : collectionItems.length === 0 ? (
+                            <div className="text-center py-12 text-muted-foreground">
+                              <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                              <p>Your saved collection is empty</p>
+                              <p className="text-sm mt-2">Save items from stories to see them here</p>
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
+                              {collectionItems.map((item) => (
+                                <Card 
+                                  key={item.sku}
+                                  className="overflow-hidden relative group"
+                                  data-testid={`collection-item-${item.sku}`}
+                                >
+                                  <Button
+                                    size="icon"
+                                    variant="destructive"
+                                    className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7"
+                                    onClick={() => handleRemoveFromCollection(item.sku)}
+                                    data-testid={`button-remove-collection-${item.sku}`}
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                  <div 
+                                    className="cursor-pointer"
+                                    onClick={() => handleAddItem(item)}
+                                  >
+                                    <div className="aspect-[3/4] relative bg-muted">
+                                      {getItemImage(item) && (
+                                        <img
+                                          src={getItemImage(item)}
+                                          alt={item.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      )}
+                                    </div>
+                                    <div className="p-3">
+                                      <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+                                      <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+                                      <p className="text-xs text-muted-foreground capitalize">{item.material}</p>
+                                    </div>
                                   </div>
-                                  <div className="p-3">
-                                    <p className="font-medium text-sm line-clamp-2">{item.name}</p>
-                                    <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
-                                    <p className="text-xs text-muted-foreground capitalize">{item.material}</p>
-                                  </div>
-                                </div>
-                              </Card>
-                            ))}
-                          </div>
-                        )}
-                      </TabsContent>
-                    </Tabs>
+                                </Card>
+                              ))}
+                            </div>
+                          )}
+                        </TabsContent>
+                      </Tabs>
+                    </div>
                   </SheetContent>
                 </Sheet>
               </div>
