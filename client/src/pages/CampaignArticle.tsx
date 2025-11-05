@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Story, Look, Item, UserProfile } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { TopBar } from "@/components/TopBar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -21,10 +22,10 @@ export default function CampaignArticle() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { addItem, setIsOpen: setCartOpen } = useCart();
+  const { openSettings } = useSettings();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isVideoMode, setIsVideoMode] = useState(false);
   const [isAIPromptOpen, setIsAIPromptOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSharePanelOpen, setIsSharePanelOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState<{ [sku: string]: string }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -339,22 +340,6 @@ export default function CampaignArticle() {
     }
   };
 
-  const handleSaveSettings = () => {
-    updateProfileMutation.mutate({
-      previewBodyDescription: settingsBody,
-      previewStyle: settingsStyle,
-      previewMood: settingsMood,
-      previewInspiration: settingsInspiration,
-      previewCustomPrompt: settingsPrompt,
-    });
-    
-    toast({
-      title: "Settings Saved",
-      description: "Your preview preferences have been updated",
-    });
-    setIsSettingsOpen(false);
-  };
-
   const handleAddToCart = (item: Item, size?: string) => {
     const itemSize = size || selectedSize[item.sku] || item.sizes[0];
     addItem({
@@ -430,7 +415,7 @@ export default function CampaignArticle() {
             size="icon"
             variant="ghost"
             className="absolute top-3 right-3 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-0 w-9 h-9"
-            onClick={() => setLocation('/settings')}
+            onClick={() => openSettings()}
             data-testid="button-settings"
           >
             <Settings className="w-5 h-5" />
@@ -943,82 +928,6 @@ export default function CampaignArticle() {
           </>
         )}
       </AnimatePresence>
-
-      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-        <DialogContent className="max-w-md" data-testid="dialog-settings">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">Configure preview</DialogTitle>
-            <DialogDescription>
-              Set your preferences for how you want to see fashion content
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 mt-4">
-            <div>
-              <Label htmlFor="settings-body">Body</Label>
-              <Input
-                id="settings-body"
-                placeholder="Shorter stature, slender frame"
-                value={settingsBody}
-                onChange={(e) => setSettingsBody(e.target.value)}
-                data-testid="input-settings-body"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="settings-style">Style</Label>
-              <Input
-                id="settings-style"
-                placeholder="Minimal fashion"
-                value={settingsStyle}
-                onChange={(e) => setSettingsStyle(e.target.value)}
-                data-testid="input-settings-style"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="settings-mood">Mood</Label>
-              <Input
-                id="settings-mood"
-                placeholder="Happy summer"
-                value={settingsMood}
-                onChange={(e) => setSettingsMood(e.target.value)}
-                data-testid="input-settings-mood"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="settings-inspiration">Inspiration</Label>
-              <Input
-                id="settings-inspiration"
-                placeholder="Image, music, video"
-                value={settingsInspiration}
-                onChange={(e) => setSettingsInspiration(e.target.value)}
-                data-testid="input-settings-inspiration"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="settings-prompt">Prompt</Label>
-              <Input
-                id="settings-prompt"
-                placeholder="Ask for your own style"
-                value={settingsPrompt}
-                onChange={(e) => setSettingsPrompt(e.target.value)}
-                data-testid="input-settings-prompt"
-              />
-            </div>
-
-            <Button 
-              className="w-full"
-              onClick={handleSaveSettings}
-              data-testid="button-save-settings"
-            >
-              Save Preferences
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

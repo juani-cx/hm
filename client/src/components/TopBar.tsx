@@ -5,6 +5,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers, CreditCard } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { MusicPlayer } from "@/components/MusicPlayer";
 import hmLogo from '@assets/H&M-Logo_1762206118498.png';
 
@@ -15,6 +16,7 @@ interface TopBarProps {
 
 export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
   const { items, setIsOpen: setCartOpen } = useCart();
+  const { openSettings } = useSettings();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
   
@@ -23,7 +25,7 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
     { label: 'Collections', icon: Layers, onClick: () => setLocation('/collections') },
     { label: 'AI Stylist', icon: Sparkles, onClick: () => setLocation('/ai-stylist') },
     { label: 'Favorites', icon: Heart, onClick: () => console.log('Favorites') },
-    { label: 'Settings', icon: Settings, onClick: () => setLocation('/settings') },
+    { label: 'Settings', icon: Settings, onClick: () => openSettings() },
     { label: 'Help & Support', icon: HelpCircle, onClick: () => console.log('Help') },
   ];
 
@@ -121,7 +123,7 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
             
             <div className="py-2">
               <DropdownMenuItem 
-                onSelect={() => setLocation('/settings')}
+                onSelect={() => openSettings()}
                 className="cursor-pointer mx-2 my-1"
                 data-testid="menu-personalize"
               >

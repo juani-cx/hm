@@ -39,7 +39,7 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
 - **Collections:** Editorial model photography, interactive modules, and viewer with actions (Add to My Collection, Save for Later, Add to Cart, Virtual AI Assist).
 - **Magazine Article Viewer (Campaign Article):** Immersive full-screen content experience with:
   - Hero image with settings, share, save, and favorite actions
-  - Settings icon navigates to centralized Settings page for persistent preferences
+  - Settings icon opens modal dialog for persistent preferences (no page navigation)
   - Collection tags displayed below image (non-clickable, tag-style indicators)
   - Interactive image gallery with multiple viewing modes (magazine, board, virtual gallery) based on user preferences
   - AI image editing capabilities with custom prompt input
@@ -55,16 +55,21 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
 - **Virtual Try-On:** AI-generated outfit previews on various model avatars (Athletic, Petite, Curvy, Tall & Slim, Plus Size).
 - **AI Stylist Page:** Outfit builder with item selection, real-time outfit calculation, AI suggestions, and save/add-to-cart options.
 - **Shopping Cart:** Drawer overlay, quantity controls, remove items, subtotal/shipping/total, AI styling tips, and "Complete the Look" suggestions.
-- **User Profile & Settings:** Centralized settings page with persistent storage in database:
+- **User Profile & Settings:** Modal dialog for settings with persistent storage in database:
+  - Implemented as a modal overlay (not a dedicated page) to keep users in context
+  - SettingsContext manages global modal state across the application
   - AI Stylist Model selection (Clara, Sofia, Emma, Alex)
   - Curated feed personalization toggle
   - Favorite style preferences (Minimalist, Streetwear, Vintage, etc.)
   - Media preview type (Image or Video)
+  - Gender selection (Man, Woman, No Gender/Mannequin) for AI-generated previews
   - Clothing size preferences (Tops and Bottoms)
   - Fit preference slider (Tighter to Looser)
   - Preview configuration settings (Body, Style, Mood, Inspiration)
   - All settings saved to database and synced across all pages
-  - Accessible via Settings icon in campaign articles and navigation
+  - Accessible via Settings icon in campaign articles and navigation menus
+  - Floating X close button in top right corner
+  - Scrollable content with sticky header
 
 ## External Dependencies
 
