@@ -80,6 +80,10 @@ export default function AIStylist() {
   const handleAddItem = (item: Item) => {
     if (!selectedItems.find(i => i.sku === item.sku)) {
       setSelectedItems([...selectedItems, item]);
+      toast({
+        title: "Item Added",
+        description: `${item.name} added to your outfit`,
+      });
     }
   };
 
@@ -218,15 +222,39 @@ export default function AIStylist() {
             )}
           </div>
 
-          <Button
-            onClick={() => setIsSelectItemsOpen(true)}
-            className="w-full"
-            variant="default"
-            data-testid="button-add-items"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Items
-          </Button>
+          <div className="space-y-3">
+            <Button
+              onClick={() => setIsSelectItemsOpen(true)}
+              className="w-full"
+              variant="default"
+              data-testid="button-add-items"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Items ({selectedItems.length})
+            </Button>
+            
+            {selectedItems.length > 0 && (
+              <Button
+                onClick={handleGeneratePreview}
+                className="w-full"
+                variant="default"
+                disabled={isGenerating}
+                data-testid="button-generate-preview"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    Generate AI Preview
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </Card>
 
         <div className="mb-6">
