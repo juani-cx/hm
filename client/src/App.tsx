@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { GlobalCart } from "@/components/GlobalCart";
 import Home from "@/pages/Home";
 import AIStylist from "@/pages/AIStylist";
+import Settings from "@/pages/Settings";
 import Collections from "@/pages/Collections";
 import Collection from "@/pages/Collection";
 import MagazineArticle from "@/pages/MagazineArticle";
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/onboarding" component={OnboardingPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/ai-stylist" component={AIStylist} />
+      <Route path="/settings" component={Settings} />
       <Route path="/collections" component={Collections} />
       <Route path="/collections/:id" component={Collection} />
       <Route path="/magazine/:id" component={MagazineArticle} />

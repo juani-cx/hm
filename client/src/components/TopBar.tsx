@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers, Music, CreditCard } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { MusicPlayer } from "@/components/MusicPlayer";
 import hmLogo from '@assets/H&M-Logo_1762206118498.png';
 
 interface TopBarProps {
@@ -16,12 +18,14 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
 
+  const [showMusicPlayer, setShowMusicPlayer] = useState(false);
+  
   const menuItems = [
     { label: 'Flow Stories', icon: Home, onClick: () => setLocation('/') },
     { label: 'Collections', icon: Layers, onClick: () => setLocation('/collections') },
     { label: 'AI Stylist', icon: Sparkles, onClick: () => setLocation('/ai-stylist') },
     { label: 'Favorites', icon: Heart, onClick: () => console.log('Favorites') },
-    { label: 'Settings', icon: Settings, onClick: () => console.log('Settings') },
+    { label: 'Settings', icon: Settings, onClick: () => setLocation('/settings') },
     { label: 'Help & Support', icon: HelpCircle, onClick: () => console.log('Help') },
   ];
 
@@ -95,14 +99,58 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
             </span>
           )}
         </Button>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={onProfileClick}
-          data-testid="button-profile"
-        >
-          <User className="w-5 h-5" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => onProfileClick?.()}
+              data-testid="button-profile"
+            >
+              <User className="w-5 h-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-72">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            
+            <DropdownMenuItem 
+              onSelect={(e) => {
+                e.preventDefault();
+                setShowMusicPlayer(!showMusicPlayer);
+              }}
+              className="cursor-pointer"
+              data-testid="menu-music"
+            >
+              <Music className="w-4 h-4 mr-2" />
+              Music for Shopping
+            </DropdownMenuItem>
+            
+            {showMusicPlayer && (
+              <div className="border-t mt-1">
+                <MusicPlayer />
+              </div>
+            )}
+            
+            <DropdownMenuItem 
+              onSelect={() => setLocation('/settings')}
+              className="cursor-pointer"
+              data-testid="menu-personalize"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Personalize Experience
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem 
+              onSelect={() => console.log('Payment options')}
+              className="cursor-pointer"
+              data-testid="menu-payment"
+            >
+              <CreditCard className="w-4 h-4 mr-2" />
+              Payment Options
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
