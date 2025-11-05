@@ -9,9 +9,18 @@ const openai = new OpenAI({
 // Generate a new image based on prompt
 export async function generateImage(
   prompt: string,
-  size: "1024x1024" | "512x512" | "256x256" = "1024x1024"
+  size: "1024x1024" | "512x512" | "256x256" = "1024x1024",
+  isMannequin: boolean = false
 ): Promise<string> {
-  const enhancedPrompt = `Professional fashion photography, studio lighting, high-end photoshoot quality, ${prompt}, photorealistic, sharp focus, professional model, clean studio background, magazine quality, 8k resolution`;
+  let enhancedPrompt: string;
+  
+  if (isMannequin) {
+    // For mannequins, use product photography enhancement
+    enhancedPrompt = `${prompt}, professional product photography, high-end retail display, sharp detail, commercial quality, 8k resolution, studio setup`;
+  } else {
+    // For human models, emphasize realistic appearance
+    enhancedPrompt = `Authentic fashion photography of a real person, natural human features, realistic skin texture with pores and subtle imperfections, genuine human expression, ${prompt}, professional but natural lighting, true-to-life appearance, real human model (not CGI, not digital art, not plastic-looking), natural beauty, soft studio lighting with realistic shadows, genuine photograph, authentic human subject, high quality DSLR camera photography`;
+  }
   
   const response = await openai.images.generate({
     model: "dall-e-3",
@@ -32,7 +41,8 @@ export async function generateImage(
 export async function generateSlideshow(
   basePrompt: string,
   count: number = 3,
-  userPreferences?: string
+  userPreferences?: string,
+  isMannequin: boolean = false
 ): Promise<string[]> {
   const variations = [
     `${basePrompt}, elegant and sophisticated styling`,
@@ -48,7 +58,7 @@ export async function generateSlideshow(
     : selectedPrompts;
   
   const images = await Promise.all(
-    enrichedPrompts.map(prompt => generateImage(prompt, "1024x1024"))
+    enrichedPrompts.map(prompt => generateImage(prompt, "1024x1024", isMannequin))
   );
   
   return images;

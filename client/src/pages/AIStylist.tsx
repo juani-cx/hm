@@ -36,7 +36,7 @@ export default function AIStylist() {
   const [settingsBody, setSettingsBody] = useState("");
   const [settingsStyle, setSettingsStyle] = useState("");
   const [settingsMood, setSettingsMood] = useState("");
-  const [settingsGender, setSettingsGender] = useState<"male" | "female" | "">("");
+  const [settingsGender, setSettingsGender] = useState<"male" | "female" | "mannequin" | "">("");
 
   const { toast } = useToast();
   const { addItem: addToCart } = useCart();
@@ -115,6 +115,13 @@ export default function AIStylist() {
     setConfigurationComplete(true);
     setShowConfigInPreview(false);
     setIsSettingsOpen(false);
+    
+    // Regenerate image if there's already a preview and items selected
+    if (previewImage && selectedItems.length > 0) {
+      setIsGenerating(true);
+      setPreviewImage(null);
+      generatePreviewMutation.mutate();
+    }
   };
 
   const handleUseProfileSettings = () => {
@@ -295,13 +302,14 @@ export default function AIStylist() {
                 <div className="space-y-3">
                   <div>
                     <Label htmlFor="config-gender">Gender</Label>
-                    <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female")}>
+                    <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female" | "mannequin")}>
                       <SelectTrigger id="config-gender" data-testid="select-config-gender">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="male">Male</SelectItem>
                         <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="mannequin">No Gender (Mannequin)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -757,13 +765,14 @@ export default function AIStylist() {
           <div className="space-y-4 mt-4">
             <div>
               <Label htmlFor="settings-gender">Gender</Label>
-              <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female")}>
+              <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female" | "mannequin")}>
                 <SelectTrigger id="settings-gender" data-testid="select-settings-gender">
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="mannequin">No Gender (Mannequin)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -110,7 +110,7 @@ export const userProfileSchema = z.object({
   topsSize: z.string().optional(),
   bottomsSize: z.string().optional(),
   fitPreference: z.number().min(0).max(100).default(50),
-  gender: z.enum(['male', 'female']).optional(),
+  gender: z.enum(['male', 'female', 'mannequin']).optional(),
 });
 
 export const insertUserProfileSchema = userProfileSchema;

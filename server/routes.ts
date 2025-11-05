@@ -234,7 +234,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/assistant/generate-outfit-preview", async (req, res) => {
     try {
-      const { skus, modelType, items } = req.body;
+      const { skus, modelType, items, gender } = req.body;
       
       if (!skus || skus.length === 0) {
         return res.status(400).json({ error: "No items selected" });
@@ -245,26 +245,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         `${item.name} in ${item.color} (${item.material})`
       ).join(', ');
 
-      // Map model types to descriptive body types
-      const modelDescriptions: Record<string, string> = {
-        athletic: 'athletic build with broad shoulders and defined muscles',
-        petite: 'petite with shorter stature and slender frame',
-        curvy: 'curvy with hourglass figure',
-        tall: 'tall and slim build',
-        plus: 'plus-size with fuller figure'
-      };
+      let prompt: string;
+      
+      // Handle mannequin display
+      if (gender === 'mannequin') {
+        prompt = `Professional fashion product photography of ${outfitDescription} displayed on a white mannequin, studio lighting, clean white background, commercial product catalog style, detailed fabric texture, high-end retail display`;
+      } else {
+        // Map model types to descriptive body types - emphasizing real human features
+        const modelDescriptions: Record<string, string> = {
+          'athletic-build': 'real person with athletic build, broad shoulders and toned physique',
+          'petite': 'real person with petite frame and shorter stature',
+          'curvy': 'real person with curvy, hourglass figure',
+          'tall-&-slim': 'real person with tall and slim build',
+          'plus-size': 'real person with plus-size, fuller figure'
+        };
 
-      const modelDescription = modelDescriptions[modelType] || modelDescriptions.athletic;
+        const modelDescription = modelDescriptions[modelType] || modelDescriptions['athletic-build'];
 
-      // Generate the image using AI - simpler prompt since generateImage adds enhancement
-      const prompt = `Full body shot of a ${modelDescription} fashion model wearing ${outfitDescription}, neutral background, professional fashion catalog style`;
+        // Generate the image using AI - emphasize realistic human appearance
+        prompt = `Full-length portrait of a ${modelDescription} wearing ${outfitDescription}, standing naturally, authentic human features, real skin texture, neutral studio backdrop, confident natural pose`;
+      }
 
       console.log('Generating outfit preview with prompt:', prompt);
 
-      // Use OpenAI image generation
-      const response = await assistantService.generateImage(prompt);
+      // Use OpenAI image generation with mannequin flag
+      const imageUrl = await generateImage(prompt, "1024x1024", gender === 'mannequin');
       
-      res.json({ imageUrl: response.imageUrl });
+      res.json({ imageUrl });
     } catch (error) {
       console.error('Outfit preview generation error:', error);
       res.status(500).json({ error: "Failed to generate outfit preview" });
@@ -386,11 +393,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
+      // Get user profile to check for mannequin preference
+      const profile = await storage.getUserProfile(userId);
+      const isMannequin = profile?.gender === 'mannequin';
+      
       // Generate the edited image
-      const imageUrl = await generateImage(prompt, "1024x1024");
+      const imageUrl = await generateImage(prompt, "1024x1024", isMannequin);
       
       // Store the generated media in user profile
-      const profile = await storage.getUserProfile(userId);
       if (profile) {
         const generatedMedia = profile.generatedMedia || [];
         generatedMedia.push({
@@ -425,9 +435,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userPreferences = profile
         ? `${profile.previewStyle || ''} ${profile.previewMood || ''} ${profile.previewBodyDescription || ''}`.trim()
         : '';
+      const isMannequin = profile?.gender === 'mannequin';
 
       // Generate slideshow images
-      const images = await generateSlideshow(prompt, count, userPreferences);
+      const images = await generateSlideshow(prompt, count, userPreferences, isMannequin);
       
       // Store the generated media in user profile
       if (profile) {
