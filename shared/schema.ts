@@ -12,6 +12,9 @@ export const itemSchema = z.object({
   sustainTags: z.array(z.string()).optional(),
   stock: z.number(),
   description: z.string().optional(),
+  category: z.enum(['tops', 'bottoms', 'dresses', 'outerwear', 'accessories', 'shoes']).optional(),
+  occasion: z.array(z.enum(['casual', 'formal', 'business', 'party', 'sport'])).optional(),
+  colorFamily: z.enum(['black', 'white', 'gray', 'brown', 'beige', 'red', 'blue', 'green', 'yellow', 'pink', 'purple', 'multicolor']).optional(),
 });
 
 export const insertItemSchema = itemSchema;
@@ -85,6 +88,20 @@ export const userProfileSchema = z.object({
     url: z.string(),
     caption: z.string().optional(),
     timestamp: z.number(),
+  })).default([]),
+  generatedMedia: z.array(z.object({
+    id: z.string(),
+    type: z.enum(['hero_edit', 'slideshow', 'video']),
+    prompt: z.string(),
+    assets: z.array(z.string()),
+    collectionId: z.string().optional(),
+    createdAt: z.number(),
+  })).default([]),
+  savedCollections: z.array(z.object({
+    collectionId: z.string(),
+    collectionTitle: z.string(),
+    itemSkus: z.array(z.string()),
+    savedAt: z.number(),
   })).default([]),
 });
 
