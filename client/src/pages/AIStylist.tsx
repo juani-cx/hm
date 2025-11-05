@@ -30,11 +30,14 @@ export default function AIStylist() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ItemCategory>('all');
   const [currentTab, setCurrentTab] = useState<'store' | 'collections'>('store');
+  const [configurationComplete, setConfigurationComplete] = useState(false);
+  const [showConfigInPreview, setShowConfigInPreview] = useState(true);
 
   const [settingsBody, setSettingsBody] = useState("");
   const [settingsStyle, setSettingsStyle] = useState("");
   const [settingsMood, setSettingsMood] = useState("");
   const [settingsInspiration, setSettingsInspiration] = useState("");
+  const [settingsGender, setSettingsGender] = useState<"male" | "female" | "">("");
 
   const { toast } = useToast();
   const { addItem: addToCart } = useCart();
@@ -69,8 +72,23 @@ export default function AIStylist() {
       setSettingsStyle(userProfile.previewStyle || "");
       setSettingsMood(userProfile.previewMood || "");
       setSettingsInspiration(userProfile.previewInspiration || "");
+      setSettingsGender(userProfile.gender || "");
+      
+      // Check if configuration is complete
+      const hasAllSettings = userProfile.previewBodyDescription && 
+                            userProfile.previewStyle && 
+                            userProfile.previewMood && 
+                            userProfile.previewInspiration &&
+                            userProfile.gender;
+      if (hasAllSettings) {
+        setConfigurationComplete(true);
+        setShowConfigInPreview(false);
+      }
     }
   }, [userProfile]);
+
+  // Check if current settings are complete
+  const areSettingsComplete = settingsBody && settingsStyle && settingsMood && settingsInspiration && settingsGender;
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Partial<UserProfile>) => {
@@ -91,8 +109,26 @@ export default function AIStylist() {
       previewStyle: settingsStyle,
       previewMood: settingsMood,
       previewInspiration: settingsInspiration,
+      gender: settingsGender as "male" | "female" | undefined,
     });
+    setConfigurationComplete(true);
+    setShowConfigInPreview(false);
     setIsSettingsOpen(false);
+  };
+
+  const handleUseProfileSettings = () => {
+    if (userProfile) {
+      setSettingsBody(userProfile.previewBodyDescription || "");
+      setSettingsStyle(userProfile.previewStyle || "");
+      setSettingsMood(userProfile.previewMood || "");
+      setSettingsInspiration(userProfile.previewInspiration || "");
+      setSettingsGender(userProfile.gender || "");
+      
+      toast({
+        title: "Profile Settings Loaded",
+        description: "Your saved preferences have been applied",
+      });
+    }
   };
 
   const handleAddItem = (item: Item) => {
@@ -121,7 +157,11 @@ export default function AIStylist() {
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/assistant/generate-outfit-preview', {
         skus: selectedItems.map(i => i.sku),
-        modelType: 'athletic',
+        modelType: settingsBody.toLowerCase().replace(/\s+/g, '-'),
+        gender: settingsGender,
+        style: settingsStyle,
+        mood: settingsMood,
+        colorPalette: settingsInspiration,
         items: selectedItems.map(i => ({
           name: i.name,
           color: i.color,
@@ -241,7 +281,7 @@ export default function AIStylist() {
             </div>
           </div>
 
-          <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-4 border-2 border-dashed" data-testid="preview-area">
+          <div className="aspect-[3/4] bg-muted rounded-lg overflow-y-auto mb-4 border-2 border-dashed" data-testid="preview-area">
             {previewImage ? (
               <img
                 src={previewImage}
@@ -249,6 +289,113 @@ export default function AIStylist() {
                 className="w-full h-full object-cover"
                 data-testid="preview-image"
               />
+            ) : showConfigInPreview ? (
+              <div className="w-full h-full p-6 flex flex-col">
+                <h3 className="font-serif text-xl mb-4">Configure Your Virtual Try-On</h3>
+                
+                <div className="space-y-4 flex-1 overflow-y-auto">
+                  <div>
+                    <Label htmlFor="config-gender">Gender</Label>
+                    <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female")}>
+                      <SelectTrigger id="config-gender" data-testid="select-config-gender">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="config-body">Body Type</Label>
+                    <Select value={settingsBody} onValueChange={setSettingsBody}>
+                      <SelectTrigger id="config-body" data-testid="select-config-body">
+                        <SelectValue placeholder="Select body type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Athletic Build">Athletic Build</SelectItem>
+                        <SelectItem value="Petite">Petite</SelectItem>
+                        <SelectItem value="Curvy">Curvy</SelectItem>
+                        <SelectItem value="Tall & Slim">Tall & Slim</SelectItem>
+                        <SelectItem value="Plus Size">Plus Size</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="config-style">Style Preference</Label>
+                    <Select value={settingsStyle} onValueChange={setSettingsStyle}>
+                      <SelectTrigger id="config-style" data-testid="select-config-style">
+                        <SelectValue placeholder="Select style" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Minimalist">Minimalist</SelectItem>
+                        <SelectItem value="Streetwear">Streetwear</SelectItem>
+                        <SelectItem value="Vintage">Vintage</SelectItem>
+                        <SelectItem value="Elegant">Elegant</SelectItem>
+                        <SelectItem value="Casual">Casual</SelectItem>
+                        <SelectItem value="Bohemian">Bohemian</SelectItem>
+                        <SelectItem value="Sporty">Sporty</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="config-mood">Mood</Label>
+                    <Select value={settingsMood} onValueChange={setSettingsMood}>
+                      <SelectTrigger id="config-mood" data-testid="select-config-mood">
+                        <SelectValue placeholder="Select mood" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Confident">Confident</SelectItem>
+                        <SelectItem value="Relaxed">Relaxed</SelectItem>
+                        <SelectItem value="Energetic">Energetic</SelectItem>
+                        <SelectItem value="Sophisticated">Sophisticated</SelectItem>
+                        <SelectItem value="Playful">Playful</SelectItem>
+                        <SelectItem value="Professional">Professional</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="config-inspiration">Color Palette</Label>
+                    <Select value={settingsInspiration} onValueChange={setSettingsInspiration}>
+                      <SelectTrigger id="config-inspiration" data-testid="select-config-inspiration">
+                        <SelectValue placeholder="Select color palette" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Neutral Tones">Neutral Tones</SelectItem>
+                        <SelectItem value="Earth Tones">Earth Tones</SelectItem>
+                        <SelectItem value="Monochrome">Monochrome</SelectItem>
+                        <SelectItem value="Pastels">Pastels</SelectItem>
+                        <SelectItem value="Bold & Bright">Bold & Bright</SelectItem>
+                        <SelectItem value="Jewel Tones">Jewel Tones</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {userProfile && (
+                    <Button
+                      variant="outline"
+                      onClick={handleUseProfileSettings}
+                      className="w-full"
+                      data-testid="button-use-profile"
+                    >
+                      Use My Profile Settings
+                    </Button>
+                  )}
+                </div>
+
+                <Button
+                  onClick={handleSaveSettings}
+                  className="w-full mt-4"
+                  disabled={!areSettingsComplete}
+                  data-testid="button-save-config"
+                >
+                  Save Configuration
+                </Button>
+              </div>
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
                 <Wand2 className="w-12 h-12 mb-3 opacity-50" />
@@ -295,10 +442,11 @@ export default function AIStylist() {
                 onClick={() => setIsSelectItemsOpen(true)}
                 className="w-full"
                 variant="default"
+                disabled={!configurationComplete}
                 data-testid="button-add-items"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Items ({selectedItems.length})
+                {configurationComplete ? `Add Items (${selectedItems.length})` : 'Configure Settings First'}
               </Button>
             ) : (
               <Button
@@ -316,7 +464,7 @@ export default function AIStylist() {
                 ) : (
                   <>
                     <Wand2 className="w-4 h-4 mr-2" />
-                    Update Preview
+                    Update Virtual Try-On
                   </>
                 )}
               </Button>
@@ -459,9 +607,9 @@ export default function AIStylist() {
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-hidden flex flex-col">
-            <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as 'store' | 'collections')} className="flex-1 flex flex-col">
-              <div className="px-6 pt-4 pb-2 border-b">
+          <div className="flex-1 overflow-hidden flex flex-col min-h-0">
+            <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as 'store' | 'collections')} className="h-full flex flex-col">
+              <div className="px-6 pt-4 pb-2 border-b flex-shrink-0">
                 <TabsList className="w-full max-w-md">
                   <TabsTrigger value="store" className="flex-1" data-testid="tab-store">
                     Store Items
@@ -472,7 +620,7 @@ export default function AIStylist() {
                 </TabsList>
               </div>
 
-              <div className="px-6 py-4 border-b">
+              <div className="px-6 py-4 border-b flex-shrink-0">
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   <Badge
                     variant={selectedCategory === 'all' ? 'default' : 'outline'}
@@ -533,8 +681,8 @@ export default function AIStylist() {
                 </div>
               </div>
 
-              <TabsContent value="store" className="flex-1 overflow-y-auto px-6 py-4 m-0">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              <TabsContent value="store" className="overflow-y-auto px-6 py-4 m-0 flex-1">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4">
                   {filteredItems.map((item) => (
                     <Card
                       key={item.sku}
@@ -562,7 +710,7 @@ export default function AIStylist() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="collections" className="flex-1 overflow-y-auto px-6 py-4 m-0">
+              <TabsContent value="collections" className="overflow-y-auto px-6 py-4 m-0 flex-1">
                 {userCollections.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <Heart className="w-16 h-16 text-muted-foreground mb-4" />
@@ -572,7 +720,7 @@ export default function AIStylist() {
                     </p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4">
                     {filteredItems.map((item) => (
                       <Card
                         key={item.sku}
@@ -636,13 +784,30 @@ export default function AIStylist() {
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="max-w-md" data-testid="dialog-settings">
           <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">Configure preview</DialogTitle>
+            <DialogTitle className="font-serif text-2xl">
+              {previewImage ? "Update Try-On Parameters" : "Configure Virtual Try-On"}
+            </DialogTitle>
             <DialogDescription>
-              Set your preferences for how you want to see fashion content
+              {previewImage 
+                ? "Modify your preferences to regenerate the preview" 
+                : "Set your preferences for how you want to see fashion content"}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="settings-gender">Gender</Label>
+              <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female")}>
+                <SelectTrigger id="settings-gender" data-testid="select-settings-gender">
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div>
               <Label htmlFor="settings-body">Body Type</Label>
               <Select value={settingsBody} onValueChange={setSettingsBody}>
@@ -650,11 +815,11 @@ export default function AIStylist() {
                   <SelectValue placeholder="Select body type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Athletic Build">Athletic Build - Broad shoulders, defined muscles</SelectItem>
-                  <SelectItem value="Petite">Petite - Shorter stature, slender frame</SelectItem>
-                  <SelectItem value="Curvy">Curvy - Hourglass figure, fuller bust and hips</SelectItem>
-                  <SelectItem value="Tall & Slim">Tall & Slim - Tall stature, lean build</SelectItem>
-                  <SelectItem value="Plus Size">Plus Size - Fuller figure, comfortable fit</SelectItem>
+                  <SelectItem value="Athletic Build">Athletic Build</SelectItem>
+                  <SelectItem value="Petite">Petite</SelectItem>
+                  <SelectItem value="Curvy">Curvy</SelectItem>
+                  <SelectItem value="Tall & Slim">Tall & Slim</SelectItem>
+                  <SelectItem value="Plus Size">Plus Size</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -701,12 +866,12 @@ export default function AIStylist() {
                   <SelectValue placeholder="Select color palette" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Neutral Tones">Neutral Tones - Beige, white, black</SelectItem>
-                  <SelectItem value="Earth Tones">Earth Tones - Brown, olive, terracotta</SelectItem>
-                  <SelectItem value="Monochrome">Monochrome - Black and white</SelectItem>
-                  <SelectItem value="Pastels">Pastels - Soft pink, lavender, mint</SelectItem>
-                  <SelectItem value="Bold & Bright">Bold & Bright - Vibrant colors</SelectItem>
-                  <SelectItem value="Jewel Tones">Jewel Tones - Emerald, sapphire, ruby</SelectItem>
+                  <SelectItem value="Neutral Tones">Neutral Tones</SelectItem>
+                  <SelectItem value="Earth Tones">Earth Tones</SelectItem>
+                  <SelectItem value="Monochrome">Monochrome</SelectItem>
+                  <SelectItem value="Pastels">Pastels</SelectItem>
+                  <SelectItem value="Bold & Bright">Bold & Bright</SelectItem>
+                  <SelectItem value="Jewel Tones">Jewel Tones</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -714,9 +879,10 @@ export default function AIStylist() {
             <Button
               className="w-full"
               onClick={handleSaveSettings}
+              disabled={!areSettingsComplete}
               data-testid="button-save-settings"
             >
-              Save Preferences
+              {previewImage ? "Update Parameters" : "Save Configuration"}
             </Button>
           </div>
         </DialogContent>
