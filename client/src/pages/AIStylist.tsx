@@ -563,21 +563,8 @@ export default function AIStylist() {
       <Dialog open={isSelectItemsOpen} onOpenChange={setIsSelectItemsOpen}>
         <DialogContent className="max-w-full max-h-full h-screen w-screen m-0 p-0 overflow-hidden flex flex-col">
           <DialogHeader className="p-6 pb-4 border-b">
-            <div className="flex items-center justify-between">
-              <div>
-                <DialogTitle className="font-serif text-3xl">Build Your Outfit</DialogTitle>
-                <DialogDescription className="mt-1">Choose items from our collection or your saved pieces</DialogDescription>
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setIsSelectItemsOpen(false)}
-                className="rounded-full"
-                data-testid="button-close-modal"
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
+            <DialogTitle className="font-serif text-3xl">Build Your Outfit</DialogTitle>
+            <DialogDescription className="mt-1">Choose items from our collection or your saved pieces</DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 overflow-hidden flex flex-col min-h-0">
