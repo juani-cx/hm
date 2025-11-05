@@ -36,7 +36,6 @@ export default function AIStylist() {
   const [settingsBody, setSettingsBody] = useState("");
   const [settingsStyle, setSettingsStyle] = useState("");
   const [settingsMood, setSettingsMood] = useState("");
-  const [settingsInspiration, setSettingsInspiration] = useState("");
   const [settingsGender, setSettingsGender] = useState<"male" | "female" | "">("");
 
   const { toast } = useToast();
@@ -71,14 +70,12 @@ export default function AIStylist() {
       setSettingsBody(userProfile.previewBodyDescription || "");
       setSettingsStyle(userProfile.previewStyle || "");
       setSettingsMood(userProfile.previewMood || "");
-      setSettingsInspiration(userProfile.previewInspiration || "");
       setSettingsGender(userProfile.gender || "");
       
-      // Check if configuration is complete
+      // Check if configuration is complete (4 required fields)
       const hasAllSettings = userProfile.previewBodyDescription && 
                             userProfile.previewStyle && 
-                            userProfile.previewMood && 
-                            userProfile.previewInspiration &&
+                            userProfile.previewMood &&
                             userProfile.gender;
       if (hasAllSettings) {
         setConfigurationComplete(true);
@@ -87,8 +84,13 @@ export default function AIStylist() {
     }
   }, [userProfile]);
 
-  // Check if current settings are complete
-  const areSettingsComplete = settingsBody && settingsStyle && settingsMood && settingsInspiration && settingsGender;
+  // Check if current settings are complete (4 required fields)
+  const areSettingsComplete = settingsBody && settingsStyle && settingsMood && settingsGender;
+  
+  // Auto-enable Add Items when config is filled (and disable when incomplete)
+  useEffect(() => {
+    setConfigurationComplete(!!areSettingsComplete);
+  }, [areSettingsComplete]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Partial<UserProfile>) => {
@@ -108,7 +110,6 @@ export default function AIStylist() {
       previewBodyDescription: settingsBody,
       previewStyle: settingsStyle,
       previewMood: settingsMood,
-      previewInspiration: settingsInspiration,
       gender: settingsGender as "male" | "female" | undefined,
     });
     setConfigurationComplete(true);
@@ -121,7 +122,6 @@ export default function AIStylist() {
       setSettingsBody(userProfile.previewBodyDescription || "");
       setSettingsStyle(userProfile.previewStyle || "");
       setSettingsMood(userProfile.previewMood || "");
-      setSettingsInspiration(userProfile.previewInspiration || "");
       setSettingsGender(userProfile.gender || "");
       
       toast({
@@ -161,7 +161,6 @@ export default function AIStylist() {
         gender: settingsGender,
         style: settingsStyle,
         mood: settingsMood,
-        colorPalette: settingsInspiration,
         items: selectedItems.map(i => ({
           name: i.name,
           color: i.color,
@@ -281,7 +280,7 @@ export default function AIStylist() {
             </div>
           </div>
 
-          <div className="aspect-[3/4] bg-muted rounded-lg overflow-y-auto mb-4 border-2 border-dashed" data-testid="preview-area">
+          <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-4 border-2 border-dashed" data-testid="preview-area">
             {previewImage ? (
               <img
                 src={previewImage}
@@ -290,10 +289,10 @@ export default function AIStylist() {
                 data-testid="preview-image"
               />
             ) : showConfigInPreview ? (
-              <div className="w-full h-full p-6 flex flex-col">
+              <div className="w-full h-full p-6 flex flex-col justify-center">
                 <h3 className="font-serif text-xl mb-4">Configure Your Virtual Try-On</h3>
                 
-                <div className="space-y-4 flex-1 overflow-y-auto">
+                <div className="space-y-3">
                   <div>
                     <Label htmlFor="config-gender">Gender</Label>
                     <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female")}>
@@ -358,23 +357,6 @@ export default function AIStylist() {
                     </Select>
                   </div>
 
-                  <div>
-                    <Label htmlFor="config-inspiration">Color Palette</Label>
-                    <Select value={settingsInspiration} onValueChange={setSettingsInspiration}>
-                      <SelectTrigger id="config-inspiration" data-testid="select-config-inspiration">
-                        <SelectValue placeholder="Select color palette" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Neutral Tones">Neutral Tones</SelectItem>
-                        <SelectItem value="Earth Tones">Earth Tones</SelectItem>
-                        <SelectItem value="Monochrome">Monochrome</SelectItem>
-                        <SelectItem value="Pastels">Pastels</SelectItem>
-                        <SelectItem value="Bold & Bright">Bold & Bright</SelectItem>
-                        <SelectItem value="Jewel Tones">Jewel Tones</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
                   {userProfile && (
                     <Button
                       variant="outline"
@@ -386,15 +368,6 @@ export default function AIStylist() {
                     </Button>
                   )}
                 </div>
-
-                <Button
-                  onClick={handleSaveSettings}
-                  className="w-full mt-4"
-                  disabled={!areSettingsComplete}
-                  data-testid="button-save-config"
-                >
-                  Save Configuration
-                </Button>
               </div>
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
@@ -446,7 +419,7 @@ export default function AIStylist() {
                 data-testid="button-add-items"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                {configurationComplete ? `Add Items (${selectedItems.length})` : 'Configure Settings First'}
+                Add Items ({selectedItems.length})
               </Button>
             ) : (
               <Button
@@ -859,30 +832,13 @@ export default function AIStylist() {
               </Select>
             </div>
 
-            <div>
-              <Label htmlFor="settings-inspiration">Color Palette</Label>
-              <Select value={settingsInspiration} onValueChange={setSettingsInspiration}>
-                <SelectTrigger id="settings-inspiration" data-testid="select-inspiration">
-                  <SelectValue placeholder="Select color palette" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Neutral Tones">Neutral Tones</SelectItem>
-                  <SelectItem value="Earth Tones">Earth Tones</SelectItem>
-                  <SelectItem value="Monochrome">Monochrome</SelectItem>
-                  <SelectItem value="Pastels">Pastels</SelectItem>
-                  <SelectItem value="Bold & Bright">Bold & Bright</SelectItem>
-                  <SelectItem value="Jewel Tones">Jewel Tones</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             <Button
               className="w-full"
               onClick={handleSaveSettings}
               disabled={!areSettingsComplete}
               data-testid="button-save-settings"
             >
-              {previewImage ? "Update Parameters" : "Save Configuration"}
+              Save to Profile
             </Button>
           </div>
         </DialogContent>
