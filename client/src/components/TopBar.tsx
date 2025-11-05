@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers, Music, CreditCard } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, Home, Sparkles, Heart, Settings, HelpCircle, Layers, CreditCard } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { MusicPlayer } from "@/components/MusicPlayer";
 import hmLogo from '@assets/H&M-Logo_1762206118498.png';
@@ -17,8 +17,6 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
   const { items, setIsOpen: setCartOpen } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [, setLocation] = useLocation();
-
-  const [showMusicPlayer, setShowMusicPlayer] = useState(false);
   
   const menuItems = [
     { label: 'Flow Stories', icon: Home, onClick: () => setLocation('/') },
@@ -110,45 +108,36 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
               <User className="w-5 h-5" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-72">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+          <DropdownMenuContent 
+            align="end" 
+            className="w-80 bg-white dark:bg-background p-0 mt-2"
+            sideOffset={8}
+          >
+            <DropdownMenuLabel className="px-4 pt-4 pb-2">My Account</DropdownMenuLabel>
             
-            <DropdownMenuItem 
-              onSelect={(e) => {
-                e.preventDefault();
-                setShowMusicPlayer(!showMusicPlayer);
-              }}
-              className="cursor-pointer"
-              data-testid="menu-music"
-            >
-              <Music className="w-4 h-4 mr-2" />
-              Music for Shopping
-            </DropdownMenuItem>
+            <div className="border-t border-b py-2 bg-muted/30">
+              <MusicPlayer />
+            </div>
             
-            {showMusicPlayer && (
-              <div className="border-t mt-1">
-                <MusicPlayer />
-              </div>
-            )}
-            
-            <DropdownMenuItem 
-              onSelect={() => setLocation('/settings')}
-              className="cursor-pointer"
-              data-testid="menu-personalize"
-            >
-              <Settings className="w-4 h-4 mr-2" />
-              Personalize Experience
-            </DropdownMenuItem>
-            
-            <DropdownMenuItem 
-              onSelect={() => console.log('Payment options')}
-              className="cursor-pointer"
-              data-testid="menu-payment"
-            >
-              <CreditCard className="w-4 h-4 mr-2" />
-              Payment Options
-            </DropdownMenuItem>
+            <div className="py-2">
+              <DropdownMenuItem 
+                onSelect={() => setLocation('/settings')}
+                className="cursor-pointer mx-2 my-1"
+                data-testid="menu-personalize"
+              >
+                <Settings className="w-4 h-4 mr-3" />
+                Personalize Experience
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                onSelect={() => console.log('Payment options')}
+                className="cursor-pointer mx-2 my-1"
+                data-testid="menu-payment"
+              >
+                <CreditCard className="w-4 h-4 mr-3" />
+                Payment Options
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
