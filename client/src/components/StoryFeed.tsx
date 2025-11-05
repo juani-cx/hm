@@ -21,7 +21,7 @@ export function StoryFeed({ stories, onAISuggestionClick, showTopCollections = f
   const title = showTopCollections ? "Top Collections" : "Flow Stories";
   
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <div className="max-w-md mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <motion.div
           initial={{ opacity: 0 }}
