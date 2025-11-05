@@ -78,8 +78,14 @@ export default function CampaignArticle() {
       setSettingsMood(profile.previewMood || "");
       setSettingsInspiration(profile.previewInspiration || "");
       setSettingsPrompt(profile.previewCustomPrompt || "");
+      
+      if (profile.mediaPreview === 'video' && story?.videoRef) {
+        setIsVideoMode(true);
+      } else if (profile.mediaPreview === 'image') {
+        setIsVideoMode(false);
+      }
     }
-  }, [profile]);
+  }, [profile, story?.videoRef]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: Partial<UserProfile>) => {

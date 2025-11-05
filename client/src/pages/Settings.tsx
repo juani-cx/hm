@@ -54,6 +54,7 @@ export default function Settings() {
   const [topsSize, setTopsSize] = useState('M');
   const [bottomsSize, setBottomsSize] = useState('32W x 30L');
   const [fitPreference, setFitPreference] = useState(50);
+  const [gender, setGender] = useState<'male' | 'female' | undefined>();
 
   useEffect(() => {
     if (profile) {
@@ -64,6 +65,7 @@ export default function Settings() {
       setTopsSize(profile.topsSize || 'M');
       setBottomsSize(profile.bottomsSize || '32W x 30L');
       setFitPreference(profile.fitPreference ?? 50);
+      setGender(profile.gender);
     }
   }, [profile]);
 
@@ -104,6 +106,7 @@ export default function Settings() {
       topsSize,
       bottomsSize,
       fitPreference,
+      gender,
     });
   };
 
@@ -223,6 +226,34 @@ export default function Settings() {
                     data-testid="media-video"
                   >
                     Video
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Gender</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setGender('male')}
+                    className={`p-4 rounded-md text-sm font-medium border-2 transition-colors ${
+                      gender === 'male'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border bg-background hover-elevate'
+                    }`}
+                    data-testid="gender-male"
+                  >
+                    Man
+                  </button>
+                  <button
+                    onClick={() => setGender('female')}
+                    className={`p-4 rounded-md text-sm font-medium border-2 transition-colors ${
+                      gender === 'female'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border bg-background hover-elevate'
+                    }`}
+                    data-testid="gender-female"
+                  >
+                    Woman
                   </button>
                 </div>
               </div>
