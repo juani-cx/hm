@@ -103,6 +103,13 @@ export const userProfileSchema = z.object({
     itemSkus: z.array(z.string()),
     savedAt: z.number(),
   })).default([]),
+  aiStylistModel: z.string().default('clara-classic'),
+  curatedFeed: z.boolean().default(true),
+  favoriteStyles: z.array(z.string()).default([]),
+  mediaPreview: z.enum(['image', 'video']).default('image'),
+  topsSize: z.string().optional(),
+  bottomsSize: z.string().optional(),
+  fitPreference: z.number().min(0).max(100).default(50),
 });
 
 export const insertUserProfileSchema = userProfileSchema;

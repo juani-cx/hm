@@ -67,35 +67,12 @@ export function EditorialContent({ onTryAIStylist, onCreateCollection }: Editori
         ))}
       </div>
 
-      {/* Interactive CTAs */}
+      {/* Interactive CTA */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="space-y-4"
       >
-        <Card className="p-4 sm:p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
-          <div className="flex items-start gap-3 sm:gap-4">
-            <div className="p-2 sm:p-3 rounded-full bg-primary/10">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-serif font-semibold text-lg sm:text-xl mb-1 sm:mb-2">Try AI Stylist</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
-                Get personalized styling recommendations powered by AI. Tell us your style preferences and discover looks curated just for you.
-              </p>
-              <Button 
-                onClick={onTryAIStylist}
-                className="w-full sm:w-auto"
-                data-testid="button-try-ai-stylist"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Get Started
-              </Button>
-            </div>
-          </div>
-        </Card>
-
         <Card className="p-4 sm:p-6 bg-gradient-to-br from-accent/10 via-accent/5 to-background border-accent/20">
           <div className="flex items-start gap-3 sm:gap-4">
             <div className="p-2 sm:p-3 rounded-full bg-accent/10">

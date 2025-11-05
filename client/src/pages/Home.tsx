@@ -9,6 +9,9 @@ import { EditorialContent } from "@/components/EditorialContent";
 import { ShoppingCart } from "@/components/ShoppingCart";
 import { TopBar } from "@/components/TopBar";
 import { LoadingCard } from "@/components/LoadingCard";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
 import { fetchStories, updateProfile } from "@/lib/api";
 import heroImg from '@assets/generated_images/Hero_fashion_editorial_image_aaf760a6.png';
 
@@ -156,6 +159,30 @@ export default function Home() {
                 onAISuggestionClick={handleAISuggestionClick}
                 showTopCollections={true}
               />
+              
+              <div className="max-w-md mx-auto px-3 sm:px-4 pb-6">
+                <Card className="p-4 sm:p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="p-2 sm:p-3 rounded-full bg-primary/10">
+                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-serif font-semibold text-lg sm:text-xl mb-1 sm:mb-2">Try AI Stylist</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
+                        Get personalized styling recommendations powered by AI. Tell us your style preferences and discover looks curated just for you.
+                      </p>
+                      <Button 
+                        onClick={handleTryAIStylist}
+                        className="w-full sm:w-auto"
+                        data-testid="button-try-ai-stylist"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Get Started
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              </div>
               
               <EditorialContent
                 onTryAIStylist={handleTryAIStylist}
