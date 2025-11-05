@@ -3,10 +3,12 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2, Share2, Settings, Instagram, MessageCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2, Share2, Settings, Instagram, MessageCircle, Edit2 } from 'lucide-react';
 import { SiTiktok } from 'react-icons/si';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -17,6 +19,8 @@ import { useCart } from '@/contexts/CartContext';
 
 const USER_ID = 'default-user';
 
+type ItemCategory = 'all' | 'tops' | 'bottoms' | 'dresses' | 'outerwear' | 'accessories' | 'shoes';
+
 export default function AIStylist() {
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
   const [isSelectItemsOpen, setIsSelectItemsOpen] = useState(false);
@@ -24,6 +28,8 @@ export default function AIStylist() {
   const [isSharePanelOpen, setIsSharePanelOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<ItemCategory>('all');
+  const [currentTab, setCurrentTab] = useState<'store' | 'collections'>('store');
 
   const [settingsBody, setSettingsBody] = useState("");
   const [settingsStyle, setSettingsStyle] = useState("");
@@ -37,6 +43,11 @@ export default function AIStylist() {
     queryKey: ['/api/items'],
   });
 
+  const { data: userCollections = [] } = useQuery<Item[]>({
+    queryKey: ['/api/collections/items'],
+    enabled: currentTab === 'collections',
+  });
+
   const { data: userProfile } = useQuery<UserProfile>({
     queryKey: ['/api/profile', USER_ID],
     queryFn: async () => {
@@ -45,6 +56,12 @@ export default function AIStylist() {
       return res.json();
     },
   });
+
+  // Filter items based on category
+  const displayItems = currentTab === 'store' ? storeItems : userCollections;
+  const filteredItems = selectedCategory === 'all' 
+    ? displayItems 
+    : displayItems.filter(item => item.category === selectedCategory);
 
   useEffect(() => {
     if (userProfile) {
@@ -116,6 +133,11 @@ export default function AIStylist() {
     onSuccess: (data) => {
       setPreviewImage(data.imageUrl);
       setIsGenerating(false);
+      setIsSelectItemsOpen(false); // Close modal after generation
+      toast({
+        title: "Preview Generated",
+        description: "Your AI outfit preview is ready!",
+      });
     },
     onError: () => {
       setPreviewImage(null);
@@ -133,6 +155,10 @@ export default function AIStylist() {
     setIsGenerating(true);
     setPreviewImage(null);
     generatePreviewMutation.mutate();
+  };
+
+  const handleUpdatePreview = () => {
+    handleGeneratePreview();
   };
 
   const handleShareTo = (platform: string) => {
@@ -231,34 +257,66 @@ export default function AIStylist() {
             )}
           </div>
 
+          {previewImage && selectedItems.length > 0 && (
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-medium">Selected Items ({selectedItems.length})</p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsSelectItemsOpen(true)}
+                  data-testid="button-edit-items"
+                >
+                  <Edit2 className="w-3 h-3 mr-2" />
+                  Edit
+                </Button>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {selectedItems.map((item) => (
+                  <div key={item.sku} className="flex-shrink-0 w-20">
+                    <div className="aspect-square bg-muted rounded-md overflow-hidden">
+                      {item.images[0] && (
+                        <img
+                          src={item.images[0]}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-3">
-            <Button
-              onClick={() => setIsSelectItemsOpen(true)}
-              className="w-full"
-              variant="default"
-              data-testid="button-add-items"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Items ({selectedItems.length})
-            </Button>
-            
-            {selectedItems.length > 0 && (
+            {!previewImage ? (
               <Button
-                onClick={handleGeneratePreview}
+                onClick={() => setIsSelectItemsOpen(true)}
                 className="w-full"
                 variant="default"
-                disabled={isGenerating}
-                data-testid="button-generate-preview"
+                data-testid="button-add-items"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Items ({selectedItems.length})
+              </Button>
+            ) : (
+              <Button
+                onClick={handleUpdatePreview}
+                className="w-full"
+                variant="default"
+                disabled={isGenerating || selectedItems.length === 0}
+                data-testid="button-update-preview"
               >
                 {isGenerating ? (
                   <>
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Generating...
+                    Updating...
                   </>
                 ) : (
                   <>
                     <Wand2 className="w-4 h-4 mr-2" />
-                    Generate AI Preview
+                    Update Preview
                   </>
                 )}
               </Button>
@@ -382,37 +440,194 @@ export default function AIStylist() {
       </div>
 
       <Dialog open={isSelectItemsOpen} onOpenChange={setIsSelectItemsOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">Select Items</DialogTitle>
-            <DialogDescription>Choose items to add to your outfit</DialogDescription>
+        <DialogContent className="max-w-full max-h-full h-screen w-screen m-0 p-0 overflow-hidden flex flex-col">
+          <DialogHeader className="p-6 pb-4 border-b">
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="font-serif text-3xl">Build Your Outfit</DialogTitle>
+                <DialogDescription className="mt-1">Choose items from our collection or your saved pieces</DialogDescription>
+              </div>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setIsSelectItemsOpen(false)}
+                className="rounded-full"
+                data-testid="button-close-modal"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto px-1">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-4">
-              {storeItems.map((item) => (
-                <Card
-                  key={item.sku}
-                  className={`overflow-hidden cursor-pointer hover-elevate ${
-                    selectedItems.find(i => i.sku === item.sku) ? 'ring-2 ring-primary' : ''
-                  }`}
-                  onClick={() => handleAddItem(item)}
-                  data-testid={`item-${item.sku}`}
-                >
-                  <div className="aspect-[3/4] relative bg-muted">
-                    {item.images[0] && (
-                      <img
-                        src={item.images[0]}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
+
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <Tabs value={currentTab} onValueChange={(v) => setCurrentTab(v as 'store' | 'collections')} className="flex-1 flex flex-col">
+              <div className="px-6 pt-4 pb-2 border-b">
+                <TabsList className="w-full max-w-md">
+                  <TabsTrigger value="store" className="flex-1" data-testid="tab-store">
+                    Store Items
+                  </TabsTrigger>
+                  <TabsTrigger value="collections" className="flex-1" data-testid="tab-collections">
+                    My Collections
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+
+              <div className="px-6 py-4 border-b">
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  <Badge
+                    variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('all')}
+                    data-testid="filter-all"
+                  >
+                    All
+                  </Badge>
+                  <Badge
+                    variant={selectedCategory === 'tops' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('tops')}
+                    data-testid="filter-tops"
+                  >
+                    Tops
+                  </Badge>
+                  <Badge
+                    variant={selectedCategory === 'bottoms' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('bottoms')}
+                    data-testid="filter-bottoms"
+                  >
+                    Bottoms
+                  </Badge>
+                  <Badge
+                    variant={selectedCategory === 'dresses' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('dresses')}
+                    data-testid="filter-dresses"
+                  >
+                    Dresses
+                  </Badge>
+                  <Badge
+                    variant={selectedCategory === 'outerwear' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('outerwear')}
+                    data-testid="filter-outerwear"
+                  >
+                    Outerwear
+                  </Badge>
+                  <Badge
+                    variant={selectedCategory === 'accessories' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('accessories')}
+                    data-testid="filter-accessories"
+                  >
+                    Accessories
+                  </Badge>
+                  <Badge
+                    variant={selectedCategory === 'shoes' ? 'default' : 'outline'}
+                    className="cursor-pointer whitespace-nowrap"
+                    onClick={() => setSelectedCategory('shoes')}
+                    data-testid="filter-shoes"
+                  >
+                    Shoes
+                  </Badge>
+                </div>
+              </div>
+
+              <TabsContent value="store" className="flex-1 overflow-y-auto px-6 py-4 m-0">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {filteredItems.map((item) => (
+                    <Card
+                      key={item.sku}
+                      className={`overflow-hidden cursor-pointer hover-elevate ${
+                        selectedItems.find(i => i.sku === item.sku) ? 'ring-2 ring-primary' : ''
+                      }`}
+                      onClick={() => handleAddItem(item)}
+                      data-testid={`item-${item.sku}`}
+                    >
+                      <div className="aspect-[3/4] relative bg-muted">
+                        {item.images[0] && (
+                          <img
+                            src={item.images[0]}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+                        <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="collections" className="flex-1 overflow-y-auto px-6 py-4 m-0">
+                {userCollections.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                    <Heart className="w-16 h-16 text-muted-foreground mb-4" />
+                    <h3 className="font-semibold text-lg mb-2">No Saved Items Yet</h3>
+                    <p className="text-sm text-muted-foreground max-w-md">
+                      Items you save from campaigns and collections will appear here
+                    </p>
                   </div>
-                  <div className="p-3">
-                    <p className="font-medium text-sm line-clamp-2">{item.name}</p>
-                    <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {filteredItems.map((item) => (
+                      <Card
+                        key={item.sku}
+                        className={`overflow-hidden cursor-pointer hover-elevate ${
+                          selectedItems.find(i => i.sku === item.sku) ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={() => handleAddItem(item)}
+                        data-testid={`collection-item-${item.sku}`}
+                      >
+                        <div className="aspect-[3/4] relative bg-muted">
+                          {item.images[0] && (
+                            <img
+                              src={item.images[0]}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+                          <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+                        </div>
+                      </Card>
+                    ))}
                   </div>
-                </Card>
-              ))}
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <div className="p-6 border-t bg-background">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-sm">
+                  <span className="font-semibold">{selectedItems.length}</span> items selected
+                </div>
+              </div>
+              <Button
+                onClick={handleGeneratePreview}
+                size="lg"
+                disabled={isGenerating || selectedItems.length === 0}
+                data-testid="button-generate-from-modal"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Generating Preview...
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    Generate AI Preview
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </DialogContent>
