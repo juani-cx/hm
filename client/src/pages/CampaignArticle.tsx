@@ -424,7 +424,7 @@ export default function CampaignArticle() {
             size="icon"
             variant="ghost"
             className="absolute top-3 right-3 bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-0 w-9 h-9"
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => setLocation('/settings')}
             data-testid="button-settings"
           >
             <Settings className="w-5 h-5" />

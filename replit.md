@@ -15,13 +15,14 @@ The frontend is built with React 18 and TypeScript, using Vite for building and 
 The backend uses Express.js with TypeScript. It features RESTful APIs for stories, items, inventory, AI assistant interactions, and user profiles. Data is currently stored in-memory using `MemStorage` (with an interface for future PostgreSQL migration via Drizzle ORM). The AI Assistant System is a multi-agent architecture (Fashion, Business, Support) using OpenAI (GPT-4o via Replit AI Integrations) for intent-based routing and context-aware responses, with guidelines stored in Markdown files. An Inventory Service handles stock availability and similar product recommendations.
 
 ### Technical Decisions
-- GPT-4o for AI chat and GPT-image-1 for virtual try-on image generation (handling base64 outputs).
+- OpenAI API key (OPENAI_API_KEY_LUCAS) is used for GPT-4o chat completions and DALL-E 3 image generation.
 - In-memory storage for POC, with Drizzle ORM configured for PostgreSQL for production.
+- User settings are persisted in the database via UserProfile schema and accessible from all pages.
 - Agent guidelines are editable markdown files for flexibility.
 - AI features are prominent but non-intrusive, with staggered timings.
 - Cart items are uniquely identified by composite `${sku}-${size}` keys.
 - User behavior (add_to_cart, save_for_later, save_to_collection) is tracked for agent learning.
-- Virtual try-on generates 1024x1024 photorealistic previews.
+- Virtual try-on generates 1024x1024 photorealistic previews using DALL-E 3.
 
 ### UI/UX Decisions
 - Editorial typography: Playfair Display for headlines, Inter for UI text.
@@ -36,8 +37,10 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
 - **Flow Stories:** Curated editorial content featuring shoppable looks.
 - **AI-Powered Assistant:** Styling guidance, product recommendations, customer support.
 - **Collections:** Editorial model photography, interactive modules, and viewer with actions (Add to My Collection, Save for Later, Add to Cart, Virtual AI Assist).
-- **Magazine Article Viewer:** Immersive full-screen content experience with:
-  - Hero image with share, save, and favorite actions
+- **Magazine Article Viewer (Campaign Article):** Immersive full-screen content experience with:
+  - Hero image with settings, share, save, and favorite actions
+  - Settings icon navigates to centralized Settings page for persistent preferences
+  - Collection tags displayed below image (non-clickable, tag-style indicators)
   - Interactive image gallery with multiple viewing modes (magazine, board, virtual gallery) based on user preferences
   - AI image editing capabilities with custom prompt input
   - Video player support for editorial content
@@ -52,12 +55,21 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
 - **Virtual Try-On:** AI-generated outfit previews on various model avatars (Athletic, Petite, Curvy, Tall & Slim, Plus Size).
 - **AI Stylist Page:** Outfit builder with item selection, real-time outfit calculation, AI suggestions, and save/add-to-cart options.
 - **Shopping Cart:** Drawer overlay, quantity controls, remove items, subtotal/shipping/total, AI styling tips, and "Complete the Look" suggestions.
-- **User Profile Agent:** Learns and stores user preferences, style choices, and shopping behavior.
+- **User Profile & Settings:** Centralized settings page with persistent storage in database:
+  - AI Stylist Model selection (Clara, Sofia, Emma, Alex)
+  - Curated feed personalization toggle
+  - Favorite style preferences (Minimalist, Streetwear, Vintage, etc.)
+  - Media preview type (Image or Video)
+  - Clothing size preferences (Tops and Bottoms)
+  - Fit preference slider (Tighter to Looser)
+  - Preview configuration settings (Body, Style, Mood, Inspiration)
+  - All settings saved to database and synced across all pages
+  - Accessible via Settings icon in campaign articles and navigation
 
 ## External Dependencies
 
 ### Third-Party Services
-- **OpenAI (via Replit AI Integrations)**: Powers the contextual assistant (GPT-4o) and image generation (gpt-image-1).
+- **OpenAI**: Direct API integration using user's API key (OPENAI_API_KEY_LUCAS) for GPT-4o chat completions and DALL-E 3 image generation.
 - **Neon Database**: Serverless PostgreSQL for production data persistence (configured for migration).
 
 ### Key Libraries
