@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { HeroSection } from "@/components/HeroSection";
 import { StoryFeed } from "@/components/StoryFeed";
-import { AssistantOverlay } from "@/components/AssistantOverlay";
 import { QuickPreferences } from "@/components/QuickPreferences";
 import { EditorialContent } from "@/components/EditorialContent";
 import { ShoppingCart } from "@/components/ShoppingCart";
@@ -209,12 +208,6 @@ export default function Home() {
             onSaveToCollection={handleSaveToCollection}
           />
         </>
-      )}
-
-      {currentView !== 'hero' && (
-        <AssistantOverlay
-          suggestions={['Show me winter looks', 'What goes with jeans?', 'Sustainable options']}
-        />
       )}
     </div>
   );

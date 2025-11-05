@@ -1,10 +1,11 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/contexts/CartContext";
 import { GlobalCart } from "@/components/GlobalCart";
+import { AssistantOverlay } from "@/components/AssistantOverlay";
 import Home from "@/pages/Home";
 import AIStylist from "@/pages/AIStylist";
 import Settings from "@/pages/Settings";
@@ -33,14 +34,30 @@ function Router() {
   );
 }
 
+function AppContent() {
+  const [location] = useLocation();
+  const isHomePage = location === '/';
+
+  return (
+    <>
+      <Toaster />
+      <Router />
+      <GlobalCart />
+      {!isHomePage && (
+        <AssistantOverlay
+          suggestions={['Show me winter looks', 'What goes with jeans?', 'Sustainable options']}
+        />
+      )}
+    </>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>
         <TooltipProvider>
-          <Toaster />
-          <Router />
-          <GlobalCart />
+          <AppContent />
         </TooltipProvider>
       </CartProvider>
     </QueryClientProvider>
