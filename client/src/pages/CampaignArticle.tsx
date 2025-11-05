@@ -62,6 +62,10 @@ export default function CampaignArticle() {
     queryKey: ["/api/items"],
   });
 
+  const { data: allStories = [] } = useQuery<Story[]>({
+    queryKey: ["/api/stories"],
+  });
+
   const userId = "default-user";
   const { data: profile } = useQuery<UserProfile>({
     queryKey: ["/api/profile", userId],
@@ -377,6 +381,29 @@ export default function CampaignArticle() {
         onChange={handleFileChange}
       />
 
+      {allStories.length > 0 && (
+        <div className="border-b border-border">
+          <div className="max-w-6xl mx-auto px-4 py-3">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+              {allStories.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setLocation(`/campaign/${s.id}`)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    s.id === story.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted hover-elevate text-foreground'
+                  }`}
+                  data-testid={`nav-story-${s.id}`}
+                >
+                  {s.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-md mx-auto px-4 py-4">
         <h1 className="font-serif text-center text-3xl sm:text-4xl tracking-tight" data-testid="text-campaign-title">
           {story.title}
@@ -678,6 +705,37 @@ export default function CampaignArticle() {
             </div>
           </div>
         )}
+
+        <div className="my-8">
+          <Card 
+            className="p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20 cursor-pointer hover-elevate"
+            onClick={() => setLocation('/ai-stylist')}
+            data-testid="card-try-ai-stylist"
+          >
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-full bg-primary/10 flex-shrink-0">
+                <Sparkles className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-serif font-semibold text-xl mb-2">Try AI Stylist</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Get personalized styling recommendations powered by AI. Tell us your style preferences and discover looks curated just for you.
+                </p>
+                <Button 
+                  className="w-full sm:w-auto"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLocation('/ai-stylist');
+                  }}
+                  data-testid="button-get-started-stylist"
+                >
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Get Started
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
       <AnimatePresence>
