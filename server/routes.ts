@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { assistantService } from "./services/assistant";
 import { inventoryService } from "./services/inventory";
 import { insertUserProfileSchema, insertAssistantEventSchema } from "@shared/schema";
+import { generateImage, generateSlideshow } from "./services/mediaGeneration";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize assistant service
@@ -361,6 +362,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(event);
     } catch (error) {
       res.status(400).json({ error: "Invalid event data" });
+    }
+  });
+
+  // Media generation endpoints
+  app.post("/api/assistant/edit-image", async (req, res) => {
+    try {
+      const { prompt, collectionId, userId } = req.body;
+      
+      if (!prompt || !userId) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Generate the edited image
+      const imageUrl = await generateImage(prompt, "1024x1024");
+      
+      // Store the generated media in user profile
+      const profile = await storage.getUserProfile(userId);
+      if (profile) {
+        const generatedMedia = profile.generatedMedia || [];
+        generatedMedia.push({
+          id: `img_${Date.now()}`,
+          type: 'hero_edit',
+          prompt,
+          assets: [imageUrl],
+          collectionId,
+          createdAt: Date.now(),
+        });
+        
+        await storage.updateUserProfile(userId, { generatedMedia });
+      }
+      
+      res.json({ imageUrl });
+    } catch (error) {
+      console.error('Image edit error:', error);
+      res.status(500).json({ error: "Failed to edit image" });
+    }
+  });
+
+  app.post("/api/assistant/generate-slideshow", async (req, res) => {
+    try {
+      const { prompt, collectionId, userId, count = 3 } = req.body;
+      
+      if (!prompt || !userId) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Get user profile for preferences
+      const profile = await storage.getUserProfile(userId);
+      const userPreferences = profile
+        ? `${profile.previewStyle || ''} ${profile.previewMood || ''} ${profile.previewBodyDescription || ''}`.trim()
+        : '';
+
+      // Generate slideshow images
+      const images = await generateSlideshow(prompt, count, userPreferences);
+      
+      // Store the generated media in user profile
+      if (profile) {
+        const generatedMedia = profile.generatedMedia || [];
+        generatedMedia.push({
+          id: `slideshow_${Date.now()}`,
+          type: 'slideshow',
+          prompt,
+          assets: images,
+          collectionId,
+          createdAt: Date.now(),
+        });
+        
+        await storage.updateUserProfile(userId, { generatedMedia });
+      }
+      
+      res.json({ images });
+    } catch (error) {
+      console.error('Slideshow generation error:', error);
+      res.status(500).json({ error: "Failed to generate slideshow" });
     }
   });
 
