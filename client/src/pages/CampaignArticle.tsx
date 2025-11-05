@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { TopBar } from "@/components/TopBar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 export default function CampaignArticle() {
   const [, params] = useRoute("/campaign/:id");
@@ -51,6 +52,31 @@ export default function CampaignArticle() {
   const userId = "default-user";
   const { data: profile } = useQuery<UserProfile>({
     queryKey: ["/api/profile", userId],
+  });
+
+  // Load settings from profile when profile is loaded
+  useEffect(() => {
+    if (profile) {
+      setSettingsBody(profile.previewBodyDescription || "");
+      setSettingsStyle(profile.previewStyle || "");
+      setSettingsMood(profile.previewMood || "");
+      setSettingsInspiration(profile.previewInspiration || "");
+      setSettingsPrompt(profile.previewCustomPrompt || "");
+    }
+  }, [profile]);
+
+  // Mutation to update profile
+  const updateProfileMutation = useMutation({
+    mutationFn: async (updates: Partial<UserProfile>) => {
+      return await apiRequest(`/api/profile/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profile", userId] });
+    },
   });
 
   if (storyLoading || !story) {
@@ -114,6 +140,14 @@ export default function CampaignArticle() {
   };
 
   const handleSaveSettings = () => {
+    updateProfileMutation.mutate({
+      previewBodyDescription: settingsBody,
+      previewStyle: settingsStyle,
+      previewMood: settingsMood,
+      previewInspiration: settingsInspiration,
+      previewCustomPrompt: settingsPrompt,
+    });
+    
     toast({
       title: "Settings Saved",
       description: "Your preview preferences have been updated",

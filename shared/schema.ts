@@ -75,6 +75,11 @@ export const userProfileSchema = z.object({
   bodyType: z.enum(['athletic', 'petite', 'curvy', 'tall_slim', 'plus_size']).optional(),
   productPagesStyle: z.enum(['magazine', 'board', 'virtual_gallery']).optional(),
   insightsPreference: z.enum(['fashion_recommendations', 'pricing_first', 'try_on']).optional(),
+  previewBodyDescription: z.string().optional(),
+  previewStyle: z.string().optional(),
+  previewMood: z.string().optional(),
+  previewInspiration: z.string().optional(),
+  previewCustomPrompt: z.string().optional(),
 });
 
 export const insertUserProfileSchema = userProfileSchema;
