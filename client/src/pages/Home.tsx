@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { HeroSection } from "@/components/HeroSection";
 import { StoryFeed } from "@/components/StoryFeed";
 import { AssistantOverlay } from "@/components/AssistantOverlay";
@@ -23,6 +24,7 @@ interface CartItem {
 }
 
 export default function Home() {
+  const [, setLocation] = useLocation();
   const [currentView, setCurrentView] = useState<View>('hero');
   const [showPreferences, setShowPreferences] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
@@ -91,8 +93,7 @@ export default function Home() {
   };
 
   const handleTryAIStylist = () => {
-    console.log('Try AI Stylist');
-    // Open assistant overlay with stylist context
+    setLocation('/ai-stylist');
   };
 
   const handleCreateCollection = () => {
