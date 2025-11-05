@@ -3,11 +3,9 @@ import fs from "fs/promises";
 import path from "path";
 import { type AgentRegistry, type RoutingConfig } from "@shared/schema";
 
-// This is using Replit's AI Integrations service
-// the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+// Using user's own OpenAI API key
 const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 interface AgentGuidelines {
@@ -216,28 +214,26 @@ Return only a JSON array of 3 suggestion strings, nothing else.`;
 
   async generateImage(prompt: string): Promise<{ imageUrl: string }> {
     try {
-      console.log('Generating image with OpenAI image generation API');
+      console.log('Generating image with DALL-E 3');
       console.log('Prompt:', prompt.substring(0, 100) + '...');
       
       const response = await openai.images.generate({
-        model: "gpt-image-1",
+        model: "dall-e-3",
         prompt: prompt,
         n: 1,
         size: "1024x1024",
+        quality: "standard",
       });
 
-      // gpt-image-1 always returns base64 format (b64_json), not URLs
-      if (!response.data || !response.data[0]?.b64_json) {
+      // DALL-E 3 returns URL by default
+      if (!response.data || !response.data[0]?.url) {
         console.error('No image data in response. Full response:', JSON.stringify(response));
         throw new Error('No image data returned from OpenAI');
       }
       
-      const base64Image = response.data[0].b64_json;
-
-      // Convert base64 to data URL format for browser display
-      const imageUrl = `data:image/png;base64,${base64Image}`;
+      const imageUrl = response.data[0].url;
       
-      console.log('Image generated successfully, base64 length:', base64Image.length);
+      console.log('Image generated successfully, URL:', imageUrl.substring(0, 50) + '...');
       
       return { imageUrl };
     } catch (error) {
