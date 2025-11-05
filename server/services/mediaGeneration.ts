@@ -1,10 +1,9 @@
 import OpenAI from "openai";
 import { Buffer } from "node:buffer";
 
-// This uses Replit's AI Integrations service for OpenAI access
+// Using user's own OpenAI API key
 const openai = new OpenAI({
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 // Generate a new image based on prompt
@@ -13,17 +12,18 @@ export async function generateImage(
   size: "1024x1024" | "512x512" | "256x256" = "1024x1024"
 ): Promise<string> {
   const response = await openai.images.generate({
-    model: "gpt-image-1",
+    model: "dall-e-3",
     prompt,
     size,
+    quality: "standard",
   });
   
-  if (!response.data || !response.data[0]?.b64_json) {
+  if (!response.data || !response.data[0]?.url) {
     throw new Error("Failed to generate image");
   }
   
-  const base64 = response.data[0].b64_json;
-  return `data:image/png;base64,${base64}`;
+  const imageUrl = response.data[0].url;
+  return imageUrl;
 }
 
 // Generate multiple images for slideshow
