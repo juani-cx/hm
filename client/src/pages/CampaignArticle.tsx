@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRoute, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -458,7 +458,10 @@ export default function CampaignArticle() {
 
       {/* Fullscreen Image Gallery */}
       <Dialog open={isImageViewerOpen} onOpenChange={setIsImageViewerOpen}>
-        <DialogContent className="max-w-screen-xl h-screen p-0 bg-black">
+        <DialogContent className="max-w-screen-xl h-screen p-0 bg-black" aria-describedby="image-gallery-description">
+          <DialogDescription id="image-gallery-description" className="sr-only">
+            Fullscreen image gallery viewer for campaign images
+          </DialogDescription>
           <div className="relative w-full h-full flex items-center justify-center">
             <Button
               size="icon"
@@ -513,7 +516,10 @@ export default function CampaignArticle() {
       {/* Video Dialog */}
       {story.videoRef && (
         <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-          <DialogContent className="max-w-4xl p-0">
+          <DialogContent className="max-w-4xl p-0" aria-describedby="video-description">
+            <DialogDescription id="video-description" className="sr-only">
+              Campaign collection video player
+            </DialogDescription>
             <div className="relative aspect-video bg-black">
               <video
                 src={story.videoRef}
@@ -535,6 +541,9 @@ export default function CampaignArticle() {
               <Wand2 className="w-5 h-5 text-primary" />
               AI Styling Assistant
             </DialogTitle>
+            <DialogDescription>
+              Customize your view with AI-powered styling options including mood, body type, and style preferences
+            </DialogDescription>
           </DialogHeader>
           
           <Tabs defaultValue="style" className="mt-4">
