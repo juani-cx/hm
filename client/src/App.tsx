@@ -10,6 +10,7 @@ import AIStylist from "@/pages/AIStylist";
 import Collections from "@/pages/Collections";
 import Collection from "@/pages/Collection";
 import MagazineArticle from "@/pages/MagazineArticle";
+import CampaignArticle from "@/pages/CampaignArticle";
 import OnboardingPage from "@/pages/onboarding";
 import ProfilePage from "@/pages/profile";
 import NotFound from "@/pages/not-found";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/collections" component={Collections} />
       <Route path="/collections/:id" component={Collection} />
       <Route path="/magazine/:id" component={MagazineArticle} />
+      <Route path="/campaign/:id" component={CampaignArticle} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useLocation } from "wouter";
 
 interface StoryCardProps {
   id: string;
@@ -6,14 +7,24 @@ interface StoryCardProps {
   imageUrl: string;
   lookCount: number;
   tags?: string[];
-  onClick: () => void;
+  onClick?: () => void;
 }
 
-export function StoryCard({ title, imageUrl, lookCount, tags = [], onClick }: StoryCardProps) {
+export function StoryCard({ id, title, imageUrl, lookCount, tags = [], onClick }: StoryCardProps) {
+  const [, setLocation] = useLocation();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      setLocation(`/campaign/${id}`);
+    }
+  };
+
   return (
     <motion.div
       whileTap={{ scale: 0.98 }}
-      onClick={onClick}
+      onClick={handleClick}
       className="relative aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow"
       data-testid={`card-story-${title.toLowerCase().replace(/\s/g, '-')}`}
     >
