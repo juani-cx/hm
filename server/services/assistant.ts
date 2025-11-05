@@ -227,12 +227,12 @@ Return only a JSON array of 3 suggestion strings, nothing else.`;
       });
 
       // gpt-image-1 always returns base64 format (b64_json), not URLs
-      const base64Image = response.data[0]?.b64_json;
-      
-      if (!base64Image) {
-        console.error('No base64 image in response. Full response:', JSON.stringify(response));
+      if (!response.data || !response.data[0]?.b64_json) {
+        console.error('No image data in response. Full response:', JSON.stringify(response));
         throw new Error('No image data returned from OpenAI');
       }
+      
+      const base64Image = response.data[0].b64_json;
 
       // Convert base64 to data URL format for browser display
       const imageUrl = `data:image/png;base64,${base64Image}`;

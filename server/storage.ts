@@ -39,6 +39,7 @@ export interface IStorage {
   // UserProfile
   getUserProfile(userId: string): Promise<UserProfile | undefined>;
   createOrUpdateUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile | undefined>;
   
   // AssistantEvents (logging)
   logAssistantEvent(event: InsertAssistantEvent): Promise<AssistantEvent>;
@@ -141,6 +142,16 @@ export class MemStorage implements IStorage {
   async createOrUpdateUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
     this.userProfiles.set(profile.userId, profile);
     return profile;
+  }
+
+  async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile | undefined> {
+    const existing = this.userProfiles.get(userId);
+    if (!existing) {
+      return undefined;
+    }
+    const updated = { ...existing, ...updates };
+    this.userProfiles.set(userId, updated);
+    return updated;
   }
 
   // AssistantEvents

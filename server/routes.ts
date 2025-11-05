@@ -171,6 +171,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/profile/:userId", async (req, res) => {
+    try {
+      const profile = await storage.updateUserProfile(req.params.userId, req.body);
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found" });
+      }
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
   // Assistant
   app.post("/api/assistant/chat", async (req, res) => {
     try {
@@ -269,7 +281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Fetch selected items
       const items = await Promise.all(skus.map(sku => storage.getItem(sku)));
-      const validItems = items.filter(Boolean);
+      const validItems = items.filter((item): item is NonNullable<typeof item> => item !== null && item !== undefined);
 
       if (validItems.length === 0) {
         return res.json({ suggestions: [] });

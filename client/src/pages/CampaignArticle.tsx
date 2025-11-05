@@ -32,6 +32,15 @@ export default function CampaignArticle() {
   // AI Prompt state
   const [aiPromptQuestion, setAiPromptQuestion] = useState("");
   
+  // Loading states
+  const [imageGenerating, setImageGenerating] = useState(false);
+  const [slideshowGenerating, setSlideshowGenerating] = useState(false);
+  
+  // Generated content state
+  const [generatedHeroImage, setGeneratedHeroImage] = useState<string | null>(null);
+  const [slideshowImages, setSlideshowImages] = useState<string[]>([]);
+  const [usingSlideshowMode, setUsingSlideshowMode] = useState(false);
+  
   // Settings/Preview Configuration state
   const [settingsBody, setSettingsBody] = useState("");
   const [settingsStyle, setSettingsStyle] = useState("");
@@ -127,10 +136,24 @@ export default function CampaignArticle() {
   });
   const lookItems = Array.from(lookItemsMap.values());
 
-  const currentImage = story.images[currentImageIndex];
+  // Determine which images to display based on mode
+  const displayImages = usingSlideshowMode && slideshowImages.length > 0 
+    ? slideshowImages 
+    : story.images;
+  
+  const currentImage = generatedHeroImage || displayImages[currentImageIndex];
 
   const handleCarouselClick = () => {
-    if (story.images.length > 1) {
+    // If we have slideshow images, cycle through them
+    if (usingSlideshowMode && slideshowImages.length > 1) {
+      const nextIndex = (currentImageIndex + 1) % slideshowImages.length;
+      setCurrentImageIndex(nextIndex);
+      toast({
+        title: "Next slideshow image",
+        description: `Showing image ${nextIndex + 1} of ${slideshowImages.length}`,
+      });
+    } else if (story.images.length > 1) {
+      // Otherwise cycle through original images
       const nextIndex = (currentImageIndex + 1) % story.images.length;
       setCurrentImageIndex(nextIndex);
       toast({
@@ -220,15 +243,90 @@ export default function CampaignArticle() {
     }
   };
 
-  const handleAskAI = () => {
+  const handleAskAI = async () => {
     if (!aiPromptQuestion.trim()) return;
     
-    toast({
-      title: "AI is thinking...",
-      description: "Getting personalized insights about this collection",
-    });
-    setAiPromptQuestion("");
+    setImageGenerating(true);
     setIsAIPromptOpen(false);
+    
+    toast({
+      title: "AI is generating...",
+      description: "Creating your personalized image",
+    });
+    
+    try {
+      const response = await apiRequest("POST", "/api/assistant/edit-image", {
+        prompt: aiPromptQuestion,
+        userId,
+        collectionId: story.id,
+      }) as unknown as { imageUrl: string };
+      
+      setGeneratedHeroImage(response.imageUrl);
+      setIsVideoMode(false); // Switch to image mode to show the generated image
+      
+      toast({
+        title: "Image ready!",
+        description: "Your personalized image has been generated",
+      });
+    } catch (error) {
+      console.error("Image generation error:", error);
+      toast({
+        title: "Generation failed",
+        description: "Failed to generate image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setImageGenerating(false);
+      setAiPromptQuestion("");
+    }
+  };
+
+  const handleGenerateSlideshow = async () => {
+    setSlideshowGenerating(true);
+    
+    toast({
+      title: "Generating slideshow...",
+      description: "Creating personalized images for you",
+    });
+    
+    try {
+      // Build prompt from user preferences
+      const promptParts = [
+        `Fashion collection ${story.title}`,
+        settingsBody && `on ${settingsBody}`,
+        settingsStyle && `in ${settingsStyle} style`,
+        settingsMood && `with ${settingsMood} mood`,
+      ].filter(Boolean);
+      
+      const prompt = promptParts.join(', ');
+      
+      const response = await apiRequest("POST", "/api/assistant/generate-slideshow", {
+        prompt,
+        userId,
+        collectionId: story.id,
+        count: 4,
+      }) as unknown as { images: string[] };
+      
+      setSlideshowImages(response.images);
+      setUsingSlideshowMode(true);
+      setCurrentImageIndex(0);
+      setIsVideoMode(false);
+      setGeneratedHeroImage(null); // Clear any single generated image
+      
+      toast({
+        title: "Slideshow ready!",
+        description: `${response.images.length} personalized images generated`,
+      });
+    } catch (error) {
+      console.error("Slideshow generation error:", error);
+      toast({
+        title: "Generation failed",
+        description: "Failed to generate slideshow. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSlideshowGenerating(false);
+    }
   };
 
   const handleSaveSettings = () => {
@@ -303,6 +401,17 @@ export default function CampaignArticle() {
               className="w-full h-full object-cover"
               data-testid="img-hero"
             />
+          )}
+          
+          {(imageGenerating || slideshowGenerating) && (
+            <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                <p className="text-white text-sm">
+                  {imageGenerating ? "Generating image..." : "Creating slideshow..."}
+                </p>
+              </div>
+            </div>
           )}
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -395,9 +504,9 @@ export default function CampaignArticle() {
               </div>
             </div>
 
-            {story.images.length > 1 && (
+            {displayImages.length > 1 && !isVideoMode && (
               <div className="flex justify-center gap-1.5 mt-4">
-                {story.images.map((_, idx) => (
+                {displayImages.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
@@ -621,10 +730,10 @@ export default function CampaignArticle() {
                     <Button 
                       className="flex-1"
                       onClick={handleAskAI}
-                      disabled={!aiPromptQuestion.trim()}
+                      disabled={!aiPromptQuestion.trim() || imageGenerating}
                       data-testid="button-ask-ai"
                     >
-                      Ask AI
+                      {imageGenerating ? "Generating..." : "Ask AI"}
                     </Button>
                     <Button 
                       variant="outline"
@@ -633,6 +742,34 @@ export default function CampaignArticle() {
                     >
                       Cancel
                     </Button>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <p className="text-sm font-medium mb-3">Quick Actions</p>
+                    <div className="grid grid-cols-2 gap-2 mb-4">
+                      <Button
+                        variant="outline"
+                        onClick={handleGenerateSlideshow}
+                        disabled={slideshowGenerating}
+                        className="w-full"
+                        data-testid="button-generate-slideshow"
+                      >
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        {slideshowGenerating ? "Generating..." : "Generate Slideshow"}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setIsAIPromptOpen(false);
+                          setLocation("/ai-stylist");
+                        }}
+                        className="w-full"
+                        data-testid="button-open-ai-stylist"
+                      >
+                        <Wand2 className="w-4 h-4 mr-2" />
+                        Open AI Stylist
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="pt-4 border-t">

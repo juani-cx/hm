@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2 } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2, Search } from 'lucide-react';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { TopBar } from '@/components/TopBar';
 import { useToast } from '@/hooks/use-toast';
-import type { Item } from '@shared/schema';
+import type { Item, UserProfile } from '@shared/schema';
 
 interface AISuggestion {
   text: string;
@@ -23,20 +26,171 @@ const MODEL_AVATARS = [
   { id: 'plus', name: 'Plus Size', description: 'Fuller figure, comfortable fit' },
 ];
 
+const CATEGORIES = [
+  { id: 'all', label: 'All Items' },
+  { id: 'tops', label: 'Tops' },
+  { id: 'bottoms', label: 'Bottoms' },
+  { id: 'dresses', label: 'Dresses' },
+  { id: 'outerwear', label: 'Outerwear' },
+  { id: 'accessories', label: 'Accessories' },
+  { id: 'shoes', label: 'Shoes' },
+];
+
+const OCCASIONS = ['casual', 'formal', 'business', 'party', 'sport'];
+const COLOR_FAMILIES = ['black', 'white', 'gray', 'brown', 'beige', 'red', 'blue', 'green', 'yellow', 'pink', 'purple', 'multicolor'];
+const PRICE_RANGES = [
+  { id: 'all', label: 'All Prices', min: 0, max: Infinity },
+  { id: 'under50', label: 'Under $50', min: 0, max: 50 },
+  { id: '50-100', label: '$50-$100', min: 50, max: 100 },
+  { id: '100-200', label: '$100-$200', min: 100, max: 200 },
+  { id: 'over200', label: 'Over $200', min: 200, max: Infinity },
+];
+
+const USER_ID = 'default-user';
+
 export default function AIStylist() {
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState(MODEL_AVATARS[0].id);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [selectedOccasion, setSelectedOccasion] = useState<string>('all');
+  const [selectedColorFamily, setSelectedColorFamily] = useState<string>('all');
+  const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all');
+  
+  const hasSeededRef = useRef(false);
+
+  const { toast } = useToast();
 
   const { data: storeItems = [] } = useQuery<Item[]>({
     queryKey: ['/api/items'],
   });
 
+  const { data: userProfile, isLoading: isLoadingProfile } = useQuery<UserProfile>({
+    queryKey: ['/api/profile', USER_ID],
+    queryFn: async () => {
+      const res = await fetch(`/api/profile/${USER_ID}`);
+      if (!res.ok) throw new Error('Failed to fetch profile');
+      return res.json();
+    },
+  });
+
+  useEffect(() => {
+    if (!hasSeededRef.current && userProfile && (!userProfile.savedCollections || userProfile.savedCollections.length === 0) && storeItems.length > 0) {
+      hasSeededRef.current = true;
+      const demoSkus = ['SKU001', 'SKU002', 'SKU005', 'SKU007'];
+      const demoItems = storeItems.filter(item => demoSkus.includes(item.sku));
+      
+      if (demoItems.length > 0) {
+        updateProfileMutation.mutate({
+          savedCollections: demoItems.map(item => ({
+            collectionId: item.sku,
+            collectionTitle: item.name,
+            itemSkus: [item.sku],
+            savedAt: Date.now(),
+          })),
+        });
+      }
+    }
+  }, [userProfile, storeItems]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const filteredItems = useMemo(() => {
+    let items = [...storeItems];
+
+    if (debouncedSearch) {
+      const query = debouncedSearch.toLowerCase();
+      items = items.filter(item =>
+        item.name.toLowerCase().includes(query) ||
+        item.color.toLowerCase().includes(query) ||
+        item.material.toLowerCase().includes(query)
+      );
+    }
+
+    if (selectedOccasion !== 'all') {
+      items = items.filter(item => item.occasion?.includes(selectedOccasion as any));
+    }
+
+    if (selectedColorFamily !== 'all') {
+      items = items.filter(item => item.colorFamily === selectedColorFamily);
+    }
+
+    if (selectedPriceRange !== 'all') {
+      const range = PRICE_RANGES.find(r => r.id === selectedPriceRange);
+      if (range) {
+        items = items.filter(item => item.price >= range.min && item.price < range.max);
+      }
+    }
+
+    return items;
+  }, [storeItems, debouncedSearch, selectedOccasion, selectedColorFamily, selectedPriceRange]);
+
+  const itemsByCategory = useMemo(() => {
+    const groups: Record<string, Item[]> = {
+      all: filteredItems,
+    };
+
+    CATEGORIES.forEach(cat => {
+      if (cat.id !== 'all') {
+        groups[cat.id] = filteredItems.filter(item => item.category === cat.id);
+      }
+    });
+
+    return groups;
+  }, [filteredItems]);
+
+  const collectionItems = useMemo(() => {
+    if (!userProfile?.savedCollections) return [];
+    const allSkus = userProfile.savedCollections.flatMap(c => c.itemSkus);
+    return storeItems.filter(item => allSkus.includes(item.sku));
+  }, [userProfile, storeItems]);
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (updates: Partial<UserProfile>) => {
+      const response = await apiRequest('PATCH', `/api/profile/${USER_ID}`, updates);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/profile', USER_ID] });
+    },
+  });
+
+  const removeFromCollectionMutation = useMutation({
+    mutationFn: async (sku: string) => {
+      const updatedCollections = (userProfile?.savedCollections || [])
+        .map(collection => ({
+          ...collection,
+          itemSkus: collection.itemSkus.filter(itemSku => itemSku !== sku),
+        }))
+        .filter(collection => collection.itemSkus.length > 0);
+      
+      const response = await apiRequest('PATCH', `/api/profile/${USER_ID}`, {
+        savedCollections: updatedCollections,
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/profile', USER_ID] });
+      toast({
+        title: "Removed from Collection",
+        description: "Item has been removed from your collection",
+      });
+    },
+  });
+
   const skuList = selectedItems.map(i => i.sku).join(',');
   
-  const { data: aiSuggestions, refetch: refetchSuggestions } = useQuery<{ suggestions: AISuggestion[] }>({
+  const { data: aiSuggestions } = useQuery<{ suggestions: AISuggestion[] }>({
     queryKey: ['/api/assistant/stylist-suggestions', skuList],
     queryFn: async () => {
       if (!skuList) return { suggestions: [] };
@@ -58,6 +212,10 @@ export default function AIStylist() {
     setSelectedItems(selectedItems.filter(i => i.sku !== sku));
   };
 
+  const handleRemoveFromCollection = (sku: string) => {
+    removeFromCollectionMutation.mutate(sku);
+  };
+
   const generatePreviewMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest('POST', '/api/assistant/generate-outfit-preview', {
@@ -72,12 +230,10 @@ export default function AIStylist() {
       return response.json();
     },
     onSuccess: (data) => {
-      console.log('Preview generated:', data);
       setPreviewImage(data.imageUrl);
       setIsGenerating(false);
     },
-    onError: (error) => {
-      console.error('Preview generation failed:', error);
+    onError: () => {
       setPreviewImage(null);
       setIsGenerating(false);
       toast({
@@ -95,15 +251,40 @@ export default function AIStylist() {
     generatePreviewMutation.mutate();
   };
 
-  const { toast } = useToast();
-
   const getItemImage = (item: Item) => item.images?.[0] || '';
+
+  const renderItemGrid = (items: Item[]) => (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pb-4">
+      {items.map((item) => (
+        <Card 
+          key={item.sku}
+          className="overflow-hidden hover-elevate cursor-pointer"
+          onClick={() => handleAddItem(item)}
+          data-testid={`item-${item.sku}`}
+        >
+          <div className="aspect-[3/4] relative bg-muted">
+            {getItemImage(item) && (
+              <img
+                src={getItemImage(item)}
+                alt={item.name}
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+          <div className="p-3">
+            <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+            <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+            <p className="text-xs text-muted-foreground capitalize">{item.material}</p>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
       <TopBar />
       
-      {/* Page Header */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
           <div className="flex items-center justify-between">
@@ -122,7 +303,6 @@ export default function AIStylist() {
 
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-7xl">
         <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Outfit Builder - Main Area */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             <Card className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
@@ -156,40 +336,141 @@ export default function AIStylist() {
                         </TabsTrigger>
                       </TabsList>
                       
-                      <TabsContent value="store" className="mt-4">
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pb-4">
-                          {storeItems.map((item) => (
-                            <Card 
-                              key={item.sku}
-                              className="overflow-hidden hover-elevate cursor-pointer"
-                              onClick={() => handleAddItem(item)}
-                              data-testid={`item-${item.sku}`}
-                            >
-                              <div className="aspect-[3/4] relative bg-muted">
-                                {getItemImage(item) && (
-                                  <img
-                                    src={getItemImage(item)}
-                                    alt={item.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                )}
-                              </div>
-                              <div className="p-3">
-                                <p className="font-medium text-sm line-clamp-2">{item.name}</p>
-                                <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
-                                <p className="text-xs text-muted-foreground capitalize">{item.material}</p>
-                              </div>
-                            </Card>
-                          ))}
+                      <TabsContent value="store" className="mt-4 space-y-4">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search by name, color, or material..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9"
+                            data-testid="input-search"
+                          />
                         </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <Select value={selectedOccasion} onValueChange={setSelectedOccasion}>
+                            <SelectTrigger data-testid="select-occasion">
+                              <SelectValue placeholder="Occasion" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Occasions</SelectItem>
+                              {OCCASIONS.map(occ => (
+                                <SelectItem key={occ} value={occ} className="capitalize">
+                                  {occ}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <Select value={selectedColorFamily} onValueChange={setSelectedColorFamily}>
+                            <SelectTrigger data-testid="select-color">
+                              <SelectValue placeholder="Color" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Colors</SelectItem>
+                              {COLOR_FAMILIES.map(color => (
+                                <SelectItem key={color} value={color} className="capitalize">
+                                  {color}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+
+                          <Select value={selectedPriceRange} onValueChange={setSelectedPriceRange}>
+                            <SelectTrigger data-testid="select-price">
+                              <SelectValue placeholder="Price Range" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {PRICE_RANGES.map(range => (
+                                <SelectItem key={range.id} value={range.id}>
+                                  {range.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <Accordion type="single" collapsible defaultValue="all" className="w-full">
+                          {CATEGORIES.map(category => {
+                            const items = itemsByCategory[category.id] || [];
+                            if (items.length === 0 && category.id !== 'all') return null;
+                            
+                            return (
+                              <AccordionItem 
+                                key={category.id} 
+                                value={category.id}
+                                data-testid={`accordion-category-${category.id}`}
+                              >
+                                <AccordionTrigger className="text-sm font-medium">
+                                  {category.label} ({items.length})
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {items.length > 0 ? (
+                                    renderItemGrid(items)
+                                  ) : (
+                                    <p className="text-sm text-muted-foreground text-center py-8">
+                                      No items found in this category
+                                    </p>
+                                  )}
+                                </AccordionContent>
+                              </AccordionItem>
+                            );
+                          })}
+                        </Accordion>
                       </TabsContent>
                       
                       <TabsContent value="collection" className="mt-4">
-                        <div className="text-center py-12 text-muted-foreground">
-                          <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                          <p>Your saved collection is empty</p>
-                          <p className="text-sm mt-2">Save items from stories to see them here</p>
-                        </div>
+                        {isLoadingProfile ? (
+                          <div className="text-center py-12">
+                            <p className="text-muted-foreground">Loading your collection...</p>
+                          </div>
+                        ) : collectionItems.length === 0 ? (
+                          <div className="text-center py-12 text-muted-foreground">
+                            <Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p>Your saved collection is empty</p>
+                            <p className="text-sm mt-2">Save items from stories to see them here</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto pb-4">
+                            {collectionItems.map((item) => (
+                              <Card 
+                                key={item.sku}
+                                className="overflow-hidden relative group"
+                                data-testid={`collection-item-${item.sku}`}
+                              >
+                                <Button
+                                  size="icon"
+                                  variant="destructive"
+                                  className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7"
+                                  onClick={() => handleRemoveFromCollection(item.sku)}
+                                  data-testid={`button-remove-collection-${item.sku}`}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                                <div 
+                                  className="cursor-pointer"
+                                  onClick={() => handleAddItem(item)}
+                                >
+                                  <div className="aspect-[3/4] relative bg-muted">
+                                    {getItemImage(item) && (
+                                      <img
+                                        src={getItemImage(item)}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    )}
+                                  </div>
+                                  <div className="p-3">
+                                    <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+                                    <p className="text-sm text-muted-foreground mt-1">${item.price}</p>
+                                    <p className="text-xs text-muted-foreground capitalize">{item.material}</p>
+                                  </div>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        )}
                       </TabsContent>
                     </Tabs>
                   </SheetContent>
@@ -273,16 +554,13 @@ export default function AIStylist() {
             </Card>
           </div>
 
-          {/* AI Suggestions Panel */}
           <div className="space-y-4 sm:space-y-6">
-            {/* Virtual Try-On Preview */}
             <Card className="p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-3 sm:mb-4">
                 <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 <h3 className="text-base sm:text-lg font-semibold">Virtual Try-On</h3>
               </div>
 
-              {/* Model Selection */}
               <div className="mb-3 sm:mb-4">
                 <p className="text-xs sm:text-sm font-medium mb-2 sm:mb-3">Select Model</p>
                 <div className="space-y-2">
@@ -304,7 +582,6 @@ export default function AIStylist() {
                 </div>
               </div>
 
-              {/* Preview Area */}
               <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-3 sm:mb-4" data-testid="preview-area">
                 {previewImage ? (
                   <img
@@ -321,7 +598,6 @@ export default function AIStylist() {
                 )}
               </div>
 
-              {/* Generate Button */}
               <Button
                 onClick={handleGeneratePreview}
                 disabled={selectedItems.length === 0 || isGenerating}
@@ -375,7 +651,6 @@ export default function AIStylist() {
               )}
             </Card>
 
-            {/* Quick Style Guide */}
             <Card className="p-4 sm:p-6">
               <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Style Guide</h3>
               <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
