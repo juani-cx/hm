@@ -5,7 +5,7 @@ import { type AgentRegistry, type RoutingConfig } from "@shared/schema";
 
 // Using user's own OpenAI API key
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY_LUCAS
 });
 
 interface AgentGuidelines {

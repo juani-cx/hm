@@ -381,29 +381,6 @@ export default function CampaignArticle() {
         onChange={handleFileChange}
       />
 
-      {allStories.length > 0 && (
-        <div className="border-b border-border">
-          <div className="max-w-6xl mx-auto px-4 py-3">
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide">
-              {allStories.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setLocation(`/campaign/${s.id}`)}
-                  className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    s.id === story.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted hover-elevate text-foreground'
-                  }`}
-                  data-testid={`nav-story-${s.id}`}
-                >
-                  {s.title}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="max-w-md mx-auto px-4 py-4">
         <h1 className="font-serif text-center text-3xl sm:text-4xl tracking-tight" data-testid="text-campaign-title">
           {story.title}
@@ -549,6 +526,26 @@ export default function CampaignArticle() {
             )}
           </div>
         </div>
+
+        {allStories.length > 0 && (
+          <div className="mt-4">
+            <div className="flex flex-wrap gap-2 justify-center">
+              {allStories.map((s) => (
+                <div
+                  key={s.id}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                    s.id === story.id
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-foreground'
+                  }`}
+                  data-testid={`tag-story-${s.id}`}
+                >
+                  {s.title}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <p className="text-center text-sm text-muted-foreground mt-3">
           Add items to your outfit first

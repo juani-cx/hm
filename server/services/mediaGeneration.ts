@@ -3,7 +3,7 @@ import { Buffer } from "node:buffer";
 
 // Using user's own OpenAI API key
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY_LUCAS
 });
 
 // Generate a new image based on prompt
