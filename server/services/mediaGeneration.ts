@@ -11,11 +11,13 @@ export async function generateImage(
   prompt: string,
   size: "1024x1024" | "512x512" | "256x256" = "1024x1024"
 ): Promise<string> {
+  const enhancedPrompt = `Professional fashion photography, studio lighting, high-end photoshoot quality, ${prompt}, photorealistic, sharp focus, professional model, clean studio background, magazine quality, 8k resolution`;
+  
   const response = await openai.images.generate({
     model: "dall-e-3",
-    prompt,
+    prompt: enhancedPrompt,
     size,
-    quality: "standard",
+    quality: "hd",
   });
   
   if (!response.data || !response.data[0]?.url) {

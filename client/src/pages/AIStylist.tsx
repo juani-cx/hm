@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2, Share2, Settings, Instagram, MessageCircle } from 'lucide-react';
 import { SiTiktok } from 'react-icons/si';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -78,7 +79,15 @@ export default function AIStylist() {
   };
 
   const handleAddItem = (item: Item) => {
-    if (!selectedItems.find(i => i.sku === item.sku)) {
+    const isSelected = selectedItems.find(i => i.sku === item.sku);
+    
+    if (isSelected) {
+      setSelectedItems(selectedItems.filter(i => i.sku !== item.sku));
+      toast({
+        title: "Item Removed",
+        description: `${item.name} removed from your outfit`,
+      });
+    } else {
       setSelectedItems([...selectedItems, item]);
       toast({
         title: "Item Added",
@@ -378,7 +387,7 @@ export default function AIStylist() {
             <DialogTitle className="font-serif text-2xl">Select Items</DialogTitle>
             <DialogDescription>Choose items to add to your outfit</DialogDescription>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto px-1">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-4">
               {storeItems.map((item) => (
                 <Card
@@ -420,47 +429,71 @@ export default function AIStylist() {
 
           <div className="space-y-4 mt-4">
             <div>
-              <Label htmlFor="settings-body">Body</Label>
-              <Input
-                id="settings-body"
-                placeholder="Shorter stature, slender frame"
-                value={settingsBody}
-                onChange={(e) => setSettingsBody(e.target.value)}
-                data-testid="input-settings-body"
-              />
+              <Label htmlFor="settings-body">Body Type</Label>
+              <Select value={settingsBody} onValueChange={setSettingsBody}>
+                <SelectTrigger id="settings-body" data-testid="select-body">
+                  <SelectValue placeholder="Select body type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Athletic Build">Athletic Build - Broad shoulders, defined muscles</SelectItem>
+                  <SelectItem value="Petite">Petite - Shorter stature, slender frame</SelectItem>
+                  <SelectItem value="Curvy">Curvy - Hourglass figure, fuller bust and hips</SelectItem>
+                  <SelectItem value="Tall & Slim">Tall & Slim - Tall stature, lean build</SelectItem>
+                  <SelectItem value="Plus Size">Plus Size - Fuller figure, comfortable fit</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <Label htmlFor="settings-style">Style</Label>
-              <Input
-                id="settings-style"
-                placeholder="Minimal fashion"
-                value={settingsStyle}
-                onChange={(e) => setSettingsStyle(e.target.value)}
-                data-testid="input-settings-style"
-              />
+              <Label htmlFor="settings-style">Style Preference</Label>
+              <Select value={settingsStyle} onValueChange={setSettingsStyle}>
+                <SelectTrigger id="settings-style" data-testid="select-style">
+                  <SelectValue placeholder="Select style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Minimalist">Minimalist</SelectItem>
+                  <SelectItem value="Streetwear">Streetwear</SelectItem>
+                  <SelectItem value="Vintage">Vintage</SelectItem>
+                  <SelectItem value="Elegant">Elegant</SelectItem>
+                  <SelectItem value="Casual">Casual</SelectItem>
+                  <SelectItem value="Bohemian">Bohemian</SelectItem>
+                  <SelectItem value="Sporty">Sporty</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
               <Label htmlFor="settings-mood">Mood</Label>
-              <Input
-                id="settings-mood"
-                placeholder="Happy summer"
-                value={settingsMood}
-                onChange={(e) => setSettingsMood(e.target.value)}
-                data-testid="input-settings-mood"
-              />
+              <Select value={settingsMood} onValueChange={setSettingsMood}>
+                <SelectTrigger id="settings-mood" data-testid="select-mood">
+                  <SelectValue placeholder="Select mood" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Confident">Confident</SelectItem>
+                  <SelectItem value="Relaxed">Relaxed</SelectItem>
+                  <SelectItem value="Energetic">Energetic</SelectItem>
+                  <SelectItem value="Sophisticated">Sophisticated</SelectItem>
+                  <SelectItem value="Playful">Playful</SelectItem>
+                  <SelectItem value="Professional">Professional</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <Label htmlFor="settings-inspiration">Inspiration</Label>
-              <Input
-                id="settings-inspiration"
-                placeholder="Image, music, video"
-                value={settingsInspiration}
-                onChange={(e) => setSettingsInspiration(e.target.value)}
-                data-testid="input-settings-inspiration"
-              />
+              <Label htmlFor="settings-inspiration">Color Palette</Label>
+              <Select value={settingsInspiration} onValueChange={setSettingsInspiration}>
+                <SelectTrigger id="settings-inspiration" data-testid="select-inspiration">
+                  <SelectValue placeholder="Select color palette" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Neutral Tones">Neutral Tones - Beige, white, black</SelectItem>
+                  <SelectItem value="Earth Tones">Earth Tones - Brown, olive, terracotta</SelectItem>
+                  <SelectItem value="Monochrome">Monochrome - Black and white</SelectItem>
+                  <SelectItem value="Pastels">Pastels - Soft pink, lavender, mint</SelectItem>
+                  <SelectItem value="Bold & Bright">Bold & Bright - Vibrant colors</SelectItem>
+                  <SelectItem value="Jewel Tones">Jewel Tones - Emerald, sapphire, ruby</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <Button

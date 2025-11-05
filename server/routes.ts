@@ -256,8 +256,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const modelDescription = modelDescriptions[modelType] || modelDescriptions.athletic;
 
-      // Generate the image using AI
-      const prompt = `High-quality fashion photography of a professional model with ${modelDescription}, wearing: ${outfitDescription}. Full body shot, studio lighting, neutral background, fashion catalog style, realistic, professional.`;
+      // Generate the image using AI - simpler prompt since generateImage adds enhancement
+      const prompt = `Full body shot of a ${modelDescription} fashion model wearing ${outfitDescription}, neutral background, professional fashion catalog style`;
 
       console.log('Generating outfit preview with prompt:', prompt);
 
