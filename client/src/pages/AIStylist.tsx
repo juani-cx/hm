@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2, Share2, Settings, Instagram, MessageCircle, Edit2 } from 'lucide-react';
+import { Sparkles, Plus, X, ShoppingBag, Heart, Wand2, Share2, Settings, Instagram, MessageCircle, Edit2, User, UserRound, UserX, Dumbbell, Triangle, Hourglass, RectangleVertical, Users } from 'lucide-react';
 import { SiTiktok } from 'react-icons/si';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -269,73 +269,153 @@ export default function AIStylist() {
                 )}
               </>
             ) : showConfigInPreview ? (
-              <div className="w-full h-full p-6 flex flex-col justify-center">
-                <h3 className="font-serif text-xl mb-4">Configure Your Virtual Try-On</h3>
+              <div className="w-full h-full p-6 flex flex-col justify-center overflow-y-auto">
+                <div className="flex items-center gap-2 mb-6">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  <h3 className="font-serif text-xl font-semibold">Virtual Try-On</h3>
+                </div>
                 
-                <div className="space-y-3">
+                <div className="space-y-6">
                   <div>
-                    <Label htmlFor="config-gender">Gender</Label>
-                    <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female" | "mannequin")}>
-                      <SelectTrigger id="config-gender" data-testid="select-config-gender">
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="mannequin">No Gender (Mannequin)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-sm font-semibold mb-3 block">Gender</Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        onClick={() => setSettingsGender("male")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsGender === "male" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-gender-male"
+                      >
+                        <User className="w-6 h-6" />
+                        <span className="text-xs font-medium">Male</span>
+                      </button>
+                      <button
+                        onClick={() => setSettingsGender("female")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsGender === "female" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-gender-female"
+                      >
+                        <UserRound className="w-6 h-6" />
+                        <span className="text-xs font-medium">Female</span>
+                      </button>
+                      <button
+                        onClick={() => setSettingsGender("mannequin")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsGender === "mannequin" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-gender-mannequin"
+                      >
+                        <UserX className="w-6 h-6" />
+                        <span className="text-xs font-medium">No Gender</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="config-body">Body Type</Label>
-                    <Select value={settingsBody} onValueChange={setSettingsBody}>
-                      <SelectTrigger id="config-body" data-testid="select-config-body">
-                        <SelectValue placeholder="Select body type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Athletic Build">Athletic Build</SelectItem>
-                        <SelectItem value="Petite">Petite</SelectItem>
-                        <SelectItem value="Curvy">Curvy</SelectItem>
-                        <SelectItem value="Tall & Slim">Tall & Slim</SelectItem>
-                        <SelectItem value="Plus Size">Plus Size</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-sm font-semibold mb-3 block">Body Type</Label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        onClick={() => setSettingsBody("Athletic Build")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsBody === "Athletic Build" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-body-athletic"
+                      >
+                        <Dumbbell className="w-6 h-6" />
+                        <span className="text-xs font-medium">Athletic</span>
+                      </button>
+                      <button
+                        onClick={() => setSettingsBody("Petite")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsBody === "Petite" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-body-petite"
+                      >
+                        <Triangle className="w-6 h-6" />
+                        <span className="text-xs font-medium">Petite</span>
+                      </button>
+                      <button
+                        onClick={() => setSettingsBody("Curvy")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsBody === "Curvy" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-body-curvy"
+                      >
+                        <Hourglass className="w-6 h-6" />
+                        <span className="text-xs font-medium">Curvy</span>
+                      </button>
+                      <button
+                        onClick={() => setSettingsBody("Tall & Slim")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsBody === "Tall & Slim" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-body-tall"
+                      >
+                        <RectangleVertical className="w-6 h-6" />
+                        <span className="text-xs font-medium">Tall & Slim</span>
+                      </button>
+                      <button
+                        onClick={() => setSettingsBody("Plus Size")}
+                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                          settingsBody === "Plus Size" 
+                            ? "border-primary bg-primary/5 text-primary" 
+                            : "border-border bg-background"
+                        }`}
+                        data-testid="button-body-plus"
+                      >
+                        <Users className="w-6 h-6" />
+                        <span className="text-xs font-medium">Plus Size</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="config-style">Style Preference</Label>
-                    <Select value={settingsStyle} onValueChange={setSettingsStyle}>
-                      <SelectTrigger id="config-style" data-testid="select-config-style">
-                        <SelectValue placeholder="Select style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Minimalist">Minimalist</SelectItem>
-                        <SelectItem value="Streetwear">Streetwear</SelectItem>
-                        <SelectItem value="Vintage">Vintage</SelectItem>
-                        <SelectItem value="Elegant">Elegant</SelectItem>
-                        <SelectItem value="Casual">Casual</SelectItem>
-                        <SelectItem value="Bohemian">Bohemian</SelectItem>
-                        <SelectItem value="Sporty">Sporty</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-sm font-semibold mb-3 block">Style Preference</Label>
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                      {['Casual', 'Bohemian', 'Minimalist', 'Streetwear', 'Vintage', 'Elegant', 'Sporty'].map((style) => (
+                        <Badge
+                          key={style}
+                          variant={settingsStyle === style ? 'default' : 'outline'}
+                          className="cursor-pointer whitespace-nowrap px-4 py-2"
+                          onClick={() => setSettingsStyle(style)}
+                          data-testid={`badge-style-${style.toLowerCase()}`}
+                        >
+                          {style}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="config-mood">Mood</Label>
-                    <Select value={settingsMood} onValueChange={setSettingsMood}>
-                      <SelectTrigger id="config-mood" data-testid="select-config-mood">
-                        <SelectValue placeholder="Select mood" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Confident">Confident</SelectItem>
-                        <SelectItem value="Relaxed">Relaxed</SelectItem>
-                        <SelectItem value="Energetic">Energetic</SelectItem>
-                        <SelectItem value="Sophisticated">Sophisticated</SelectItem>
-                        <SelectItem value="Playful">Playful</SelectItem>
-                        <SelectItem value="Professional">Professional</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className="text-sm font-semibold mb-3 block">Mood</Label>
+                    <div className="flex gap-2 overflow-x-auto pb-2">
+                      {['Confident', 'Playful', 'Relaxed', 'Professional', 'Energetic', 'Sophisticated'].map((mood) => (
+                        <Badge
+                          key={mood}
+                          variant={settingsMood === mood ? 'default' : 'outline'}
+                          className="cursor-pointer whitespace-nowrap px-4 py-2"
+                          onClick={() => setSettingsMood(mood)}
+                          data-testid={`badge-mood-${mood.toLowerCase()}`}
+                        >
+                          {mood}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
 
                   {userProfile && (
