@@ -56,7 +56,7 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onDismiss()}>
       <DialogContent 
-        className="max-w-md"
+        className="max-w-md h-[90vh] max-h-[844px] p-0 flex flex-col gap-0"
         data-testid="onboarding-wizard"
       >
         <DialogTitle className="sr-only">
@@ -69,15 +69,24 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
           Step {step} of 4: Configure your preferences for a personalized experience
         </DialogDescription>
         
-        <div className="space-y-6">
+        {/* Fixed Header */}
+        <div className="flex-shrink-0 px-6 pt-6 pb-4 border-b">
           <div className="text-sm text-muted-foreground">
             Onboarding 1-5
           </div>
+          <h2 className="font-serif text-2xl sm:text-3xl mt-2">
+            {step === 1 && "Desired experience"}
+            {step === 2 && "Size and flow"}
+            {step === 3 && "Product pages & collections"}
+            {step === 4 && "Insights preferences"}
+          </h2>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
 
           {step === 1 && (
             <div className="space-y-6">
-              <h2 className="font-serif text-3xl">Desired experience</h2>
-              
               <div className="space-y-3">
                 <button
                   onClick={() => updatePreference('desiredExperience', 'ultra_personalized')}
@@ -180,8 +189,6 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
 
           {step === 2 && (
             <div className="space-y-6">
-              <h2 className="font-serif text-3xl">Size and flow</h2>
-              
               <div>
                 <Label className="text-sm font-semibold mb-3 block">Gender</Label>
                 <div className="grid grid-cols-3 gap-2">
@@ -354,8 +361,6 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
 
           {step === 3 && (
             <div className="space-y-6">
-              <h2 className="font-serif text-3xl">Product pages & collections</h2>
-              
               <div className="space-y-3">
                 <button
                   onClick={() => updatePreference('productPagesStyle', 'magazine')}
@@ -401,8 +406,6 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
 
           {step === 4 && (
             <div className="space-y-6">
-              <h2 className="font-serif text-3xl">Insights preferences</h2>
-              
               <div className="space-y-3">
                 <button
                   onClick={() => updatePreference('insightsPreference', 'fashion_recommendations')}
@@ -445,8 +448,11 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
               </div>
             </div>
           )}
+        </div>
 
-          <div className="flex items-center justify-between gap-4 pt-4 border-t">
+        {/* Fixed Footer */}
+        <div className="flex-shrink-0 px-6 py-4 border-t bg-background">
+          <div className="flex items-center justify-between gap-4">
             <button
               onClick={handleSkip}
               className="text-sm font-medium hover-elevate px-4 py-2 rounded-md"
