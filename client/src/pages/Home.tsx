@@ -12,7 +12,7 @@ import { OnboardingWizard, type OnboardingPreferences } from "@/components/Onboa
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
-import { fetchStories, updateProfile } from "@/lib/api";
+import { fetchStories, updateProfile, fetchProfile } from "@/lib/api";
 import heroImg from '@assets/generated_images/Hero_fashion_editorial_image_aaf760a6.png';
 
 type View = 'hero' | 'feed';
@@ -38,11 +38,35 @@ export default function Home() {
   });
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // Fetch user profile to get gender preference
+  const { data: userProfile } = useQuery({
+    queryKey: ['/api/profile', userId],
+    queryFn: () => fetchProfile(userId),
+  });
+
   // Fetch stories from API
-  const { data: stories, isLoading: storiesLoading } = useQuery({
+  const { data: rawStories, isLoading: storiesLoading } = useQuery({
     queryKey: ['/api/stories'],
     queryFn: fetchStories,
     enabled: currentView === 'feed',
+  });
+
+  // Transform stories based on gender preference
+  const stories = rawStories?.map(story => {
+    const gender = userProfile?.gender;
+    let imageUrl = story.imageUrl;
+
+    // Use gender-specific images if available
+    if (gender === 'male' && story.maleImages && story.maleImages.length > 0) {
+      imageUrl = story.maleImages[0];
+    } else if (gender === 'female' && story.femaleImages && story.femaleImages.length > 0) {
+      imageUrl = story.femaleImages[0];
+    }
+
+    return {
+      ...story,
+      imageUrl
+    };
   });
 
   // Auto-open onboarding wizard after 2 seconds on every home page visit (demo mode)

@@ -532,6 +532,8 @@ Beneath, the foundation of any autumn wardrobe: our White Turtleneck in 100% org
 This collection represents more than clothing—it's an invitation to embrace the season with intention, choosing pieces that honor both craft and planet. Each item has been selected to complement the others, creating endless possibilities for personal expression while minimizing environmental impact.`,
       lookIds: [lookIds[0]],
       images: ["/generated_images/Story_card_autumn_look_7a4bbbf6.png", "/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
+      femaleImages: ["/generated_images/Story_card_autumn_look_7a4bbbf6.png"],
+      maleImages: ["/generated_images/Male_autumn_essentials_trench_coat_2a809354.png"],
       tags: ["Sustainability", "Fall"],
       lookCount: 2
     },
@@ -546,6 +548,8 @@ We've reimagined casual wear through the lens of sustainability, proving that en
 This is summer dressing at its finest—uncomplicated, authentic, and aligned with your values. It's about creating space for life's moments while treading lightly on the earth.`,
       lookIds: [lookIds[1]],
       images: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
+      femaleImages: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
+      maleImages: ["/generated_images/Male_summer_casual_outfit_fae64d47.png"],
       tags: ["Fresh", "Summer"],
       lookCount: 1
     },
@@ -560,6 +564,8 @@ This season, we invite you to embrace a slower, more intentional approach to dre
 Spring Garden represents fashion's future: thoughtful, sustainable, and deeply connected to the natural world. It's an invitation to bloom alongside the season, expressing your most vibrant self while nurturing the planet.`,
       lookIds: [lookIds[2]],
       images: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
+      femaleImages: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
+      maleImages: ["/generated_images/Male_spring_garden_look_28619890.png"],
       tags: ["Floral", "Sustainable"],
       lookCount: 1
     },
@@ -574,6 +580,8 @@ The Wide-Leg Trousers complete this triumvirate, offering a sophisticated silhou
 This collection celebrates the evolution of workwear, honoring tradition while pushing boundaries. These are investment pieces designed to support your ambitions, crafted with attention to detail that speaks to your own commitment to excellence. Because true professional power comes not from conformity, but from authentic self-expression grounded in quality and values.`,
       lookIds: [lookIds[3]],
       images: ["/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
+      femaleImages: ["/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
+      maleImages: ["/generated_images/Male_workwear_blazer_look_1bca3e0c.png"],
       tags: ["Professional", "Tailored"],
       lookCount: 1
     },

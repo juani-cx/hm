@@ -48,6 +48,8 @@ export const storySchema = z.object({
   narrativeMd: z.string().optional(),
   lookIds: z.array(z.string()),
   images: z.array(z.string()),
+  femaleImages: z.array(z.string()).optional(),
+  maleImages: z.array(z.string()).optional(),
   videoRef: z.string().optional(),
   campaignRef: z.string().optional(),
   tags: z.array(z.string()).optional(),
