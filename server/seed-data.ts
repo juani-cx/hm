@@ -37,7 +37,7 @@ export async function seedData() {
     {
       sku: "SKU003",
       name: "Wool Scarf",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Beige_wool_scarf_product_bd9462cf.png"],
       price: 35,
       sizes: ["One Size"],
       color: "Beige",
@@ -82,7 +82,7 @@ export async function seedData() {
     {
       sku: "SKU006",
       name: "Floral Midi Dress",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Floral_midi_dress_product_bd176bd1.png"],
       price: 79,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Multicolor",
@@ -97,7 +97,7 @@ export async function seedData() {
     {
       sku: "SKU007",
       name: "Tailored Blazer",
-      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      images: ["/generated_images/Navy_tailored_blazer_product_b2b39374.png"],
       price: 129,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Navy",
@@ -112,7 +112,7 @@ export async function seedData() {
     {
       sku: "SKU008",
       name: "Silk Blouse",
-      images: ["/generated_images/Product_basic_tee_7cb6d64a.png"],
+      images: ["/generated_images/Cream_silk_blouse_product_73677d24.png"],
       price: 69,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Cream",
@@ -127,7 +127,7 @@ export async function seedData() {
     {
       sku: "SKU009",
       name: "Wide-Leg Trousers",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/Black_wide-leg_trousers_product_4a36eac6.png"],
       price: 69,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Black",
@@ -142,7 +142,7 @@ export async function seedData() {
     {
       sku: "SKU010",
       name: "Striped Cotton T-Shirt",
-      images: ["/generated_images/Product_basic_tee_7cb6d64a.png"],
+      images: ["/generated_images/Striped_cotton_t-shirt_product_1da93eda.png"],
       price: 19,
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       color: "Blue/White",
@@ -157,7 +157,7 @@ export async function seedData() {
     {
       sku: "SKU011",
       name: "Black Ankle Boots",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/Black_ankle_boots_product_795461dc.png"],
       price: 89,
       sizes: ["36", "37", "38", "39", "40", "41"],
       color: "Black",
@@ -172,7 +172,7 @@ export async function seedData() {
     {
       sku: "SKU012",
       name: "Cashmere Cardigan",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Gray_cashmere_cardigan_product_09938aa5.png"],
       price: 149,
       sizes: ["S", "M", "L", "XL"],
       color: "Gray",
@@ -187,7 +187,7 @@ export async function seedData() {
     {
       sku: "SKU013",
       name: "Pencil Skirt",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/Black_pencil_skirt_product_ee3c025a.png"],
       price: 45,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Black",
@@ -202,7 +202,7 @@ export async function seedData() {
     {
       sku: "SKU014",
       name: "Evening Gown",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Burgundy_evening_gown_product_86ae3e02.png"],
       price: 199,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Burgundy",
@@ -217,7 +217,7 @@ export async function seedData() {
     {
       sku: "SKU015",
       name: "Trench Coat",
-      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      images: ["/generated_images/Beige_trench_coat_product_b5afc5dd.png"],
       price: 179,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Beige",
@@ -232,7 +232,7 @@ export async function seedData() {
     {
       sku: "SKU016",
       name: "Linen Shirt",
-      images: ["/generated_images/Product_basic_tee_7cb6d64a.png"],
+      images: ["/generated_images/White_linen_shirt_product_08743d80.png"],
       price: 49,
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       color: "White",
@@ -247,7 +247,7 @@ export async function seedData() {
     {
       sku: "SKU017",
       name: "Chino Pants",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/Khaki_chino_pants_product_cc18eb4a.png"],
       price: 55,
       sizes: ["28", "30", "32", "34", "36", "38"],
       color: "Khaki",
@@ -262,7 +262,7 @@ export async function seedData() {
     {
       sku: "SKU018",
       name: "Cocktail Dress",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Black_cocktail_dress_product_7cb071fb.png"],
       price: 119,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Black",
@@ -277,7 +277,7 @@ export async function seedData() {
     {
       sku: "SKU019",
       name: "Puffer Jacket",
-      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      images: ["/generated_images/Navy_puffer_jacket_product_f51b9ecc.png"],
       price: 139,
       sizes: ["S", "M", "L", "XL", "XXL"],
       color: "Navy",
@@ -292,7 +292,7 @@ export async function seedData() {
     {
       sku: "SKU020",
       name: "V-Neck Sweater",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Burgundy_v-neck_sweater_product_b34759d8.png"],
       price: 39,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Burgundy",
@@ -307,7 +307,7 @@ export async function seedData() {
     {
       sku: "SKU021",
       name: "Leather Belt",
-      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      images: ["/generated_images/Brown_leather_belt_product_b186730d.png"],
       price: 29,
       sizes: ["S", "M", "L"],
       color: "Brown",
@@ -322,7 +322,7 @@ export async function seedData() {
     {
       sku: "SKU022",
       name: "Sneakers",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/White_canvas_sneakers_product_cdf1144c.png"],
       price: 79,
       sizes: ["36", "37", "38", "39", "40", "41", "42", "43"],
       color: "White",
@@ -337,7 +337,7 @@ export async function seedData() {
     {
       sku: "SKU023",
       name: "Maxi Dress",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Floral_maxi_dress_product_5af834b3.png"],
       price: 89,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Floral Print",
@@ -352,7 +352,7 @@ export async function seedData() {
     {
       sku: "SKU024",
       name: "Hooded Sweatshirt",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Gray_hooded_sweatshirt_product_c0c608fe.png"],
       price: 45,
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       color: "Gray",
@@ -367,7 +367,7 @@ export async function seedData() {
     {
       sku: "SKU025",
       name: "Pleated Midi Skirt",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/Pink_pleated_skirt_product_0b9af31c.png"],
       price: 65,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Pink",
@@ -382,7 +382,7 @@ export async function seedData() {
     {
       sku: "SKU026",
       name: "Bomber Jacket",
-      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      images: ["/generated_images/Green_bomber_jacket_product_57bccabc.png"],
       price: 99,
       sizes: ["S", "M", "L", "XL"],
       color: "Green",
@@ -397,7 +397,7 @@ export async function seedData() {
     {
       sku: "SKU027",
       name: "Button-Down Shirt",
-      images: ["/generated_images/Product_basic_tee_7cb6d64a.png"],
+      images: ["/generated_images/Blue_oxford_shirt_product_1b1fb38e.png"],
       price: 39,
       sizes: ["XS", "S", "M", "L", "XL", "XXL"],
       color: "Blue",
@@ -412,7 +412,7 @@ export async function seedData() {
     {
       sku: "SKU028",
       name: "Yoga Pants",
-      images: ["/generated_images/Product_denim_jeans_ce699130.png"],
+      images: ["/generated_images/Black_yoga_pants_product_2efa2121.png"],
       price: 49,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Black",
@@ -427,7 +427,7 @@ export async function seedData() {
     {
       sku: "SKU029",
       name: "Sunglasses",
-      images: ["/generated_images/Product_leather_jacket_a13fb76c.png"],
+      images: ["/generated_images/Black_aviator_sunglasses_product_e6831b5c.png"],
       price: 35,
       sizes: ["One Size"],
       color: "Black",
@@ -442,7 +442,7 @@ export async function seedData() {
     {
       sku: "SKU030",
       name: "Wrap Dress",
-      images: ["/generated_images/Product_knit_sweater_77d57eeb.png"],
+      images: ["/generated_images/Red_wrap_dress_product_a8109357.png"],
       price: 75,
       sizes: ["XS", "S", "M", "L", "XL"],
       color: "Red",
