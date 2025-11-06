@@ -69,12 +69,18 @@ export function TopBar({ onSearchClick, onProfileClick }: TopBarProps) {
         </SheetContent>
       </Sheet>
       
-      <img 
-        src={hmLogo} 
-        alt="H&M" 
-        className="h-6 w-auto absolute left-1/2 -translate-x-1/2"
-        data-testid="logo-hm"
-      />
+      <button
+        onClick={() => setLocation('/')}
+        className="absolute left-1/2 -translate-x-1/2 hover-elevate rounded-md p-1 transition-all"
+        data-testid="button-logo-home"
+      >
+        <img 
+          src={hmLogo} 
+          alt="H&M" 
+          className="h-6 w-auto"
+          data-testid="logo-hm"
+        />
+      </button>
 
       <div className="flex items-center gap-2">
         <Button

@@ -45,15 +45,12 @@ export default function Home() {
     enabled: currentView === 'feed',
   });
 
-  // Auto-open onboarding wizard after 2 seconds if not shown in this session
+  // Auto-open onboarding wizard after 2 seconds on every home page visit (demo mode)
   useEffect(() => {
-    const hasSeenOnboarding = sessionStorage.getItem('hm-onboarding-shown');
-    if (!hasSeenOnboarding) {
-      const timer = setTimeout(() => {
-        setShowOnboarding(true);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
+    const timer = setTimeout(() => {
+      setShowOnboarding(true);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleEnterFlow = () => {
