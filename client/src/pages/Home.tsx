@@ -141,6 +141,7 @@ export default function Home() {
       await updateProfile({
         userId,
         desiredExperience: preferences.desiredExperience,
+        stylePreference: preferences.stylePreference,
         bodyType: preferences.bodyType,
         productPagesStyle: preferences.productPagesStyle,
         insightsPreference: preferences.insightsPreference,
