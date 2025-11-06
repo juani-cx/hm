@@ -173,9 +173,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/profile/:userId", async (req, res) => {
     try {
-      const profile = await storage.updateUserProfile(req.params.userId, req.body);
+      let profile = await storage.updateUserProfile(req.params.userId, req.body);
       if (!profile) {
-        return res.status(404).json({ error: "Profile not found" });
+        // Profile doesn't exist, create it
+        profile = await storage.createOrUpdateUserProfile({
+          userId: req.params.userId,
+          ...req.body,
+        });
       }
       res.json(profile);
     } catch (error) {

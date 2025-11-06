@@ -71,7 +71,6 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/profile', USER_ID] });
-      queryClient.invalidateQueries({ queryKey: ['/api/stories'] });
       toast({
         title: "Settings Saved",
         description: "Your preferences have been updated successfully.",
