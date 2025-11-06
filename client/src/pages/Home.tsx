@@ -143,7 +143,7 @@ export default function Home() {
           
           {storiesLoading ? (
             <div className="max-w-md mx-auto px-4 py-6">
-              <h2 className="font-serif font-bold text-4xl mb-6 tracking-tight">Top Collections</h2>
+              <h2 className="font-serif font-bold text-4xl mb-6 tracking-tight">Flow Stories for You</h2>
               <div className="grid grid-cols-2 gap-4">
                 <LoadingCard />
                 <LoadingCard />

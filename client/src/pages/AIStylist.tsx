@@ -391,7 +391,7 @@ export default function AIStylist() {
           )}
 
           <div className="space-y-3">
-            {!previewImage ? (
+            {!previewImage && (
               <Button
                 onClick={() => setIsSelectItemsOpen(true)}
                 className="w-full"
@@ -401,26 +401,6 @@ export default function AIStylist() {
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Items ({selectedItems.length})
-              </Button>
-            ) : (
-              <Button
-                onClick={handleUpdatePreview}
-                className="w-full"
-                variant="default"
-                disabled={isGenerating || selectedItems.length === 0}
-                data-testid="button-update-preview"
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Updating...
-                  </>
-                ) : (
-                  <>
-                    <Wand2 className="w-4 h-4 mr-2" />
-                    Update Virtual Try-On
-                  </>
-                )}
               </Button>
             )}
           </div>
