@@ -52,7 +52,14 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
   - Real-time cart count badge in navigation
   - Quick add-to-cart with automatic cart drawer opening
   - Cart accessible from all pages via TopBar
-- **Virtual Try-On:** AI-generated outfit previews on various model avatars (Athletic, Petite, Curvy, Tall & Slim, Plus Size).
+- **Virtual Try-On:** AI-generated outfit previews on various model avatars (Athletic, Petite, Curvy, Tall & Slim, Plus Size) with:
+  - Initial configuration directly in preview area (before first generation)
+  - Settings dialog accessible via gear icon with contextual CTA:
+    - "Save to Profile" for initial setup
+    - "Apply Changes" when updating existing preview
+  - Smooth regeneration UX: old image remains visible with loading overlay while new image generates
+  - Spinner overlay displays "Generating new preview..." during regeneration
+  - Image updates seamlessly once new preview is ready
 - **AI Stylist Page:** Outfit builder with item selection, real-time outfit calculation, AI suggestions, and save/add-to-cart options.
 - **Shopping Cart:** Drawer overlay, quantity controls, remove items, subtotal/shipping/total, AI styling tips, and "Complete the Look" suggestions.
 - **User Profile & Settings:** Modal dialog for settings with persistent storage in database:

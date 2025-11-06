@@ -106,6 +106,8 @@ export default function AIStylist() {
   });
 
   const handleSaveSettings = () => {
+    const hasExistingPreview = !!previewImage && selectedItems.length > 0;
+    
     updateProfileMutation.mutate({
       previewBodyDescription: settingsBody,
       previewStyle: settingsStyle,
@@ -117,9 +119,9 @@ export default function AIStylist() {
     setIsSettingsOpen(false);
     
     // Regenerate image if there's already a preview and items selected
-    if (previewImage && selectedItems.length > 0) {
+    if (hasExistingPreview) {
       setIsGenerating(true);
-      setPreviewImage(null);
+      // Keep the old image visible while generating new one
       generatePreviewMutation.mutate();
     }
   };
@@ -287,14 +289,24 @@ export default function AIStylist() {
             </div>
           </div>
 
-          <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-4 border-2 border-dashed" data-testid="preview-area">
+          <div className="aspect-[3/4] bg-muted rounded-lg overflow-hidden mb-4 border-2 border-dashed relative" data-testid="preview-area">
             {previewImage ? (
-              <img
-                src={previewImage}
-                alt="Outfit Preview"
-                className="w-full h-full object-cover"
-                data-testid="preview-image"
-              />
+              <>
+                <img
+                  src={previewImage}
+                  alt="Outfit Preview"
+                  className="w-full h-full object-cover"
+                  data-testid="preview-image"
+                />
+                {isGenerating && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                      <p className="text-white text-sm font-medium">Generating new preview...</p>
+                    </div>
+                  </div>
+                )}
+              </>
             ) : showConfigInPreview ? (
               <div className="w-full h-full p-6 flex flex-col justify-center">
                 <h3 className="font-serif text-xl mb-4">Configure Your Virtual Try-On</h3>
@@ -834,7 +846,7 @@ export default function AIStylist() {
               disabled={!areSettingsComplete}
               data-testid="button-save-settings"
             >
-              Save to Profile
+              {previewImage ? "Apply Changes" : "Save to Profile"}
             </Button>
           </div>
         </DialogContent>
