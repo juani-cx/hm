@@ -269,19 +269,19 @@ export default function AIStylist() {
                 )}
               </>
             ) : showConfigInPreview ? (
-              <div className="w-full h-full p-6 flex flex-col justify-center overflow-y-auto">
+              <div className="w-full h-full p-6 flex flex-col justify-center">
                 <div className="flex items-center gap-2 mb-6">
                   <Sparkles className="w-5 h-5 text-primary" />
                   <h3 className="font-serif text-xl font-semibold">Virtual Try-On</h3>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-5">
                   <div>
                     <Label className="text-sm font-semibold mb-3 block">Gender</Label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       <button
                         onClick={() => setSettingsGender("male")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsGender === "male" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -293,7 +293,7 @@ export default function AIStylist() {
                       </button>
                       <button
                         onClick={() => setSettingsGender("female")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsGender === "female" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -305,7 +305,7 @@ export default function AIStylist() {
                       </button>
                       <button
                         onClick={() => setSettingsGender("mannequin")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsGender === "mannequin" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -313,17 +313,17 @@ export default function AIStylist() {
                         data-testid="button-gender-mannequin"
                       >
                         <UserX className="w-6 h-6" />
-                        <span className="text-xs font-medium">No Gender</span>
+                        <span className="text-xs font-medium whitespace-nowrap">No Gender</span>
                       </button>
                     </div>
                   </div>
 
                   <div>
                     <Label className="text-sm font-semibold mb-3 block">Body Type</Label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-3 gap-2">
                       <button
                         onClick={() => setSettingsBody("Athletic Build")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsBody === "Athletic Build" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -335,7 +335,7 @@ export default function AIStylist() {
                       </button>
                       <button
                         onClick={() => setSettingsBody("Petite")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsBody === "Petite" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -347,7 +347,7 @@ export default function AIStylist() {
                       </button>
                       <button
                         onClick={() => setSettingsBody("Curvy")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsBody === "Curvy" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -359,7 +359,7 @@ export default function AIStylist() {
                       </button>
                       <button
                         onClick={() => setSettingsBody("Tall & Slim")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsBody === "Tall & Slim" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -367,11 +367,11 @@ export default function AIStylist() {
                         data-testid="button-body-tall"
                       >
                         <RectangleVertical className="w-6 h-6" />
-                        <span className="text-xs font-medium">Tall & Slim</span>
+                        <span className="text-xs font-medium whitespace-nowrap">Tall & Slim</span>
                       </button>
                       <button
                         onClick={() => setSettingsBody("Plus Size")}
-                        className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all hover-elevate ${
+                        className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
                           settingsBody === "Plus Size" 
                             ? "border-primary bg-primary/5 text-primary" 
                             : "border-border bg-background"
@@ -379,41 +379,27 @@ export default function AIStylist() {
                         data-testid="button-body-plus"
                       >
                         <Users className="w-6 h-6" />
-                        <span className="text-xs font-medium">Plus Size</span>
+                        <span className="text-xs font-medium whitespace-nowrap">Plus Size</span>
                       </button>
                     </div>
                   </div>
 
                   <div>
                     <Label className="text-sm font-semibold mb-3 block">Style Preference</Label>
-                    <div className="flex gap-2 overflow-x-auto pb-2">
-                      {['Casual', 'Bohemian', 'Minimalist', 'Streetwear', 'Vintage', 'Elegant', 'Sporty'].map((style) => (
-                        <Badge
+                    <div className="flex flex-wrap gap-2">
+                      {['Casual', 'Bohemian', 'Minimalist', 'Streetwear'].map((style) => (
+                        <button
                           key={style}
-                          variant={settingsStyle === style ? 'default' : 'outline'}
-                          className="cursor-pointer whitespace-nowrap px-4 py-2"
                           onClick={() => setSettingsStyle(style)}
+                          className={`px-5 py-2 rounded-full border-2 text-sm font-medium transition-all hover-elevate ${
+                            settingsStyle === style 
+                              ? "border-primary bg-primary/10 text-primary" 
+                              : "border-border bg-background text-foreground"
+                          }`}
                           data-testid={`badge-style-${style.toLowerCase()}`}
                         >
                           {style}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-semibold mb-3 block">Mood</Label>
-                    <div className="flex gap-2 overflow-x-auto pb-2">
-                      {['Confident', 'Playful', 'Relaxed', 'Professional', 'Energetic', 'Sophisticated'].map((mood) => (
-                        <Badge
-                          key={mood}
-                          variant={settingsMood === mood ? 'default' : 'outline'}
-                          className="cursor-pointer whitespace-nowrap px-4 py-2"
-                          onClick={() => setSettingsMood(mood)}
-                          data-testid={`badge-mood-${mood.toLowerCase()}`}
-                        >
-                          {mood}
-                        </Badge>
+                        </button>
                       ))}
                     </div>
                   </div>
