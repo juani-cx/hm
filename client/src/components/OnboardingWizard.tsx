@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,6 +9,7 @@ import { ChevronRight, User, UserRound, UserX, Dumbbell, Triangle, Users, Rectan
 interface OnboardingWizardProps {
   open: boolean;
   onComplete: (preferences: OnboardingPreferences) => void;
+  onDismiss: () => void;
 }
 
 export interface OnboardingPreferences {
@@ -23,7 +24,7 @@ export interface OnboardingPreferences {
   insightsPreference?: 'fashion_recommendations' | 'pricing_first' | 'fit_my_style';
 }
 
-export function OnboardingWizard({ open, onComplete }: OnboardingWizardProps) {
+export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWizardProps) {
   const [step, setStep] = useState(1);
   const [preferences, setPreferences] = useState<OnboardingPreferences>({
     fitPreference: 50,
@@ -53,11 +54,21 @@ export function OnboardingWizard({ open, onComplete }: OnboardingWizardProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onDismiss()}>
       <DialogContent 
-        className="max-w-md [&>button]:hidden"
+        className="max-w-md"
         data-testid="onboarding-wizard"
       >
+        <DialogTitle className="sr-only">
+          {step === 1 && "Desired experience"}
+          {step === 2 && "Size and flow"}
+          {step === 3 && "Product pages & collections"}
+          {step === 4 && "Insights preferences"}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Step {step} of 4: Configure your preferences for a personalized experience
+        </DialogDescription>
+        
         <div className="space-y-6">
           <div className="text-sm text-muted-foreground">
             Onboarding 1-5

@@ -34,6 +34,15 @@ The backend uses Express.js with TypeScript. It features RESTful APIs for storie
 - H&M logo and favicon for consistent branding.
 
 ### Feature Specifications
+- **Onboarding Wizard:** 4-step modal wizard that auto-opens after 2 seconds on home page:
+  - Step 1: Desired Experience & Style Preferences (Ultra personalized, Non intrusive, Traditional, Casual & comfy, Minimalist, Playful, Fashionist)
+  - Step 2: Size and Flow (Gender, Body Type, Tops/Bottoms sizes, Fit preference slider)
+  - Step 3: Product Pages & Collections style (Magazine, Board, Virtual gallery)
+  - Step 4: Insights Preferences (Fashion recommendations, Pricing first, Fit my style)
+  - Session-tracked to show only once per session using sessionStorage
+  - All preferences saved to user profile upon completion
+  - Skip and Next navigation with red H&M branded buttons
+  - Accessible with proper ARIA labels for screen readers
 - **Flow Stories:** Curated editorial content featuring shoppable looks.
 - **AI-Powered Assistant:** Styling guidance, product recommendations, customer support.
 - **Collections:** Editorial model photography, interactive modules, and viewer with actions (Add to My Collection, Save for Later, Add to Cart, Virtual AI Assist).

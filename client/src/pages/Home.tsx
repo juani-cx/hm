@@ -51,7 +51,6 @@ export default function Home() {
     if (!hasSeenOnboarding) {
       const timer = setTimeout(() => {
         setShowOnboarding(true);
-        sessionStorage.setItem('hm-onboarding-shown', 'true');
       }, 2000);
       return () => clearTimeout(timer);
     }
@@ -151,11 +150,18 @@ export default function Home() {
         fitPreference: preferences.fitPreference,
         onboardingCompleted: true,
       });
+      sessionStorage.setItem('hm-onboarding-shown', 'true');
       setShowOnboarding(false);
     } catch (error) {
       console.error('Failed to save onboarding preferences:', error);
+      sessionStorage.setItem('hm-onboarding-shown', 'true');
       setShowOnboarding(false);
     }
+  };
+
+  const handleOnboardingDismiss = () => {
+    sessionStorage.setItem('hm-onboarding-shown', 'true');
+    setShowOnboarding(false);
   };
 
   return (
@@ -248,6 +254,7 @@ export default function Home() {
       <OnboardingWizard
         open={showOnboarding}
         onComplete={handleOnboardingComplete}
+        onDismiss={handleOnboardingDismiss}
       />
     </div>
   );
