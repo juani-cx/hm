@@ -266,11 +266,13 @@ export default function CampaignArticle() {
     });
     
     try {
-      const response = await apiRequest("POST", "/api/assistant/edit-image", {
+      const res = await apiRequest("POST", "/api/assistant/edit-image", {
         prompt: aiPromptQuestion,
         userId,
         collectionId: story.id,
-      }) as unknown as { imageUrl: string };
+      });
+      
+      const response = await res.json() as { imageUrl: string };
       
       setGeneratedHeroImage(response.imageUrl);
       setIsVideoMode(false); // Switch to image mode to show the generated image
@@ -311,12 +313,14 @@ export default function CampaignArticle() {
       
       const prompt = promptParts.join(', ');
       
-      const response = await apiRequest("POST", "/api/assistant/generate-slideshow", {
+      const res = await apiRequest("POST", "/api/assistant/generate-slideshow", {
         prompt,
         userId,
         collectionId: story.id,
         count: 4,
-      }) as unknown as { images: string[] };
+      });
+      
+      const response = await res.json() as { images: string[] };
       
       setSlideshowImages(response.images);
       setUsingSlideshowMode(true);
