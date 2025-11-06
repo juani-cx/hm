@@ -18,7 +18,7 @@ interface StoryFeedProps {
 
 export function StoryFeed({ stories, onAISuggestionClick, showTopCollections = false }: StoryFeedProps) {
   const topStories = showTopCollections ? stories.slice(0, 4) : stories;
-  const title = showTopCollections ? "Top Collections" : "Flow Stories";
+  const title = showTopCollections ? "Flow Stories for You" : "Flow Stories";
   
   return (
     <div className="bg-background">
