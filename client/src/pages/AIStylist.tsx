@@ -13,7 +13,6 @@ import { SiTiktok } from 'react-icons/si';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiRequest, queryClient } from '@/lib/queryClient';
 import { TopBar } from '@/components/TopBar';
-import { useToast } from '@/hooks/use-toast';
 import type { Item, UserProfile } from '@shared/schema';
 import { useCart } from '@/contexts/CartContext';
 
@@ -38,7 +37,6 @@ export default function AIStylist() {
   const [settingsMood, setSettingsMood] = useState("");
   const [settingsGender, setSettingsGender] = useState<"male" | "female" | "mannequin" | "">("");
 
-  const { toast } = useToast();
   const { addItem: addToCart } = useCart();
 
   const { data: storeItems = [] } = useQuery<Item[]>({
@@ -98,10 +96,6 @@ export default function AIStylist() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/profile", USER_ID] });
-      toast({
-        title: "Settings Saved",
-        description: "Your preview preferences have been updated",
-      });
     },
   });
 
@@ -132,11 +126,6 @@ export default function AIStylist() {
       setSettingsStyle(userProfile.previewStyle || "");
       setSettingsMood(userProfile.previewMood || "");
       setSettingsGender(userProfile.gender || "");
-      
-      toast({
-        title: "Profile Settings Loaded",
-        description: "Your saved preferences have been applied",
-      });
     }
   };
 
@@ -145,16 +134,8 @@ export default function AIStylist() {
     
     if (isSelected) {
       setSelectedItems(selectedItems.filter(i => i.sku !== item.sku));
-      toast({
-        title: "Item Removed",
-        description: `${item.name} removed from your outfit`,
-      });
     } else {
       setSelectedItems([...selectedItems, item]);
-      toast({
-        title: "Item Added",
-        description: `${item.name} added to your outfit`,
-      });
     }
   };
 
@@ -181,20 +162,11 @@ export default function AIStylist() {
     onSuccess: (data) => {
       setPreviewImage(data.imageUrl);
       setIsGenerating(false);
-      setIsSelectItemsOpen(false); // Close modal after generation
-      toast({
-        title: "Preview Generated",
-        description: "Your AI outfit preview is ready!",
-      });
+      setIsSelectItemsOpen(false);
     },
     onError: () => {
       setPreviewImage(null);
       setIsGenerating(false);
-      toast({
-        title: "Generation Failed",
-        description: "Sorry, image generation is currently unavailable. Please try again later.",
-        variant: "destructive",
-      });
     }
   });
 
@@ -210,27 +182,16 @@ export default function AIStylist() {
   };
 
   const handleShareTo = (platform: string) => {
-    toast({
-      title: `Sharing to ${platform}`,
-      description: "Opening share interface...",
-    });
     setIsSharePanelOpen(false);
   };
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "Link copied!",
-      description: "Link copied to clipboard",
-    });
     setIsSharePanelOpen(false);
   };
 
   const handleSaveOutfit = () => {
-    toast({
-      title: "Outfit Saved",
-      description: "Your outfit has been saved to your collection",
-    });
+    // Outfit saved
   };
 
   const handleAddToCart = () => {
@@ -243,10 +204,10 @@ export default function AIStylist() {
         size: item.sizes[0] || 'M',
       });
     });
-    toast({
-      title: "Added to Cart",
-      description: `${selectedItems.length} items added to your cart`,
-    });
+  };
+
+  const handleClearAllItems = () => {
+    setSelectedItems([]);
   };
 
   const totalValue = selectedItems.reduce((sum, item) => sum + item.price, 0);
@@ -734,8 +695,20 @@ export default function AIStylist() {
           <div className="p-6 border-t bg-background">
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="text-sm">
-                  <span className="font-semibold">{selectedItems.length}</span> items selected
+                <div className="flex items-center gap-2">
+                  <div className="text-sm">
+                    <span className="font-semibold">{selectedItems.length}</span> items selected
+                  </div>
+                  {selectedItems.length > 0 && (
+                    <button
+                      onClick={handleClearAllItems}
+                      className="p-1 hover-elevate rounded-md"
+                      data-testid="button-clear-all-items"
+                      aria-label="Clear all selected items"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               </div>
               <Button
