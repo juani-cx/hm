@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -107,16 +106,27 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
     );
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
-        <DialogHeader className="px-6 pt-6 pb-4 sticky top-0 bg-background z-10">
-          <DialogTitle className="font-serif text-3xl" data-testid="text-settings-title">
-            Settings
-          </DialogTitle>
-        </DialogHeader>
+  if (!open) return null;
 
-        <div className="px-6 pb-6 space-y-6">
+  return (
+    <div className="fixed inset-0 z-50 bg-white overflow-hidden flex flex-col">
+      {/* Header with title and close button */}
+      <div className="flex items-center justify-between px-6 py-6 border-b">
+        <h1 className="font-serif text-3xl" data-testid="text-settings-title">
+          Settings
+        </h1>
+        <button
+          onClick={() => onOpenChange(false)}
+          className="p-2 hover-elevate rounded-md"
+          data-testid="button-close-settings"
+        >
+          <X className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 pb-32">
+        <div className="max-w-2xl mx-auto space-y-6">
           <Card className="p-6">
             <h2 className="font-semibold text-lg mb-4" data-testid="text-ai-preferences">AI Preferences</h2>
             
@@ -317,7 +327,12 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               </div>
             </div>
           </Card>
+        </div>
+      </div>
 
+      {/* Fixed bottom CTA button */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t">
+        <div className="max-w-2xl mx-auto">
           <Button
             onClick={handleSavePreferences}
             className="w-full"
@@ -329,7 +344,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
             {updateProfileMutation.isPending ? 'Saving...' : 'Save Preferences'}
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
