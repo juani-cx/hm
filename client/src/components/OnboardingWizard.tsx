@@ -39,11 +39,7 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
   };
 
   const handleSkip = () => {
-    if (step < 4) {
-      setStep(step + 1);
-    } else {
-      onComplete(preferences);
-    }
+    onDismiss();
   };
 
   const updatePreference = <K extends keyof OnboardingPreferences>(
@@ -458,7 +454,7 @@ export function OnboardingWizard({ open, onComplete, onDismiss }: OnboardingWiza
               className="text-sm font-medium hover-elevate px-4 py-2 rounded-md"
               data-testid="button-skip"
             >
-              Skip
+              Skip Onboarding
             </button>
             <Button
               onClick={handleNext}
