@@ -55,9 +55,8 @@ export function OnboardingWizard({ open, onComplete }: OnboardingWizardProps) {
   return (
     <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
-        className="max-w-md"
+        className="max-w-md [&>button]:hidden"
         data-testid="onboarding-wizard"
-        hideClose
       >
         <div className="space-y-6">
           <div className="text-sm text-muted-foreground">

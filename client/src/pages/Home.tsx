@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { HeroSection } from "@/components/HeroSection";
@@ -8,6 +8,7 @@ import { EditorialContent } from "@/components/EditorialContent";
 import { ShoppingCart } from "@/components/ShoppingCart";
 import { TopBar } from "@/components/TopBar";
 import { LoadingCard } from "@/components/LoadingCard";
+import { OnboardingWizard, type OnboardingPreferences } from "@/components/OnboardingWizard";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
@@ -31,10 +32,11 @@ export default function Home() {
   const [showPreferences, setShowPreferences] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [userId] = useState('demo-user');
+  const [userId] = useState('default-user');
   const [preferencesDismissed, setPreferencesDismissed] = useState(() => {
     return localStorage.getItem('hm-preferences-dismissed') === 'true';
   });
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Fetch stories from API
   const { data: stories, isLoading: storiesLoading } = useQuery({
@@ -43,6 +45,17 @@ export default function Home() {
     enabled: currentView === 'feed',
   });
 
+  // Auto-open onboarding wizard after 2 seconds if not shown in this session
+  useEffect(() => {
+    const hasSeenOnboarding = sessionStorage.getItem('hm-onboarding-shown');
+    if (!hasSeenOnboarding) {
+      const timer = setTimeout(() => {
+        setShowOnboarding(true);
+        sessionStorage.setItem('hm-onboarding-shown', 'true');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const handleEnterFlow = () => {
     setCurrentView('feed');
@@ -120,6 +133,27 @@ export default function Home() {
     } catch (error) {
       console.error('Failed to save preferences:', error);
       setShowPreferences(false);
+    }
+  };
+
+  const handleOnboardingComplete = async (preferences: OnboardingPreferences) => {
+    try {
+      await updateProfile({
+        userId,
+        desiredExperience: preferences.desiredExperience,
+        bodyType: preferences.bodyType,
+        productPagesStyle: preferences.productPagesStyle,
+        insightsPreference: preferences.insightsPreference,
+        gender: preferences.gender,
+        topsSize: preferences.topsSize,
+        bottomsSize: preferences.bottomsSize,
+        fitPreference: preferences.fitPreference,
+        onboardingCompleted: true,
+      });
+      setShowOnboarding(false);
+    } catch (error) {
+      console.error('Failed to save onboarding preferences:', error);
+      setShowOnboarding(false);
     }
   };
 
@@ -209,6 +243,11 @@ export default function Home() {
           />
         </>
       )}
+
+      <OnboardingWizard
+        open={showOnboarding}
+        onComplete={handleOnboardingComplete}
+      />
     </div>
   );
 }
