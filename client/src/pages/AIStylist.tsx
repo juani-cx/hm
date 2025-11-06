@@ -779,70 +779,133 @@ export default function AIStylist() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 mt-4">
+          <div className="space-y-5 mt-4">
             <div>
-              <Label htmlFor="settings-gender">Gender</Label>
-              <Select value={settingsGender} onValueChange={(v) => setSettingsGender(v as "male" | "female" | "mannequin")}>
-                <SelectTrigger id="settings-gender" data-testid="select-settings-gender">
-                  <SelectValue placeholder="Select gender" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="mannequin">No Gender (Mannequin)</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label className="text-sm font-semibold mb-3 block">Gender</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => setSettingsGender("male")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsGender === "male" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-gender-male"
+                >
+                  <User className="w-6 h-6" />
+                  <span className="text-xs font-medium">Male</span>
+                </button>
+                <button
+                  onClick={() => setSettingsGender("female")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsGender === "female" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-gender-female"
+                >
+                  <UserRound className="w-6 h-6" />
+                  <span className="text-xs font-medium">Female</span>
+                </button>
+                <button
+                  onClick={() => setSettingsGender("mannequin")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsGender === "mannequin" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-gender-mannequin"
+                >
+                  <UserX className="w-6 h-6" />
+                  <span className="text-xs font-medium whitespace-nowrap">No Gender</span>
+                </button>
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="settings-body">Body Type</Label>
-              <Select value={settingsBody} onValueChange={setSettingsBody}>
-                <SelectTrigger id="settings-body" data-testid="select-body">
-                  <SelectValue placeholder="Select body type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Athletic Build">Athletic Build</SelectItem>
-                  <SelectItem value="Petite">Petite</SelectItem>
-                  <SelectItem value="Curvy">Curvy</SelectItem>
-                  <SelectItem value="Tall & Slim">Tall & Slim</SelectItem>
-                  <SelectItem value="Plus Size">Plus Size</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label className="text-sm font-semibold mb-3 block">Body Type</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => setSettingsBody("Athletic Build")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsBody === "Athletic Build" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-body-athletic"
+                >
+                  <Dumbbell className="w-6 h-6" />
+                  <span className="text-xs font-medium">Athletic</span>
+                </button>
+                <button
+                  onClick={() => setSettingsBody("Petite")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsBody === "Petite" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-body-petite"
+                >
+                  <Triangle className="w-6 h-6" />
+                  <span className="text-xs font-medium">Petite</span>
+                </button>
+                <button
+                  onClick={() => setSettingsBody("Curvy")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsBody === "Curvy" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-body-curvy"
+                >
+                  <Hourglass className="w-6 h-6" />
+                  <span className="text-xs font-medium">Curvy</span>
+                </button>
+                <button
+                  onClick={() => setSettingsBody("Tall & Slim")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsBody === "Tall & Slim" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-body-tall"
+                >
+                  <RectangleVertical className="w-6 h-6" />
+                  <span className="text-xs font-medium whitespace-nowrap">Tall & Slim</span>
+                </button>
+                <button
+                  onClick={() => setSettingsBody("Plus Size")}
+                  className={`p-3 rounded-lg border-2 flex flex-col items-center gap-1.5 transition-all hover-elevate ${
+                    settingsBody === "Plus Size" 
+                      ? "border-primary bg-primary/5 text-primary" 
+                      : "border-border bg-background"
+                  }`}
+                  data-testid="button-settings-body-plus"
+                >
+                  <Users className="w-6 h-6" />
+                  <span className="text-xs font-medium whitespace-nowrap">Plus Size</span>
+                </button>
+              </div>
             </div>
 
             <div>
-              <Label htmlFor="settings-style">Style Preference</Label>
-              <Select value={settingsStyle} onValueChange={setSettingsStyle}>
-                <SelectTrigger id="settings-style" data-testid="select-style">
-                  <SelectValue placeholder="Select style" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Minimalist">Minimalist</SelectItem>
-                  <SelectItem value="Streetwear">Streetwear</SelectItem>
-                  <SelectItem value="Vintage">Vintage</SelectItem>
-                  <SelectItem value="Elegant">Elegant</SelectItem>
-                  <SelectItem value="Casual">Casual</SelectItem>
-                  <SelectItem value="Bohemian">Bohemian</SelectItem>
-                  <SelectItem value="Sporty">Sporty</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="settings-mood">Mood</Label>
-              <Select value={settingsMood} onValueChange={setSettingsMood}>
-                <SelectTrigger id="settings-mood" data-testid="select-mood">
-                  <SelectValue placeholder="Select mood" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Confident">Confident</SelectItem>
-                  <SelectItem value="Relaxed">Relaxed</SelectItem>
-                  <SelectItem value="Energetic">Energetic</SelectItem>
-                  <SelectItem value="Sophisticated">Sophisticated</SelectItem>
-                  <SelectItem value="Playful">Playful</SelectItem>
-                  <SelectItem value="Professional">Professional</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label className="text-sm font-semibold mb-3 block">Style Preference</Label>
+              <div className="flex flex-wrap gap-2">
+                {['Casual', 'Bohemian', 'Minimalist', 'Streetwear'].map((style) => (
+                  <button
+                    key={style}
+                    onClick={() => setSettingsStyle(style)}
+                    className={`px-5 py-2 rounded-full border-2 text-sm font-medium transition-all hover-elevate ${
+                      settingsStyle === style 
+                        ? "border-primary bg-primary/10 text-primary" 
+                        : "border-border bg-background text-foreground"
+                    }`}
+                    data-testid={`button-settings-style-${style.toLowerCase()}`}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <Button
