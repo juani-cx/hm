@@ -534,6 +534,7 @@ This collection represents more than clothing—it's an invitation to embrace th
       images: ["/generated_images/Story_card_autumn_look_7a4bbbf6.png", "/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
       femaleImages: ["/generated_images/Story_card_autumn_look_7a4bbbf6.png"],
       maleImages: ["/generated_images/Male_autumn_essentials_trench_coat_2a809354.png"],
+      mannequinImages: ["/generated_images/Mannequin_autumn_trench_coat_554a0aed.png"],
       tags: ["Sustainability", "Fall"],
       lookCount: 2
     },
@@ -550,6 +551,7 @@ This is summer dressing at its finest—uncomplicated, authentic, and aligned wi
       images: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
       femaleImages: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
       maleImages: ["/generated_images/Male_summer_casual_outfit_fae64d47.png"],
+      mannequinImages: ["/generated_images/Mannequin_summer_casual_outfit_16a94576.png"],
       tags: ["Fresh", "Summer"],
       lookCount: 1
     },
@@ -566,6 +568,7 @@ Spring Garden represents fashion's future: thoughtful, sustainable, and deeply c
       images: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
       femaleImages: ["/generated_images/Story_card_summer_look_b5f6c911.png"],
       maleImages: ["/generated_images/Male_spring_garden_look_28619890.png"],
+      mannequinImages: ["/generated_images/Mannequin_spring_floral_dress_9fcf178b.png"],
       tags: ["Floral", "Sustainable"],
       lookCount: 1
     },
@@ -582,6 +585,7 @@ This collection celebrates the evolution of workwear, honoring tradition while p
       images: ["/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
       femaleImages: ["/generated_images/Story_card_workwear_look_a3ea8ce1.png"],
       maleImages: ["/generated_images/Male_workwear_blazer_look_1bca3e0c.png"],
+      mannequinImages: ["/generated_images/Mannequin_workwear_blazer_9fbfc675.png"],
       tags: ["Professional", "Tailored"],
       lookCount: 1
     },

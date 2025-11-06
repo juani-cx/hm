@@ -61,6 +61,8 @@ export default function Home() {
       imageUrl = story.maleImages[0];
     } else if (gender === 'female' && story.femaleImages && story.femaleImages.length > 0) {
       imageUrl = story.femaleImages[0];
+    } else if (gender === 'mannequin' && story.mannequinImages && story.mannequinImages.length > 0) {
+      imageUrl = story.mannequinImages[0];
     }
 
     return {
