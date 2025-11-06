@@ -65,25 +65,13 @@ export default function AIStylist() {
 
   useEffect(() => {
     if (userProfile) {
-      setSettingsBody(userProfile.previewBodyDescription || "");
-      setSettingsStyle(userProfile.previewStyle || "");
-      setSettingsMood(userProfile.previewMood || "");
-      setSettingsGender(userProfile.gender || "");
-      
-      // Check if configuration is complete (4 required fields)
-      const hasAllSettings = userProfile.previewBodyDescription && 
-                            userProfile.previewStyle && 
-                            userProfile.previewMood &&
-                            userProfile.gender;
-      if (hasAllSettings) {
-        setConfigurationComplete(true);
-        setShowConfigInPreview(false);
-      }
+      // Don't auto-load settings - keep everything deselected by default
+      // User can click "Use My Profile Settings" if they want to load saved preferences
     }
   }, [userProfile]);
 
-  // Check if current settings are complete (4 required fields)
-  const areSettingsComplete = settingsBody && settingsStyle && settingsMood && settingsGender;
+  // Check if current settings are complete (3 required fields: gender, body type, style)
+  const areSettingsComplete = settingsBody && settingsStyle && settingsGender;
   
   // Auto-enable Add Items when config is filled (and disable when incomplete)
   useEffect(() => {
@@ -105,7 +93,6 @@ export default function AIStylist() {
     updateProfileMutation.mutate({
       previewBodyDescription: settingsBody,
       previewStyle: settingsStyle,
-      previewMood: settingsMood,
       gender: settingsGender as "male" | "female" | undefined,
     });
     setConfigurationComplete(true);
@@ -124,7 +111,6 @@ export default function AIStylist() {
     if (userProfile) {
       setSettingsBody(userProfile.previewBodyDescription || "");
       setSettingsStyle(userProfile.previewStyle || "");
-      setSettingsMood(userProfile.previewMood || "");
       setSettingsGender(userProfile.gender || "");
     }
   };
@@ -150,7 +136,7 @@ export default function AIStylist() {
         modelType: settingsBody.toLowerCase().replace(/\s+/g, '-'),
         gender: settingsGender,
         style: settingsStyle,
-        mood: settingsMood,
+        mood: "Confident",
         items: selectedItems.map(i => ({
           name: i.name,
           color: i.color,
